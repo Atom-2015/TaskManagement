@@ -1,0 +1,42 @@
+/* sign in responsive */
+
+@media(max-width:768px){
+    #signinMain{
+        padding: 15px !important;
+    }
+    .textsign h1{
+        font-size: 25px !important;
+    }
+    #imagesign{
+        width: 140px !important;
+        height: 140px !important;
+        margin-bottom: 8px !important;
+    }
+    .emailSign{
+        margin-bottom: 8px !important;
+    }
+
+    #parasign{
+        margin: 10px 0px !important;
+    }
+    #para2sign{
+        margin: 10px 0px 0px 0px !important;
+    }
+
+
+    /* sign  up responsive below */
+
+    #mainsignup{
+        padding: 15px !important;
+    }
+    .imgsignup{
+        width: 180px !important;
+        height: 140px !important;
+        margin-bottom: 18px !important;
+    }
+    #signuppara{
+        margin: 10px 0px !important;
+    }
+
+
+}
