@@ -155,12 +155,12 @@ function Sidebar() {
             </div>
 
             {/* Content Area */}
-            <div className="p-[9px] box-border bg-red-500" id='sidebar-right' style={{
+            <div className="p-[9px] box-border  " id='sidebar-right' style={{
                 width: '94%',
                 marginLeft: '6%',
                 // height: '100vh',
                 overflowY: 'scroll',
-                // background: '#1e1e1e',
+                background: '#1e1e1e',
                 // background: 'red',
                 backdropFilter: 'blur(10px)',
                 boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)',

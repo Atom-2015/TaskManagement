@@ -8,6 +8,7 @@ import Sign_in from './Component/Authfolder/signin';
 import App from './App';
 import { Provider } from "react-redux";
 import { store } from './StoreRDK/store'; 
+import ProjectIndex from './Component/Projects/projectIndex';
 import 'bootstrap/dist/css/bootstrap.min.css'; 
 import 'bootstrap/dist/css/bootstrap.min.css'; 
  
@@ -51,7 +52,7 @@ const router = createBrowserRouter([
     element: <ProtectedRoute element={<App />} />,
     children:[
       {path:'/dashboard' , element : <h1>Dashboard</h1>},
-      {path:'/projectManagement' , element : <h1>Project Management</h1>},
+      {path:'/projectManagement' , element : <ProjectIndex/> },
     ]
      
   },
