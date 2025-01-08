@@ -11,6 +11,7 @@ import { store } from './StoreRDK/store';
 import ProjectIndex from './Component/Projects/projectIndex';
 import 'bootstrap/dist/css/bootstrap.min.css'; 
 import 'bootstrap/dist/css/bootstrap.min.css'; 
+import UsermanagementIndex from './Component/userManagement.js/usermanagementIndex';
  
  
 
@@ -53,6 +54,7 @@ const router = createBrowserRouter([
     children:[
       {path:'/dashboard' , element : <h1>Dashboard</h1>},
       {path:'/projectManagement' , element : <ProjectIndex/> },
+      {path:'/userManagement' , element:<UsermanagementIndex/>}
     ]
      
   },

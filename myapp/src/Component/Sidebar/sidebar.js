@@ -114,14 +114,14 @@ function Sidebar() {
                     {/* Management Link */}
                     <div className="mb-4 relative group">
                         <NavLink
-                            to='/management/userManagement'
+                            to='/userManagement'
                             className={({ isActive }) =>
                                 `block py-2 px-4 rounded-lg ${isActive ? "bg-blue-600 text-white" : "text-white hover:bg-gray-800"}`
                             }
                         >
                             <FontAwesomeIcon icon={faListCheck} className=" text-white" />
                         </NavLink>
-                        <span className="absolute left-full ml-2 hidden group-hover:block bg-gray-800 text-white text-sm rounded p-2 py-1 px-4 z-10">Management</span>
+                        <span className="absolute left-full ml-2 hidden group-hover:block bg-gray-800 text-white text-sm rounded p-2 py-1 px-4 z-10">User Management</span>
                     </div>
 
                     {/* Billing Link */}
