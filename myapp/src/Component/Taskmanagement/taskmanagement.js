@@ -10,7 +10,7 @@ function Taskmanagement() {
       {/* Flex container for project name and button */}
       <div className="flex items-center justify-between mb-4">
         {/* Project Name on the left */}
-        <h2 className="text-white text-lg font-semibold">Project Name</h2>
+        <h2 className="text-white text-lg font-semibold">Task Management</h2>
         
         {/* Add Task Button on the right */}
         <Addtaskbutton />
