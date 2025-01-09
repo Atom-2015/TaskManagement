@@ -12,6 +12,7 @@ import ProjectIndex from './Component/Projects/projectIndex';
 import 'bootstrap/dist/css/bootstrap.min.css'; 
 import 'bootstrap/dist/css/bootstrap.min.css'; 
 import UsermanagementIndex from './Component/userManagement.js/usermanagementIndex';
+import Taskmanagement from './Component/Taskmanagement/taskmanagement';
  
  
 
@@ -53,8 +54,9 @@ const router = createBrowserRouter([
     element: <ProtectedRoute element={<App />} />,
     children:[
       {path:'/dashboard' , element : <h1>Dashboard</h1>},
-      {path:'/projectManagement' , element : <ProjectIndex/> },
-      {path:'/userManagement' , element:<UsermanagementIndex/>}
+      {path:'/projectManagement' , element : <ProjectIndex/>},
+      {path:'/userManagement' , element:<UsermanagementIndex/>},
+      {path:'/tasks' , element :  <Taskmanagement/> },
     ]
      
   },
