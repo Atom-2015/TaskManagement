@@ -1,6 +1,6 @@
 import React from 'react'
 
-function Topthreecomponent() {
+function AttendanceSection() {
   return (
     <div className=' flex flex-row  justify-between ' >
       <div className=' w-[18%] bg-red-300 h-[150px] rounded ' ><span ><b>Attendance</b> </span> <span>This Month</span> 
@@ -25,4 +25,4 @@ function Topthreecomponent() {
   )
 }
 
-export default Topthreecomponent
+export default AttendanceSection;
