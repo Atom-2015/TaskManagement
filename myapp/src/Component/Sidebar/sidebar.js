@@ -1,12 +1,14 @@
 
 import { Navigate, NavLink, Outlet, useNavigate } from 'react-router-dom';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUserTie, faMapLocationDot, faChartColumn, faListCheck, faMoneyBill1, faHandshakeAngle } from '@fortawesome/free-solid-svg-icons';
+// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+// import { faUserTie, faMapLocationDot, faChartColumn, faListCheck, faMoneyBill1, faHandshakeAngle } from '@fortawesome/free-solid-svg-icons';
 import React, { useState } from 'react';
 import ankit from '../Media/thumb-1920-665825.jpg';
 import { getUserName } from '../../FeatureRedux/User_Name'
 import './sidebar.css'
 import { useSelector, useDispatch } from 'react-redux';
+import { Home, Briefcase, Calendar, Settings } from 'lucide-react'
+
 
 
 function Sidebar() {
@@ -56,13 +58,13 @@ function Sidebar() {
 
             {/* Sidebar */}
             <div  style={{
-                width: '6%',
+                width: '13%',
                 position: 'fixed',
                 top: '0px',
                 height: '100vh',
-                background: '#1e1e1e',
+                background: '#1f2937',
                 backdropFilter: 'blur(10px)',
-                display: 'flex',
+                
                 flexDirection: 'column',
                 justifyContent: 'space-between',
                 boxShadow: '0px 0px 8px 0px gray',
@@ -76,7 +78,7 @@ function Sidebar() {
                     onClick={() => openmodal()}
                     style={{ cursor: 'pointer', position: 'relative' }}
                 >
-                    <FontAwesomeIcon icon={faUserTie} className='text-white text-xl' />
+                    {/* <FontAwesomeIcon icon={faUserTie} className='text-white text-xl' /> */}
                     <span className="absolute left-full cursor-pointer  ml-2 hidden group-hover:block bg-gray-800 text-white text-sm rounded p-2 py-1 px-4 z-10">User</span>
                 </div>
 
@@ -87,15 +89,17 @@ function Sidebar() {
                         <NavLink
                             to='/dashboard' id='clicksidebar'
                             className={({ isActive }) =>
-                                `block py-2 px-4 rounded-lg ${isActive ? "bg-blue-600 text-white" : "text-white hover:bg-gray-800"}`
+                                ` py-2 px-4 rounded-lg flex align-middle items-center gap-[10px] no-underline ${isActive ? "bg-gray-600 text-white" : "text-white hover:bg-gray-800"}`
                             }
                         >
-                            <FontAwesomeIcon icon={faMapLocationDot} className='text-white' />
+                            {/* <FontAwesomeIcon icon={faMapLocationDot} className='text-white' /> */}
+                            <Home size={20} />
+                            <span>Dashboard</span>
                         </NavLink>
-                        <span className="absolute left-full ml-2 hidden group-hover:block bg-gray-800 text-white text-sm rounded p-2 py-1 px-4 z-10">Dashboard
+                        {/* <span className="absolute left-full ml-2 hidden group-hover:block bg-gray-800 text-white text-sm rounded p-2 py-1 px-4 z-10">Dashboard
 
 
-                        </span>
+                        </span> */}
                     </div>
 
                     {/* Dashboard Link */}
@@ -103,12 +107,14 @@ function Sidebar() {
                         <NavLink
                             to='/projectManagement'
                             className={({ isActive }) =>
-                                `block py-2 px-4 rounded-lg ${isActive ? "bg-blue-600 text-white" : "text-white hover:bg-gray-800"}`
+                                ` py-2 px-4 rounded-lg flex align-middle items-center gap-[10px] no-underline ${isActive ? "bg-gray-600 text-white" : "text-white hover:bg-gray-800"}`
                             }
                         >
-                            <FontAwesomeIcon icon={faChartColumn} className='text-white' />
+                            {/* <FontAwesomeIcon icon={faChartColumn} className='text-white' /> */}
+                            <Briefcase size={20} />
+                            <span>Projects</span>
                         </NavLink>
-                        <span className="absolute left-full ml-2 hidden group-hover:block bg-gray-800 text-white text-sm rounded p-2 py-1 px-4 z-10">PM</span>
+                        {/* <span className="absolute left-full ml-2 hidden group-hover:block bg-gray-800 text-white text-sm rounded p-2 py-1 px-4 z-10">PM</span> */}
                     </div>
 
                     {/* Management Link */}
@@ -116,12 +122,14 @@ function Sidebar() {
                         <NavLink
                             to='/userManagement'
                             className={({ isActive }) =>
-                                `block py-2 px-4 rounded-lg ${isActive ? "bg-blue-600 text-white" : "text-white hover:bg-gray-800"}`
+                                `py-2 px-4 rounded-lg flex align-middle items-center gap-[10px] no-underline ${isActive ? "bg-gray-600 text-white" : "text-white hover:bg-gray-800"}`
                             }
                         >
-                            <FontAwesomeIcon icon={faListCheck} className=" text-white" />
+                            {/* <FontAwesomeIcon icon={faListCheck} className=" text-white" /> */}
+                            <Calendar size={20} />
+                            <span>Leave</span>
                         </NavLink>
-                        <span className="absolute left-full ml-2 hidden group-hover:block bg-gray-800 text-white text-sm rounded p-2 py-1 px-4 z-10">User Management</span>
+                        {/* <span className="absolute left-full ml-2 hidden group-hover:block bg-gray-800 text-white text-sm rounded p-2 py-1 px-4 z-10">User Management</span> */}
                     </div>
 
                     {/* Billing Link */}
@@ -129,38 +137,30 @@ function Sidebar() {
                         <NavLink
                             to='/billing'
                             className={({ isActive }) =>
-                                `block py-2 px-4 rounded-lg ${isActive ? "bg-blue-600 text-white" : "text-white hover:bg-gray-800"}`
+                                `py-2 px-4 rounded-lg flex align-middle items-center gap-[10px] no-underline ${isActive ? "bg-gray-600 text-white" : "text-white hover:bg-gray-800"}`
                             }
                         >
-                            <FontAwesomeIcon icon={faMoneyBill1} className=" text-white" />
+                            {/* <FontAwesomeIcon icon={faMoneyBill1} className=" text-white" /> */}
+                            <Settings size={20} />
+                            <span>Settings</span>
                         </NavLink>
-                        <span className="absolute left-full ml-2 hidden group-hover:block bg-gray-800 text-white text-sm rounded p-2 py-1 px-4 z-10">Billing</span>
+                        {/* <span className="absolute left-full ml-2 hidden group-hover:block bg-gray-800 text-white text-sm rounded p-2 py-1 px-4 z-10">Billing</span> */}
                     </div>
                 </div>
 
-                {/* Help Center at the Bottom */}
-                <div className="mt-auto relative group">
-                    <NavLink
-                        to='/helpcenter'
-                        className={({ isActive }) =>
-                            `block py-2 px-4 rounded-lg ${isActive ? "bg-blue-600 text-white" : "text-white hover:bg-gray-800"}`
-                        }
-                    >
-                        <FontAwesomeIcon icon={faHandshakeAngle} className=" text-white" />
-                    </NavLink>
-                    <span className="absolute left-full ml-2 bottom-2 hidden group-hover:block bg-gray-800 text-white text-sm rounded p-2 py-1 px-4 z-10">
-                        Help Center
-                    </span>
-                </div>
+            
+
+
             </div>
 
             {/* Content Area */}
             <div className="p-[9px] box-border  " id='sidebar-right' style={{
-                width: '94%',
-                marginLeft: '6%',
+                width: '100%',
+                marginLeft: '200px',
+                
                 // height: '100vh',
                 overflowY: 'scroll',
-                background: '#1e1e1e',
+                background: 'white',
                 // background: 'red',
                 backdropFilter: 'blur(10px)',
                 boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)',
