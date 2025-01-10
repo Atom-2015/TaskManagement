@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from 'react-router-dom';
 
 function Projectlist() {
   const projects = [
@@ -24,6 +25,11 @@ function Projectlist() {
         return "border-gray-600"; // Default color in case of an unknown status
     }
   };
+  const navigate = useNavigate()
+
+  const navigatetoissues = ()=>{
+    navigate("/tasks")
+  }
 
   return (
     <div className="p-4">
@@ -34,7 +40,7 @@ function Projectlist() {
             <div key={index} className="mb-6 rounded  ">
               {/* Project Name with dynamic left border color */}
               <div  className={`bg-[#808080] rounded border-l-4 shadow-md ${getStatusBorderColor(project.status)}`}>
-                <div className={`w-full text-left pl-2 text-white font-bold text-lg border-b border-gray-300`}>
+                <div className={`w-full text-left pl-2 text-white font-bold text-lg border-b border-gray-300`} onClick={navigatetoissues} >
                   {project.name}
                 </div>
 
