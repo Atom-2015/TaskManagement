@@ -363,7 +363,7 @@ function Sidebar() {
                     {/* Billing Link */}
                     <div className="mb-4 relative group">
                         <NavLink
-                            to='/billing'
+                            to='/settings'
                             className={({ isActive }) =>
                                 `py-2 px-4 rounded-lg flex align-middle items-center gap-[10px] no-underline ${isActive ? "bg-gray-600 text-white" : "text-white hover:bg-gray-800"}`}
                         >

@@ -14,6 +14,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import UsermanagementIndex from './Component/userManagement.js/usermanagementIndex';
 import Taskmanagement from './Component/Taskmanagement/taskmanagement';
 import Dashboardindex from './Component/Dashboard/dashboardindex';
+import Settingindex from './Component/Settings/settingindex';
  
  
 
@@ -58,6 +59,7 @@ const router = createBrowserRouter([
       {path:'/projectManagement' , element : <ProjectIndex/>},
       {path:'/userManagement' , element:<UsermanagementIndex/>},
       {path:'/tasks' , element :  <Taskmanagement/> },
+      {path:'/settings' , element: <Settingindex/>}
     ]
      
   },
