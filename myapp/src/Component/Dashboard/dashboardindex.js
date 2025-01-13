@@ -8,12 +8,13 @@ function Dashboardindex() {
   return (
     <div className='ml-9  '  >
       <ClockDashboard/>
+      <AttendanceSection/>
       {/* <h1 className=' text-white'> Ye Dashboard Hai </h1> */}
       <div className='flex flex-row  justify-between mb-6 mt-[10px] '>
         <Taskview/>
         <Projectview/>
       </div>
-      <AttendanceSection/>
+     
     </div>
   )
 }

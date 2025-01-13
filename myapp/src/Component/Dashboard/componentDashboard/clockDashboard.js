@@ -25,7 +25,7 @@ function ClockDashboard() {
   }, [time]);
 
   return (
-    <div className="flex justify-between items-center h-[120px] w-full p-4 mt-[50px]">
+    <div className="flex justify-between items-center w-full p-2 mt-[10px]">
       {/* Greeting Section (left side) */}
       <div className="text-2xl font-semibold text-gray-800">
         Good {greet}, {name}!
