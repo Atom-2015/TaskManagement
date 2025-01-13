@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 
 function ClockDashboard() {
   const [time, setTime] = useState(new Date());
-  const name = "Ankit"; // You can replace this with dynamic user data
+  const name = "Aditya"; // You can replace this with dynamic user data
 
   useEffect(() => {
     // Update the time every second
@@ -21,7 +21,7 @@ function ClockDashboard() {
       </div>
 
       {/* Time Section (right side) */}
-      <div className=" shadow-md rounded-xl p-6 text-center w-[250px] bg-[#619FD0] h-[100px] ">
+      <div className=" shadow-md rounded-xl p-6 text-center w-[250px] bg-[#619FD0] h-[90px] ">
         <h2 className="text-2xl font-semibold text-gray-800">
           {time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
         </h2>
