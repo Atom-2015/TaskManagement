@@ -60,6 +60,7 @@
     "tailwind": "^4.0.0",
     "use-image": "^1.1.1",
     "util": "^0.12.5",
+    "weather": "^1.0.4",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
