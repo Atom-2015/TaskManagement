@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "weather": "^1.0.4",
     "web-vitals": "^4.2.4"
   },
   "devDependencies": {
