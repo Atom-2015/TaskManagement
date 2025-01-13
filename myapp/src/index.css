@@ -2,6 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
+
+
+
+
+
 /* Define the typing animation */
 @keyframes typing {
     0% {
@@ -67,3 +72,4 @@
     border-width: 4px;
     border-style: solid;
   }
+
