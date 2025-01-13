@@ -15,6 +15,9 @@ import UsermanagementIndex from './Component/userManagement.js/usermanagementInd
 import Taskmanagement from './Component/Taskmanagement/taskmanagement';
 import Dashboardindex from './Component/Dashboard/dashboardindex';
 import Settingindex from './Component/Settings/settingindex';
+import ProjectSetting from './Component/Settings/NestedComponentSettings/projectSetting';
+import Taskindex from './Component/Taskmanagement/taskindex';
+import Projectdetal from './Component/Taskmanagement/projectdetailpageintask/projectdetal';
  
  
 
@@ -58,8 +61,13 @@ const router = createBrowserRouter([
       {path:'/dashboard' , element : <Dashboardindex/>},
       {path:'/projectManagement' , element : <ProjectIndex/>},
       {path:'/userManagement' , element:<UsermanagementIndex/>},
-      {path:'/tasks' , element :  <Taskmanagement/> },
-      {path:'/settings' , element: <Settingindex/>}
+      {path:'/tasks' , element :  <Taskindex/> , children:[
+        {path:'/tasks/alltask' , element:<Taskmanagement/>},
+        {path:'/tasks/projectdetails' , element:<Projectdetal/>},
+      ] },
+      {path:'/settings' , element: <Settingindex/> , children:[
+        {path:'/settings/prijectSetting' , element : <ProjectSetting/> },
+      ]}
     ]
      
   },
