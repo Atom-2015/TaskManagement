@@ -379,7 +379,8 @@ function Sidebar() {
                 width: '100%',
                 marginLeft: '200px',
                 overflowY: 'scroll',
-                background: '#EBEAE5',
+                // background: '#EBEAE5',
+                background:'#808080',
                 backdropFilter: 'blur(10px)',
                 boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)',
                 zIndex: '0'
