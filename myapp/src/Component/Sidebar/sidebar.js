@@ -248,7 +248,7 @@
 
 import { Navigate, NavLink, Outlet, useNavigate } from 'react-router-dom';
 import React, { useState } from 'react';
-import ankit from '../Media/thumb-1920-665825.jpg';
+// import ankit from '../Media/thumb-1920-665825.jpg';
 
 import { getUserName } from '../../FeatureRedux/User_Name';
 import './sidebar.css';
@@ -287,10 +287,8 @@ function Sidebar() {
                 left: 0,
                 width: '100%',
                 height: '100vh',
-                backgroundImage: `url(${ankit})`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-                filter: 'blur(1px)',
+               
+              
                 zIndex: '-1',
             }}></div>
 
@@ -305,6 +303,7 @@ function Sidebar() {
                 width: '13%',
                 position: 'fixed',
                 top: '0px',
+                marginTop:'30px',
                 height: '100vh',
                 background: '#1f2937',
                 backdropFilter: 'blur(10px)',
@@ -376,7 +375,7 @@ function Sidebar() {
             </div>
 
             {/* Content Area */}
-            <div className="p-[9px] box-border" id='sidebar-right' style={{
+            <div className="p-[9px] mt-[70px] box-border" id='sidebar-right' style={{
                 width: '100%',
                 marginLeft: '200px',
                 overflowY: 'scroll',
