@@ -20,6 +20,7 @@ import Taskindex from './Component/Taskmanagement/taskindex';
 import Projectdetal from './Component/Taskmanagement/projectdetailpageintask/projectdetal';
  
  
+ 
 
 const ProtectedRoute = ({ element }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -71,7 +72,8 @@ const router = createBrowserRouter([
     ]
      
   },
-  
+
+ 
   { path: '/signin', element: <Sign_in /> },
   { path: '/signup', element: <Sign_up /> },
 ]);

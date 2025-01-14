@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
+
 function ClockDashboard() {
   const [time, setTime] = useState(new Date());
   const name = "Aditya"; // You can replace this with dynamic user data
@@ -24,7 +25,14 @@ function ClockDashboard() {
     return () => clearInterval(timer);
   }, [time]);
 
+
+
+
+
   return (
+
+
+
     <div className="flex justify-between items-center w-full p-2 mt-[10px]">
       {/* Greeting Section (left side) */}
       <div className="text-2xl font-semibold text-gray-800">
