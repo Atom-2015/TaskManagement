@@ -5,7 +5,10 @@ import AttendanceSection from './componentDashboard/attendanceSection';
 import Taskview from './componentDashboard/taskview';
 import Projectview from './componentDashboard/projectview';
 import ClockDashboard from './componentDashboard/clockDashboard';
-import PieChartt from './piechart';
+import PieChartt from './charts/piechart';
+import GraphChart from './charts/graphchart';
+import LineChart from './charts/linechart';
+import DonutChart from './charts/donutechart';
 // import MyPieChart from './componentDashboard/piechart';  // Correct the import path
 
 function Dashboardindex() {
@@ -21,9 +24,12 @@ function Dashboardindex() {
       </div>
 
       {/* PieChart Added */}
-      <div className="mt-2">
+      <div className="mt-2 flex flex-row" >
        
         <PieChartt/>
+        <GraphChart/>
+        <LineChart/>
+        <DonutChart/>
       </div>
 
    
