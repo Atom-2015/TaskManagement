@@ -35,20 +35,20 @@ function ClockDashboard() {
 
     <div className="flex justify-between items-center w-full p-2 mt-[10px]">
       {/* Greeting Section (left side) */}
-      <div className="text-2xl font-semibold text-gray-800">
+      <div className="text-2xl font-semibold bg-[#98c1d9]  py-2 px-4 rounded">
         Good {greet}, {name}!
       </div>
 
       {/* Time Section (right side) */}
-      <div className="shadow-md rounded-xl p-6 text-center w-[250px] bg-[#619FD0] h-[90px]">
-        <h2 className="text-2xl font-semibold text-gray-800">
+      <div className="shadow-md rounded-xl py-2 px-5  text-center  bg-[#98c1d9]">
+        <h2 className="text-2xl font-semibold">
           {time.toLocaleTimeString([], {
             hour: '2-digit',
             minute: '2-digit',
             second: '2-digit',
           })}
         </h2>
-        <p className="text-sm text-gray-600">
+        <p className="text-sm ">
           {time.toLocaleDateString([], {
             weekday: 'long',
             month: 'long',

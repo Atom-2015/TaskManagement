@@ -11,7 +11,7 @@ function Projectview() {
 
   return (
     <>
-      <div className="w-[49%] bg-gray-100 p-2 rounded-lg shadow-md overflow-hidden h-[250px]">
+      <div className="w-[49%] bg-gray-100 p-2 rounded-lg shadow-md overflow-hidden border">
         <h2 className="text-sm font-semibold mb-2 text-gray-700">Project Overview</h2>
         {/* Header Row */}
         <div className="flex justify-between items-center bg-gray-200 text-gray-600 font-semibold text-xs py-1 px-2 sticky top-0 z-10 rounded-t-md">
