@@ -28,7 +28,7 @@ function Projectlist() {
   const navigate = useNavigate()
 
   const navigatetoissues = ()=>{
-    navigate("/tasks")
+    navigate("/tasks/alltask")
   }
 
   return (
