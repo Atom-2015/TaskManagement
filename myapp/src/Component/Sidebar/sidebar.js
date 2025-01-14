@@ -253,7 +253,7 @@ import React, { useState } from 'react';
 import { getUserName } from '../../FeatureRedux/User_Name';
 import './sidebar.css';
 import { useSelector, useDispatch } from 'react-redux';
-import { Home, Briefcase, Calendar, Settings } from 'lucide-react';
+import { Gauge, Briefcase, Calendar, Settings } from 'lucide-react';
 import Header from './header';
 
 function Sidebar() {
@@ -332,7 +332,7 @@ function Sidebar() {
                             className={({ isActive }) =>
                                 ` py-2 px-4 rounded-lg flex align-middle items-center gap-[10px] no-underline ${isActive ? "bg-gray-600 text-white" : "text-white hover:bg-gray-800"}`}
                         >
-                            <Home size={20} />
+                            <Gauge size={20} />
                             <span>Dashboard</span>
                         </NavLink>
                     </div>
@@ -380,7 +380,7 @@ function Sidebar() {
                 marginLeft: '200px',
                 overflowY: 'scroll',
                 // background: '#EBEAE5',
-                background:'#808080',
+                background:'white',
                 backdropFilter: 'blur(10px)',
                 boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)',
                 zIndex: '0'
