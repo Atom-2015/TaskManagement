@@ -1,5 +1,5 @@
 import React from "react";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 
 function Projectlist() {
   const projects = [
@@ -10,68 +10,63 @@ function Projectlist() {
     { name: "Project E", lead: "Eve", deadline: "2025-01-25", status: "Pending" },
   ];
 
-  // Function to return the appropriate border color based on project status
-  const getStatusBorderColor = (status) => {
+  const getStatusColor = (status) => {
     switch (status) {
       case "Completed":
-        return "border-green-600";
+        return "bg-green-300 text-green-800";
       case "Delayed":
-        return "border-red-600";
+        return "bg-red-300 text-red-800";
       case "Pending":
-        return "border-yellow-600";
+        return "bg-yellow-300 text-yellow-800";
       case "Ongoing":
-        return "border-blue-600";
+        return "bg-blue-300 text-blue-800";
       default:
-        return "border-gray-600"; // Default color in case of an unknown status
+        return "bg-gray-300 text-gray-800";
     }
   };
-  const navigate = useNavigate()
 
-  const navigatetoissues = ()=>{
-    navigate("/tasks/alltask")
-  }
+  const navigate = useNavigate();
+
+  const navigateToIssues = () => {
+    navigate("/tasks/alltask");
+  };
 
   return (
-    <div className="p-4">
-       
-      <div className="overflow-x-auto">
+    <div className="p-2">
+      <h1 className="text-2xl font-thin text-white mb-4">Project List</h1>
+      <div className="grid gap-4 lg:grid-cols-2 xl:grid-cols-3">
         {projects.length !== 0 ? (
           projects.map((project, index) => (
-            <div key={index} className="mb-6 rounded  ">
-              {/* Project Name with dynamic left border color */}
-              <div  className={`bg-[#808080] rounded border-l-4 shadow-md ${getStatusBorderColor(project.status)}`}>
-                <div className={`w-full text-left pl-2 text-white font-bold text-lg border-b border-gray-300`} onClick={navigatetoissues} >
+            <div
+              key={index}
+              className=" shadow-[0px_0px_2px_1px_gray]  transition-transform transform hover:scale-105 hover:shadow-md"
+            >
+              {/* Header with Project Name */}
+              <div
+                className="bg-[#354759] p-3 border-b cursor-pointer"
+                onClick={navigateToIssues}
+              >
+                <h2 className="text-lg font-semibold text-white">
                   {project.name}
-                </div>
-
-                {/* Table with project details */}
-                <table className="table-fixed w-full  text-left">
+                </h2>
+              </div>
+              {/* Project Details Table */}
+              <div className="p-2 bg-[#354759]">
+                <table className="w-full bg-[#354759] table-fixed text-sm text-center text-white">
                   <thead>
-                    <tr className="">
-                      <th className="text-white px-2 py-0 w-1/5 border-r border-gray-300">Project Head</th>
-                      <th className="text-white px-2 py-0 w-1/5 border-r border-gray-300">Start Date</th>
-                      <th className="text-white px-2 py-0 w-1/5 border-r border-gray-300">End Date</th>
-                      <th className="text-white px-2 py-0 w-1/5 border-r border-gray-300">Team</th>
-                      <th className="text-white px-2 py-0 w-1/5    ">Status</th>
+                    <tr>
+                      <th className="pb-2 font-thin">Project Head</th>
+                      <th className="pb-2 font-thin">Deadline</th>
+                      <th className="pb-2 font-thin">Team</th>
+                      <th className="pb-2 font-thin">Status</th>
                     </tr>
                   </thead>
                   <tbody>
                     <tr>
-                      <td className="text-white px-2 py-0 border-r border-gray-300">{project.lead}</td>
-                      <td className="text-white px-2 py-0 border-r border-gray-300">2024-01-01</td>
-                      <td className="text-white px-2 py-0 border-r border-gray-300">{project.deadline}</td>
-                      <td className="text-white px-2 py-0 border-r border-gray-300">Team A</td>
-                      <td
-                        className={`px-2 py-0 ${
-                          project.status === "Completed"
-                            ? "text-green-600"
-                            : project.status === "Delayed"
-                            ? "text-red-600"
-                            : project.status === "Pending"
-                            ? "text-yellow-600"
-                            : "text-blue-600"
-                        }`}
-                      >
+                      <td className="py-1">{project.lead}</td>
+                      <td className="py-1">{project.deadline}</td>
+                      <td className="py-1">Team A</td>
+                      <td className={`py-1 px-2 rounded-md font-semibold ${getStatusColor(project.status)}`}>
                         {project.status}
                       </td>
                     </tr>
@@ -81,7 +76,9 @@ function Projectlist() {
             </div>
           ))
         ) : (
-          <h1 className="text-center text-gray-500">Project list is empty</h1>
+          <h2 className="text-center text-gray-500 col-span-full">
+            Project list is empty
+          </h2>
         )}
       </div>
     </div>
@@ -89,5 +86,3 @@ function Projectlist() {
 }
 
 export default Projectlist;
-
- 

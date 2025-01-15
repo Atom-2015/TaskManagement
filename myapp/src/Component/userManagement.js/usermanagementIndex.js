@@ -5,7 +5,7 @@ import AdduserButton from './adduserButton'
 function UsermanagementIndex() {
   return (
     <>
-    <div>UsermanagementIndex</div>
+    {/* <div>UsermanagementIndex</div> */}
     <AdduserButton/>
     <Userlist/>
     </>
