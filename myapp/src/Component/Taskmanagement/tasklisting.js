@@ -73,12 +73,14 @@ function Tasklisting() {
               <th className="px-4 py-2 border border-gray-200 text-white">Assigned To</th>
               <th className="px-4 py-2 border border-gray-200 text-white">Assigned By</th>
               <th className="px-4 py-2 border border-gray-200 text-white">Deadline</th>
+              <th className="px-4 py-2 border border-gray-200 text-white">Quantity</th>
+              <th className="px-4 py-2 border border-gray-200 text-white">Units</th>
               <th className="px-4 py-2 border border-gray-200 text-white">Actions</th>
             </tr>
           </thead>
           <tbody>
             {tasks.map((task, index) => (
-              <tr key={index} className="hover:bg-gray-50">
+              <tr key={index} className="">
                 <td className="px-4 py-2 border border-gray-200 text-white">{task.taskName}</td>
                 <td className={`px-4 py-2 border border-gray-200 ${getStatusClass(task.status)}`}>
                   {task.status}
@@ -86,6 +88,8 @@ function Tasklisting() {
                 <td className="px-4 py-2 border border-gray-200 text-white">{task.assignedTo}</td>
                 <td className="px-4 py-2 border border-gray-200 text-white">{task.assignedBy}</td>
                 <td className="px-4 py-2 border border-gray-200 text-white">{task.deadline}</td>
+                <td className="px-4 py-2 border border-gray-200 text-white">{task.Quantity}</td>
+                <td className="px-4 py-2 border border-gray-200 text-white">{task.Units}</td>
                 <td className="px-4 py-2 border border-gray-200 text-white relative">
                   <button
                     onClick={() => handleMenuToggle(index)}
@@ -97,13 +101,13 @@ function Tasklisting() {
                     <div className="absolute top-full left-0 mt-2 bg-white border border-gray-200 rounded shadow-md z-10">
                       <button
                         onClick={() => handleEdit(task)}
-                        className="block w-full text-black text-left px-4 py-2 hover:bg-gray-100"
+                        className="block w-full text-black text-left px-4 py-2"
                       >
                         Edit
                       </button>
                       <button
                         onClick={() => handleDelete(task)}
-                        className="block text-black w-full text-left px-4 py-2 hover:bg-gray-100"
+                        className="block text-black w-full text-left px-4 py-2 "
                       >
                         Delete
                       </button>

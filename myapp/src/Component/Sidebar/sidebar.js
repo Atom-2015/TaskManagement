@@ -249,11 +249,10 @@
 import { Navigate, NavLink, Outlet, useNavigate } from 'react-router-dom';
 import React, { useState } from 'react';
 // import ankit from '../Media/thumb-1920-665825.jpg';
-
 import { getUserName } from '../../FeatureRedux/User_Name';
 import './sidebar.css';
 import { useSelector, useDispatch } from 'react-redux';
-import { Gauge, Briefcase, Calendar, Settings } from 'lucide-react';
+import { Gauge, Briefcase, Users, Settings, CalendarDays } from 'lucide-react';
 import Header from './header';
 
 function Sidebar() {
@@ -355,10 +354,12 @@ function Sidebar() {
                             to='/userManagement'
                             className={({ isActive }) =>
                                 `py-2 px-4 rounded-lg flex align-middle items-center gap-[10px] no-underline ${isActive ? "bg-gray-600 text-white" : "text-white hover:bg-gray-800"}`}>
-                            <Calendar size={20} />
+                            <Users size={20} />
                             <span>Users</span>
                         </NavLink>
                     </div>
+
+                
 
                     {/* Billing Link */}
                     <div className="mb-4 relative group">
@@ -369,6 +370,17 @@ function Sidebar() {
                         >
                             <Settings size={20} />
                             <span>Settings</span>
+                        </NavLink>
+                    </div>
+
+                    <div className="mb-4 relative group">
+                        <NavLink
+                            to=''
+                            className={({ isActive }) =>
+                                `py-2 px-4 rounded-lg flex align-middle items-center gap-[10px] no-underline ${isActive ? "bg-gray-600 text-white" : "text-white hover:bg-gray-800"}`}
+                        >
+                            <CalendarDays size={20} />
+                            <span>Attendance</span>
                         </NavLink>
                     </div>
                 </div>
