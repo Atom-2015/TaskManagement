@@ -77,7 +77,7 @@ function LineChart() {
   };
 
   return (
-    <div className="w-[50%] p-3 bg-[#354759] rounded-lg shadow-lg">
+    <div className="w-[39%] p-3 bg-[#354759] rounded-lg shadow-lg">
       <h3 className="text-center text-white text-lg font-semibold mb-4">Animated Line Chart</h3>
       <div className="w-full" style={{ height: '270px' }}> {/* Set a specific height here */}
         <Line data={data} options={options} />

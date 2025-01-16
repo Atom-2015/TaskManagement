@@ -19,13 +19,18 @@ function Addtaskbutton() {
 
       {/* Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
-          <div className="bg-gray-800 rounded-lg w-11/12 max-w-md p-6">
+        <div className="fixed inset-0 top-40   z-50  bg-opacity-50">
+          <div className="bg-gray-800 rounded-lg mx-auto   w-[90%]  p-6">
             <h2 className="text-xl font-bold text-white mb-4">Add New Task</h2>
             
             {/* Form */}
             <form>
-              <div className="mb-4">
+
+
+
+
+<div className=' grid grid-cols-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2'>
+<div className="mb-4">
                 <label className="block text-gray-300 mb-2" htmlFor="taskName">
                   Task Name
                 </label>
@@ -49,6 +54,50 @@ function Addtaskbutton() {
                 />
               </div>
 
+
+
+          
+
+              <div className="mb-4">
+                <label className="block text-gray-300 mb-2" htmlFor="assignedTo">
+                  Assigned By
+                </label>
+                <input
+                  type="text"
+                  id="assignedTo"
+                  className="w-full px-4 py-2 bg-gray-900 text-white border border-gray-700 rounded focus:outline-none focus:ring-2 focus:ring-blue-600"
+                  placeholder="Enter assignee's name"
+                />
+              </div>
+
+              <div className="mb-4">
+                <label className="block text-gray-300 mb-2" htmlFor="assignedTo">
+                  Quantity
+                </label>
+                <input
+                  type="text"
+                  id="assignedTo"
+                  className="w-full px-4 py-2 bg-gray-900 text-white border border-gray-700 rounded focus:outline-none focus:ring-2 focus:ring-blue-600"
+                  placeholder="Enter assignee's name"
+                />
+              </div>
+              
+
+
+
+            
+              <div className="mb-4">
+                <label className="block text-gray-300 mb-2" htmlFor="assignedTo">
+                  Units
+                </label>
+                <input
+                  type="text"
+                  id="assignedTo"
+                  className="w-full px-4 py-2 bg-gray-900 text-white border border-gray-700 rounded focus:outline-none focus:ring-2 focus:ring-blue-600"
+                  placeholder="Enter assignee's name"
+                />
+              </div>
+
               <div className="mb-4">
                 <label className="block text-gray-300 mb-2" htmlFor="deadline">
                   Deadline
@@ -58,6 +107,7 @@ function Addtaskbutton() {
                   id="deadline"
                   className="w-full px-4 py-2 bg-gray-900 text-white border border-gray-700 rounded focus:outline-none focus:ring-2 focus:ring-blue-600"
                 />
+              </div>
               </div>
 
               <div className="flex justify-end gap-4">
