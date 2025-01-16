@@ -356,7 +356,7 @@ function Sidebar() {
                             className={({ isActive }) =>
                                 `py-2 px-4 rounded-lg flex align-middle items-center gap-[10px] no-underline ${isActive ? "bg-gray-600 text-white" : "text-white hover:bg-gray-800"}`}>
                             <Calendar size={20} />
-                            <span>Leave</span>
+                            <span>Users</span>
                         </NavLink>
                     </div>
 
@@ -379,8 +379,8 @@ function Sidebar() {
                 width: '100%',
                 marginLeft: '200px',
                 overflowY: 'scroll',
-                // background: '#EBEAE5',
-                background:'white',
+            
+                background:'#2e3e4e',
                 backdropFilter: 'blur(10px)',
                 boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)',
                 zIndex: '0'
@@ -408,7 +408,7 @@ function Sidebar() {
                     top: '50%',
                     left: '50%',
                     transform: 'translate(-50%, -50%)',
-                    background: '#fff',
+                    background: '#2e3e4e',
                     borderRadius: '8px',
                     boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)',
                     padding: '20px',

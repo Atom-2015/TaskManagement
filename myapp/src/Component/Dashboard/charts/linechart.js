@@ -23,12 +23,12 @@ ChartJS.register(
 function LineChart() {
   // Static data for the Line Chart (simulating an ECG-like curve)
   const data = {
-    labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'], // Same labels as Pie chart
+    labels: ['Jan', 'Feb','Mar', 'Apr', 'May', 'Jun', 'Jul' , 'Aug' ,'Sep' , 'Oct' , 'Nov', 'Dec'], // Same labels as Pie chart
     datasets: [
       {
-        label: 'Aditya Bhaiya',  
+        label: 'User Task', 
         data: [12, 19, 3, 5, 2, 3], // Data values for each label
-        borderColor: 'rgba(75, 192, 192, 1)', // Line color
+        borderColor: 'white', // Line color
         borderWidth: 2, // Line width
         tension: 0.4, // Smoothing effect for the line (like ECG)
         fill: false, // No fill under the line
@@ -44,7 +44,11 @@ function LineChart() {
     plugins: {
       legend: {
         position: 'top', // Position of the legend
+        labels: {
+          color: '#ffffff', // Set legend label text color to white
+        },
       },
+      
       tooltip: {
         enabled: true,
       },
@@ -53,10 +57,13 @@ function LineChart() {
     scales: {
       x: {
         ticks: {
-          autoSkip: true, // Skips some labels for readability
+          color: '#ffffff', // Set X-axis text color to white
         },
       },
       y: {
+        ticks: {
+          color: '#ffffff', // Set Y-axis text color to white
+        },
         beginAtZero: true, // Start y-axis at zero
       },
     },
@@ -70,9 +77,9 @@ function LineChart() {
   };
 
   return (
-    <div className="line-chart-container mx-auto p-4 bg-[#3d5a80] rounded-lg shadow-lg">
-      <h3 className="text-center text-lg font-semibold mb-4">Animated Line Chart  </h3>
-      <div className="w-64 h-64 mx-auto"> {/* Restrict size using width and height */}
+    <div className="w-[50%] p-3 bg-[#354759] rounded-lg shadow-lg">
+      <h3 className="text-center text-white text-lg font-semibold mb-4">Animated Line Chart</h3>
+      <div className="w-full" style={{ height: '270px' }}> {/* Set a specific height here */}
         <Line data={data} options={options} />
       </div>
     </div>

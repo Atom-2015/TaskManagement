@@ -15,8 +15,8 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend);
 function GraphChart() {
   // Static data for the Bar Chart
   const data = {
-    labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'], // Same labels as Pie chart
-    datasets: [
+    labels: ['Jan', 'Feb','Mar', 'Apr', 'May', 'Jun', 'Jul' , 'Aug' ,'Sep' , 'Oct' , 'Nov', 'Dec'], // Same labels as Pie chart
+    datasets: [    
       {
         label: '# of Votes', // Label for the dataset
         data: [12, 19, 3, 5, 2, 3], // Data values for each label
@@ -46,18 +46,36 @@ function GraphChart() {
     plugins: {
       legend: {
         position: 'top', // Position of the legend
+        labels: {
+          color: '#ffffff', // Set legend label text color to white
+        },
+       
       },
       tooltip: {
         enabled: true,
+      },
+    },
+    scales: {
+      x: {
+        ticks: {
+          color: '#ffffff', // Set X-axis text color to white
+        },
+      },
+      y: {
+        ticks: {
+          color: '#ffffff', // Set Y-axis text color to white
+        },
       },
     },
     maintainAspectRatio: false, // Allow custom sizing
   };
 
   return (
-    <div className="bar-chart-container mx-auto p-4 bg-[#3d5a80] rounded-lg shadow-lg">
-      <h3 className="text-center text-lg font-semibold mb-4">Bar Chart Example</h3>
-      <div className="w-64 h-64 mx-auto"> {/* Restrict size using width and height */}
+    <div className="w-[50%] mx-auto p-3 bg-[#354759] rounded-lg shadow-lg">
+      <h3 className="text-center text-lg font-semibold text-white mb-4">
+        Bar Chart Example
+      </h3>
+      <div className="w-[100%] h-64 mx-auto"> {/* Restrict size using width and height */}
         <Bar data={data} options={options} />
       </div>
     </div>

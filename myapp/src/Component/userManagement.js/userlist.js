@@ -9,68 +9,58 @@ function Userlist() {
     { name: "Sophia Brown", email: "sophia.brown@example.com", role: "Editor", status: "Inactive" },
   ];
 
-  // Function to return the appropriate border color based on user status
-  const getStatusBorderColor = (status) => {
+  const getStatusBadge = (status) => {
     switch (status) {
       case "Active":
-        return "border-green-600";
+        return "bg-green-300 text-green-700";
       case "Inactive":
-        return "border-gray-600";
+        return "bg-gray-300 text-gray-700";
       case "Pending":
-        return "border-yellow-600";
+        return "bg-yellow-300 text-yellow-700";
       default:
-        return "border-gray-300"; // Default color in case of an unknown status
+        return "bg-gray-300 text-gray-700";
     }
   };
 
   return (
-    <div className="p-4">
-      <div className="overflow-x-auto">
-        {users.length !== 0 ? (
+    <div className="p-6 bg-[#2e3e4e] min-h-screen">
+      <h1 className="text-2xl font-semibold text-white  mb-6">User List</h1>
+      <div className="space-y-6">
+        {users.length > 0 ? (
           users.map((user, index) => (
-            <div key={index} className="mb-6 rounded">
-              {/* User Info with dynamic left border color */}
-              <div
-                className={`bg-[#808080] rounded border-l-4 shadow-md ${getStatusBorderColor(
-                  user.status
-                )}`}
-              >
-                <div className="w-full text-left pl-2 text-white font-bold text-lg border-b border-gray-300">
-                  {user.name}
-                </div>
-
-                {/* Table with user details */}
-                <table className="table-fixed w-full text-left">
-                  <thead>
-                    <tr>
-                      <th className="text-white px-2 py-0 w-1/4 border-r border-gray-300">Email</th>
-                      <th className="text-white px-2 py-0 w-1/4 border-r border-gray-300">Role</th>
-                      <th className="text-white px-2 py-0 w-1/4">Status</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td className="text-white px-2 py-0 border-r border-gray-300">{user.email}</td>
-                      <td className="text-white px-2 py-0 border-r border-gray-300">{user.role}</td>
-                      <td
-                        className={`px-2 py-0 ${
-                          user.status === "Active"
-                            ? "text-green-600"
-                            : user.status === "Inactive"
-                            ? "text-gray-600"
-                            : "text-yellow-600"
-                        }`}
+            <div
+              key={index}
+              className="bg-[#354759] rounded-lg shadow-lg border-l-4 p-2 hover:shadow-xl transition-all"
+            >
+              <h2 className="text-xl font-semibold text-white mb-2">{user.name}</h2>
+              <table className="w-full table-fixed text-sm">
+                <thead>
+                  <tr className="text-white border-b">
+                    <th className="px-4 py-2 text-center">Email</th>
+                    <th className="px-4 py-2 text-center">Role</th>
+                    <th className="px-4 py-2 text-center">Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td className="px-4 py-2 text-white">{user.email}</td>
+                    <td className="px-4 py-2 text-white">{user.role}</td>
+                    <td className="px-4 py-2">
+                      <span
+                        className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusBadge(
+                          user.status
+                        )}`}
                       >
                         {user.status}
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
+                      </span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           ))
         ) : (
-          <h1 className="text-center text-gray-500">User list is empty</h1>
+          <div className="text-center text-gray-500">No users found.</div>
         )}
       </div>
     </div>

@@ -20,16 +20,17 @@ function Dashboardindex() {
          {/* Other components */}
          <div className='flex flex-row justify-between mb-6 mt-[20px]'>
         <Taskview />
-        <Projectview />
+        <LineChart/>
+        {/* <PieChartt/> */}
       </div>
 
       {/* PieChart Added */}
       <div className="mt-2 flex flex-row" >
        
-        <PieChartt/>
-        <GraphChart/>
-        <LineChart/>
-        <DonutChart/>
+      <Projectview />
+      <GraphChart/>
+       
+        {/* <DonutChart/> */}
       </div>
 
    

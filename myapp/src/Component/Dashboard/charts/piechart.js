@@ -47,6 +47,9 @@ const PieChartt = () => {
       legend: {
         position: 'top', // Set legend position
       },
+      label: {
+        color: '#ffffff', // Set legend label text color to white
+      },
       tooltip: {
         enabled: true,
       },
