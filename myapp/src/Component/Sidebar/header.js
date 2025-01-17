@@ -82,7 +82,7 @@ function Header() {
           </button>
 
           {isUserDropdownOpen && (
-            <div className="absolute right-0 mt-2 w-40 bg-white text-black shadow-lg rounded-md py-2">
+              <div className="absolute right-0 mt-2 w-40 bg-white text-black shadow-lg rounded-md py-2">
               <p className="px-4 py-2 text-sm font-medium">{userName}</p>
               <button
                 className="w-full text-left px-4 py-2 text-sm hover:bg-gray-200"
