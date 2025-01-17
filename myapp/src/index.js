@@ -18,6 +18,7 @@ import Settingindex from './Component/Settings/settingindex';
 import ProjectSetting from './Component/Settings/NestedComponentSettings/projectSetting';
 import Taskindex from './Component/Taskmanagement/taskindex';
 import Projectdetal from './Component/Taskmanagement/projectdetailpageintask/projectdetal';
+import Attendanceindex from './Component/Attendance/attendanceindex';
  
  
  
@@ -68,7 +69,9 @@ const router = createBrowserRouter([
       ] },
       {path:'/settings' , element: <Settingindex/> , children:[
         {path:'/settings/prijectSetting' , element : <ProjectSetting/> },
-      ]}
+      ]},
+      {path:'/attendance',element:<Attendanceindex/>}
+      
     ]
      
   },
