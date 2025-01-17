@@ -1,4 +1,9 @@
+ 
+
+
 import React, { useState } from "react";
+import { useDispatch } from 'react-redux'; // Move this import to the top
+import { addUser } from '../../FeatureRedux/adduserSlice'; // Corrected import
 
 function AdduserButton() {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -7,7 +12,11 @@ function AdduserButton() {
         email: "",
         role: "",
         status: "Active",
+        password: "",
     });
+
+    // Move useDispatch here
+    const dispatch = useDispatch();
 
     // Function to handle form input changes
     const handleInputChange = (e) => {
@@ -22,6 +31,10 @@ function AdduserButton() {
     const handleFormSubmit = (e) => {
         e.preventDefault();
         console.log("New User Created:", formData);
+        
+        // Dispatching the action after form submission
+        dispatch(addUser(formData));
+
         setIsModalOpen(false); // Close the modal after submission
     };
 
@@ -30,14 +43,14 @@ function AdduserButton() {
             {/* Add User Button */}
             <button
                 onClick={() => setIsModalOpen(true)}
-                className="bg-blue-600  text-white px-4 py-2 rounded shadow hover:bg-blue-700"
+                className="bg-blue-600 text-white px-4 py-2 rounded shadow hover:bg-blue-700"
             >
                 Add User
             </button>
 
             {/* Modal */}
             {isModalOpen && (
-                <div className="fixed inset-0  bg-opacity-70 flex items-center justify-center z-50">
+                <div className="fixed inset-0 bg-opacity-70 flex items-center justify-center z-50">
                     <div className="bg-gray-900 text-white rounded-lg shadow-lg w-96 p-6">
                         <h2 className="text-xl font-bold mb-4">Create New User</h2>
 
@@ -64,6 +77,19 @@ function AdduserButton() {
                                     type="email"
                                     name="email"
                                     value={formData.email}
+                                    onChange={handleInputChange}
+                                    className="w-full border border-gray-600 rounded px-3 py-2 focus:outline-none focus:ring focus:ring-blue-300 bg-gray-800 text-white"
+                                    required
+                                />
+                            </div>
+                            <div className="mb-4">
+                                <label className="block text-gray-300 font-medium mb-2">
+                                Password
+                                </label>
+                                <input
+                                    type="password"
+                                    name="password"
+                                    value={formData.password}
                                     onChange={handleInputChange}
                                     className="w-full border border-gray-600 rounded px-3 py-2 focus:outline-none focus:ring focus:ring-blue-300 bg-gray-800 text-white"
                                     required

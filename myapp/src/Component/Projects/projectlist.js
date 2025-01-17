@@ -34,6 +34,7 @@ function Projectlist() {
   return (
     <div className="p-2">
       <h1 className="text-2xl font-thin text-white mb-4">Project List</h1>
+    
       <div className="grid gap-4 lg:grid-cols-2 xl:grid-cols-3">
         {projects.length !== 0 ? (
           projects.map((project, index) => (

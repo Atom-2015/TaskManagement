@@ -249,14 +249,14 @@
 import { Navigate, NavLink, Outlet, useNavigate } from 'react-router-dom';
 import React, { useState } from 'react';
 // import ankit from '../Media/thumb-1920-665825.jpg';
-import { getUserName } from '../../FeatureRedux/User_Name';
+ 
 import './sidebar.css';
 import { useSelector, useDispatch } from 'react-redux';
 import { Gauge, Briefcase, Users, Settings, CalendarDays } from 'lucide-react';
 import Header from './header';
 
 function Sidebar() {
-    const [isModalOpen, setModalOpen] = useState(false);
+    // const [isModalOpen, setModalOpen] = useState(false);
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const response = useSelector((state) => state.user);
@@ -266,10 +266,10 @@ function Sidebar() {
     });
 
     const openmodal = async () => {
-        setModalOpen(true);
-        const data = await dispatch(getUserName());
-        console.warn('ye data hai direct dispatch se', data.payload.name);
-        setUser(data.payload);
+        // setModalOpen(true);
+        // const data = await dispatch(getUserName());
+        // console.warn('ye data hai direct dispatch se', data.payload.name);
+        // setUser(data.payload);
     };
 
     const handleLogout = () => {
@@ -401,73 +401,10 @@ function Sidebar() {
             </div>
 
             {/* Background Overlay for Modal */}
-            {isModalOpen && (
-                <div style={{
-                    position: 'fixed',
-                    top: 0,
-                    left: 0,
-                    width: '100%',
-                    height: '100%',
-                    backgroundColor: 'rgba(0, 0, 0, 0.9)', 
-                    zIndex: 1000,
-                }}></div>
-            )}
+            
 
             {/* Modal in the Center */}
-            {isModalOpen && (
-                <div style={{
-                    position: 'fixed',
-                    top: '50%',
-                    left: '50%',
-                    transform: 'translate(-50%, -50%)',
-                    background: '#2e3e4e',
-                    borderRadius: '8px',
-                    boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)',
-                    padding: '20px',
-                    zIndex: 2001,
-                    width: '300px',
-                }}>
-                    <div style={{ textAlign: 'center', marginBottom: '15px' }}>
-                        <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 'bold', color: '#333' }}>Welcome, {user.name}</h3>
-                        <p style={{ margin: 0, fontSize: '14px', color: '#777' }}>{user.company || 'No company'}</p>
-                    </div>
-                    <div style={{ borderTop: '1px solid #ddd', paddingTop: '15px' }}>
-                        <button
-                            style={{
-                                width: '100%',
-                                background: '#007BFF',
-                                color: '#fff',
-                                border: 'none',
-                                borderRadius: '4px',
-                                padding: '10px',
-                                cursor: 'pointer',
-                                marginBottom: '10px',
-                                fontSize: '14px',
-                                fontWeight: 'bold',
-                            }}
-                            onClick={handleLogout}
-                        >
-                            Logout
-                        </button>
-                        <button
-                            style={{
-                                width: '100%',
-                                background: '#6c757d',
-                                color: '#fff',
-                                border: 'none',
-                                borderRadius: '4px',
-                                padding: '10px',
-                                cursor: 'pointer',
-                                fontSize: '14px',
-                                fontWeight: 'bold',
-                            }}
-                            onClick={() => setModalOpen(false)}
-                        >
-                            Close
-                        </button>
-                    </div>
-                </div>
-            )}
+             
         </div>
     );
 }

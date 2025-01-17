@@ -23,7 +23,7 @@ ChartJS.register(
 function LineChart() {
   // Static data for the Line Chart (simulating an ECG-like curve)
   const data = {
-    labels: ['Jan', 'Feb','Mar', 'Apr', 'May', 'Jun', 'Jul' , 'Aug' ,'Sep' , 'Oct' , 'Nov', 'Dec'], // Same labels as Pie chart
+    labels: ['Jan', 'Feb','Mar', 'Apr', 'May', 'Jun', 'Jul' , 'Aug' ,'Sep' , 'Oct' , 'Nov', 'Dec'],
     datasets: [
       {
         label: 'User Task', 

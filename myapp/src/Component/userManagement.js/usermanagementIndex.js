@@ -6,8 +6,10 @@ function UsermanagementIndex() {
   return (
     <>
     {/* <div>UsermanagementIndex</div> */}
+   
     <AdduserButton/>
     <Userlist/>
+    {/* <h1>hello the count is </h1> */}
     </>
   )
 }
