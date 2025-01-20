@@ -6,7 +6,11 @@ export const addtask = createAsyncThunk(
     'additionoftask',
     async (taskdata, { rejectWithValue }) => {
         try {
-            const response = await axiosInstance.post('/api/task/createTask', taskdata);
+            const response = await axiosInstance.post('/api/task/createTask', taskdata, {
+                headers: {
+                    'x-project-id':localStorage.getItem('Projectid')
+                }
+            });
             return response.data;  // Ensure the data is returned here
         } catch (error) {
             return rejectWithValue(

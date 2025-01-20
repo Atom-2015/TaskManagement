@@ -6,6 +6,7 @@ const axiosInstance = axios.create({
   timeout: 5000, // Optional: Timeout 5 seconds
   headers: {
     'Content-Type': 'application/json', // Optional:  
+    'x-auth-token':localStorage.getItem('token')
   },
 });
 
