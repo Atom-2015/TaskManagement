@@ -5,7 +5,7 @@ import  addUser  from '../FeatureRedux/adduserSlice';
 import  allUser  from '../FeatureRedux/alluserSlice';
 import  projectlist  from '../FeatureRedux/projectlistSlice';
 import subtasklist from '../FeatureRedux/subtaskSlice';
- 
+import alltaskuserspecificSlice from '../FeatureRedux/alltaskuserspecific';
 
 
 export  const store = configureStore({
@@ -16,7 +16,8 @@ export  const store = configureStore({
         addUser:addUser,
         allUser:allUser,
         projectlist:projectlist,
-        subtasklist: subtasklist
+        subtasklist: subtasklist,
+        alltaskuserspecificSlice:alltaskuserspecificSlice
     }
 
 

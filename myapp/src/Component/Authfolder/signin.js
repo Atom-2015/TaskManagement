@@ -7,7 +7,7 @@ import axios from 'axios';
 import logo from '../Media/atom1.png';
 import { Oval } from 'react-loader-spinner'; 
 import './siginresponsive.css'
-
+import axiosInstance from '../../axiosInstance';
 
 function Sign_in() {
     const [email, setEmail] = useState('');
@@ -18,7 +18,7 @@ function Sign_in() {
         e.preventDefault();
         setLoader(true);
         try {
-            const response = await axios.post('http://13.201.248.202:3001/api/Signin', { email, password }, {
+            const response = await axiosInstance.post('/api/user/Signin', { email, password }, {
                 headers: {
                     'Content-Type': 'application/json'
                 }
@@ -28,7 +28,7 @@ function Sign_in() {
             if (data.user) {
                 localStorage.setItem('token', data.user);
                 localStorage.setItem('company_id', data.company_id);
-                window.location.href = '/main';
+                window.location.href = '/dashboard';
             } else {
                 // alert('Please check your username and password');
             }
