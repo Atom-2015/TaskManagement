@@ -1,16 +1,11 @@
 import React, { useState, useEffect } from "react";
-import {
-  Select,
-  MenuItem,
-  FormControl,
-  InputLabel,
-} from "@mui/material";
+import { Select, MenuItem, FormControl, InputLabel } from "@mui/material";
 import { format, startOfMonth, endOfMonth, eachDayOfInterval } from "date-fns";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCheckCircle, faTimesCircle } from "@fortawesome/free-solid-svg-icons";
 
-// Dummy attendance data (Replace with API call)
 const users = ["John Doe", "Jane Smith", "Alice Brown", "Michael Scott"];
 
-// Function to generate attendance data dynamically based on the month
 const generateAttendanceData = (daysInMonth) => {
   return users.map((user) => ({
     name: user,
@@ -24,37 +19,32 @@ const Attendance = () => {
   const [selectedMonth, setSelectedMonth] = useState(new Date());
   const [daysInMonth, setDaysInMonth] = useState([]);
   const [attendanceData, setAttendanceData] = useState([]);
-  const [filter, setFilter] = useState("all"); // "all", "present", "absent"
+  const [filter, setFilter] = useState("all");
 
-  // Function to update the days in the month when the selected month changes
   useEffect(() => {
     const newDaysInMonth = eachDayOfInterval({
       start: startOfMonth(selectedMonth),
       end: endOfMonth(selectedMonth),
     });
-
     setDaysInMonth(newDaysInMonth);
     setAttendanceData(generateAttendanceData(newDaysInMonth.length));
   }, [selectedMonth]);
 
-  // Handle Month Change
   const handleMonthChange = (event) => {
-    const newMonth = new Date(event.target.value);
-    setSelectedMonth(newMonth);
+    setSelectedMonth(new Date(event.target.value));
   };
 
-  // Handle Status Filter
   const handleFilterChange = (event) => {
     setFilter(event.target.value);
   };
 
   return (
-    <div className="p-5">
+    <div className="p-6 bg-[#2e3e4e] min-h-screen">
       {/* Filter Section */}
-      <div className="flex gap-5 mb-5">
+      <div className="flex flex-wrap gap-5 mb-6">
         {/* Month Selector */}
-        <FormControl variant="outlined" className="w-48">
-          <InputLabel>Month</InputLabel>
+        <FormControl variant="outlined" className="w-48 ">
+          <InputLabel className="text-white">Month</InputLabel>
           <Select
             value={format(selectedMonth, "yyyy-MM")}
             onChange={handleMonthChange}
@@ -72,8 +62,8 @@ const Attendance = () => {
         </FormControl>
 
         {/* Status Filter */}
-        <FormControl variant="outlined" className="w-48">
-          <InputLabel>Status</InputLabel>
+        <FormControl variant="outlined" className="w-48 ">
+          <InputLabel className="text-white">Status</InputLabel>
           <Select value={filter} onChange={handleFilterChange} label="Status">
             <MenuItem value="all">All</MenuItem>
             <MenuItem value="present">Present</MenuItem>
@@ -82,15 +72,15 @@ const Attendance = () => {
         </FormControl>
       </div>
 
-      {/* Attendance Table with Scrollbars */}
-      <div className="overflow-x-auto max-w-full">
-        <div className="overflow-y-auto max-h-[70vh]">
-          <table className="min-w-[1000px] table-auto border-collapse w-full">
-            <thead>
+      {/* Attendance Table */}
+      <div className="bg-[#2e3e4e] p-2 rounded-lg shadow-[0px_0px_1px_1px_white]  w-full">
+        <div className="max-h-[70vh] overflow-y-auto">
+          <table className="w-full table-fixed border-collapse">
+            <thead className="sticky top-0 bg-gray-200 shadow-md">
               <tr>
-                <th className="font-bold bg-gray-100 p-2">User</th>
+                <th className="p-3 text-left w-40">User</th>
                 {daysInMonth.map((day, index) => (
-                  <th key={index} className="font-bold bg-gray-100 p-2">
+                  <th key={index} className="p-3 text-center w-8">
                     {format(day, "d")}
                   </th>
                 ))}
@@ -98,19 +88,24 @@ const Attendance = () => {
             </thead>
             <tbody>
               {attendanceData.map((user) => (
-                <tr key={user.name}>
-                  <td className="border p-2">{user.name}</td>
+                <tr key={user.name} className="border-t">
+                  <td className="p-3 font-medium text-white">{user.name}</td>
                   {user.attendance.map((status, index) => {
                     if (filter === "present" && status !== "✔️") return null;
                     if (filter === "absent" && status !== "❌") return null;
                     return (
-                      <td
-                        key={index}
-                        className={`border p-2 ${
-                          status === "✔️" ? "text-green-500" : "text-red-500"
-                        }`}
-                      >
-                        {status}
+                      <td key={index} className="p-2 text-center">
+                        {status === "✔️" ? (
+                          <FontAwesomeIcon
+                            icon={faCheckCircle}
+                            className="text-green-500 text-lg"
+                          />
+                        ) : (
+                          <FontAwesomeIcon
+                            icon={faTimesCircle}
+                            className="text-red-500 text-lg"
+                          />
+                        )}
                       </td>
                     );
                   })}

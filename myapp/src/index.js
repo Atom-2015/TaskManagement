@@ -19,6 +19,8 @@ import ProjectSetting from './Component/Settings/NestedComponentSettings/project
 import Taskindex from './Component/Taskmanagement/taskindex';
 import Projectdetal from './Component/Taskmanagement/projectdetailpageintask/projectdetal';
 import Attendanceindex from './Component/Attendance/attendanceindex';
+import ProjectCost from './Component/Taskmanagement/projectcost/projectcost';
+
  
  
  
@@ -66,6 +68,8 @@ const router = createBrowserRouter([
       {path:'/tasks' , element :  <Taskindex/> , children:[
         {path:'/tasks/alltask' , element:<Taskmanagement/>},
         {path:'/tasks/projectdetails' , element:<Projectdetal/>},
+        {path:'/tasks/projectcost' , element:<ProjectCost/>},
+        
       ] },
       {path:'/settings' , element: <Settingindex/> , children:[
         {path:'/settings/prijectSetting' , element : <ProjectSetting/> },
