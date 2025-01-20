@@ -1,15 +1,25 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { projectlist } from "../../FeatureRedux/projectlistSlice";
+import moment from "moment"; // Import moment
 
 function Projectlist() {
-  const projects = [
-    { name: "Project A", lead: "Alice", deadline: "2025-01-15", status: "Ongoing" },
-    { name: "Project B", lead: "Bob", deadline: "2025-02-01", status: "Completed" },
-    { name: "Project C", lead: "Charlie", deadline: "2025-01-30", status: "Delayed" },
-    { name: "Project D", lead: "Diana", deadline: "2025-03-10", status: "Ongoing" },
-    { name: "Project E", lead: "Eve", deadline: "2025-01-25", status: "Pending" },
-  ];
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
+  // Get state values from Redux
+  const { projects, isLoading, isError, errorMessage } = useSelector(
+    (state) => state.projectlist
+  );
+
+  // Fetch projects when component loads
+  useEffect(() => {
+    const formData = {}; // Replace with actual formData if needed
+    dispatch(projectlist(formData));
+  }, [dispatch]);
+
+  // Utility to determine the status badge color
   const getStatusColor = (status) => {
     switch (status) {
       case "Completed":
@@ -25,27 +35,39 @@ function Projectlist() {
     }
   };
 
-  const navigate = useNavigate();
-
-  const navigateToIssues = () => {
-    navigate("/tasks/alltask");
+  // Navigate to the tasks page
+  const navigateToIssues = (projectid) => {
+    localStorage.setItem('Projectid',projectid)
+     
+      navigate("/tasks/alltask", ); // Correctly passing projectId
+    
+    
   };
 
   return (
     <div className="p-2">
       <h1 className="text-2xl font-thin text-white mb-4">Project List</h1>
-    
+
+      {/* Show loading or error messages */}
+      {isLoading && (
+        <p className="text-center text-yellow-500">Loading projects...</p>
+      )}
+      {isError && (
+        <p className="text-center text-red-500">{errorMessage}</p>
+      )}
+
+      {/* Display project cards */}
       <div className="grid gap-4 lg:grid-cols-2 xl:grid-cols-3">
-        {projects.length !== 0 ? (
+        {!isLoading && !isError && projects.length > 0 ? (
           projects.map((project, index) => (
             <div
               key={index}
-              className=" shadow-[0px_0px_2px_1px_gray]  transition-transform transform hover:scale-105 hover:shadow-md"
+              className="shadow-[0px_0px_2px_1px_gray] transition-transform transform hover:scale-105 hover:shadow-md"
             >
               {/* Header with Project Name */}
               <div
                 className="bg-[#354759] p-3 border-b cursor-pointer"
-                onClick={navigateToIssues}
+                onClick={()=>navigateToIssues(project._id)}
               >
                 <h2 className="text-lg font-semibold text-white">
                   {project.name}
@@ -64,11 +86,20 @@ function Projectlist() {
                   </thead>
                   <tbody>
                     <tr>
-                      <td className="py-1">{project.lead}</td>
-                      <td className="py-1">{project.deadline}</td>
-                      <td className="py-1">Team A</td>
-                      <td className={`py-1 px-2 rounded-md font-semibold ${getStatusColor(project.status)}`}>
-                        {project.status}
+                      <td className="py-1">{project.lead || "N/A"}</td>
+                      {/* Format the end_date */}
+                      <td className="py-1">
+                        {project.end_date
+                          ? moment(project.end_date).format("DD MMM YYYY")
+                          : "N/A"}
+                      </td>
+                      <td className="py-1">{project.team || "Team A"}</td>
+                      <td
+                        className={`py-1 px-2 rounded-md font-semibold ${getStatusColor(
+                          project.status
+                        )}`}
+                      >
+                        {project.status || "Unknown"}
                       </td>
                     </tr>
                   </tbody>
@@ -77,9 +108,11 @@ function Projectlist() {
             </div>
           ))
         ) : (
-          <h2 className="text-center text-gray-500 col-span-full">
-            Project list is empty
-          </h2>
+          !isLoading && (
+            <h2 className="text-center text-gray-500 col-span-full">
+              Project list is empty
+            </h2>
+          )
         )}
       </div>
     </div>

@@ -1,129 +1,22 @@
-// import React from "react";
-
-// function Userlist() {
-//   const users = [
-//     { name: "John Doe", email: "john.doe@example.com", role: "Admin", status: "Active" },
-//     { name: "Jane Smith", email: "jane.smith@example.com", role: "Editor", status: "Inactive" },
-//     { name: "Mike Johnson", email: "mike.johnson@example.com", role: "Viewer", status: "Pending" },
-//     { name: "Emily Davis", email: "emily.davis@example.com", role: "Admin", status: "Active" },
-//     { name: "Sophia Brown", email: "sophia.brown@example.com", role: "Editor", status: "Inactive" },
-//   ];
-
-//   const getStatusBadge = (status) => {
-//     switch (status) {
-//       case "Active":
-//         return "bg-green-300 text-green-700";
-//       case "Inactive":
-//         return "bg-gray-300 text-gray-700";
-//       case "Pending":
-//         return "bg-yellow-300 text-yellow-700";
-//       default:
-//         return "bg-gray-300 text-gray-700";
-//     }
-//   };
-
-//   return (
-//     <div className="p-6 bg-[#2e3e4e] min-h-screen">
-//       {/* <h1 className="text-2xl font-semibold text-white mb-6">User List</h1> */}
-//       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6">
-//         {users.length > 0 ? (
-//           users.map((user, index) => (
-//             <div
-//               key={index}
-//               className="bg-[#354759] rounded-lg shadow-lg border-l-4 p-2 hover:shadow-xl transition-all"
-//             >
-//               <h2 className="text-xl font-thin text-white mb-2">{user.name}</h2>
-//               <table className="w-full table-fixed text-sm">
-//                 <thead>
-//                   <tr className="text-white border-b">
-//                     <th className="px-4 py-2 font-thin text-center">Email</th>
-//                     <th className="px-4 py-2  font-thin text-center">Role</th>
-//                     <th className="px-4 py-2 font-thin text-center">Status</th>
-//                   </tr>
-//                 </thead>
-//                 <tbody>
-//                   <tr>
-//                     <td className="px-4 py-2 font-thin text-white">{user.email}</td>
-//                     <td className="px-4 py-2 font-thin text-white">{user.role}</td>
-//                     <td className="px-4 py-2">
-//                       <span
-//                         className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusBadge(
-//                           user.status
-//                         )}`}
-//                       >
-//                         {user.status}
-//                       </span>
-//                     </td>
-//                   </tr>
-//                 </tbody>
-//               </table>
-//             </div>
-//           ))
-//         ) : (
-//           <div className="text-center text-gray-500 col-span-full">No users found.</div>
-//         )}
-//       </div>
-//     </div>
-//   );
-// }
-
-// export default Userlist;
-
-
-
-
-
-
-
-
-
-
-
-import React, { useState } from "react";
-import noor from '../Media/noor.jpeg'
+import React, { useEffect, useState } from "react";
+import noor from "../Media/noor.jpeg";
+import { useDispatch, useSelector } from "react-redux";
+import { allUser } from "../../FeatureRedux/alluserSlice";
 
 function Userlist() {
   const [viewMode, setViewMode] = useState("grid"); // Toggle between 'grid' and 'list'
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState("");
 
-  const users = [
-    {
-      name: "Noor Bhai",
-      email: "mohd.nuruddin.atom@gmail.com",
-      role: "Editor",
-      status: "Active",
-      image: noor
-    },
-    {
-      name: "Jane Smith",
-      email: "jane.smith@example.com",
-      role: "Editor",
-      status: "Inactive",
-      image: "https://via.placeholder.com/50",
-    },
-    {
-      name: "Mike Johnson",
-      email: "mike.johnson@example.com",
-      role: "Viewer",
-      status: "Pending",
-      image: "https://via.placeholder.com/50",
-    },
-    {
-      name: "Emily Davis",
-      email: "emily.davis@example.com",
-      role: "Admin",
-      status: "Active",
-      image: "https://via.placeholder.com/50",
-    },
-    {
-      name: "Sophia Brown",
-      email: "sophia.brown@example.com",
-      role: "Editor",
-      status: "Inactive",
-      image: "https://via.placeholder.com/50",
-    },
-  ];
+  const dispatch = useDispatch();
+  const { users, isLoading, isError, errorMessage } = useSelector(
+    (state) => state.allUser // Adjust this to match your slice name
+  );
+
+  useEffect(() => {
+    console.log("Fetching users...");
+    dispatch(allUser()); // Dispatch the action to fetch users
+  }, [dispatch]);
 
   const getStatusBadge = (status) => {
     switch (status) {
@@ -181,89 +74,82 @@ function Userlist() {
         </button>
       </div>
 
+      {/* Loading or Error Messages */}
+      {isLoading && <p>Loading...</p>}
+      {isError && <p className="text-red-500">Error: {errorMessage}</p>}
+
       {/* User List */}
-      {viewMode === "list" ? (
-        <div className="overflow-x-auto">
-          <table className="min-w-full bg-[#2e3e4e] text-white rounded-lg">
-            <thead>
-              <tr>
-              <th className="px-4 py-2 text-center">Name</th>
-                <th className="px-4 py-2 text-center">Email</th>
-                <th className="px-4 py-2 text-center">Role</th>
-                <th className="px-4 py-2 text-center">Status</th>
-                <th className="px-4 py-2 text-left">Image</th>
-               
-              </tr>
-            </thead>
-            <tbody>
-              {filteredUsers.length > 0 ? (
-                filteredUsers.map((user, index) => (
-                  <tr key={index} className="hover:bg-[#3a4b5b] border-b">
-                    <td className="px-4 py-2 text-center">{user.name}</td>
-                    <td className="px-4 py-2 text-center">{user.email}</td>
-                    <td className="px-4 py-2 text-center">{user.role}</td>
-                    <td className="px-4 py-2 text-center">
-                      <span
-                        className={`px-3 py-1 rounded-full  text-xs font-semibold ${getStatusBadge(user.status)}`}
-                      >
-                        {user.status}
-                      </span>
-                    </td>
-                    <td className="px-4 py-2">
-                      <img
-                        src={user.image}
-                        alt={user.name}
-                        className="w-12 h-12 rounded-full object-cover"
-                      />
-                    </td>
+      {!isLoading && !isError && (
+        <>
+          {viewMode === "list" ? (
+            <div className="overflow-x-auto">
+              <table className="min-w-full bg-[#2e3e4e] text-white rounded-lg">
+                <thead>
+                  <tr>
+                    <th className="px-4 py-2 text-center">Name</th>
+                    <th className="px-4 py-2 text-center">Email</th>
+                    <th className="px-4 py-2 text-center">Role</th>
+                    <th className="px-4 py-2 text-center">Status</th>
+                    <th className="px-4 py-2 text-left">Image</th>
                   </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan="5" className="text-center px-4 py-2 text-gray-500">
-                    No users found.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredUsers.length > 0 ? (
-            filteredUsers.map((user, index) => (
-              <div
-                key={index}
-                className="bg-[#2e3e4e] rounded-lg shadow-lg border-l-4 border-blue-500 p-4 hover:shadow-xl transition-all flex justify-between items-center"
-              >
-                {/* User Image */}
-                <div className="flex-shrink-0">
+                </thead>
+                <tbody>
+                  {filteredUsers.map((user, index) => (
+                    <tr key={index} className="hover:bg-[#3a4b5b] border-b">
+                      <td className="px-4 py-2 text-center">{user.name}</td>
+                      <td className="px-4 py-2 text-center">{user.email}</td>
+                      <td className="px-4 py-2 text-center">{user.role}</td>
+                      <td className="px-4 py-2 text-center">
+                        <span
+                          className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusBadge(
+                            user.status
+                          )}`}
+                        >
+                          {user.status   }
+                        </span>
+                      </td>
+                      <td className="px-4 py-2">
+                        <img
+                          src={user.image || noor}
+                          alt={user.name}
+                          className="w-12 h-12 rounded-full object-cover"
+                        />
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredUsers.map((user, index) => (
+                <div
+                  key={index}
+                  className="bg-[#2e3e4e] rounded-lg shadow-lg border-l-4 border-blue-500 p-4 hover:shadow-xl transition-all flex justify-between items-center"
+                >
                   <img
-                    src={user.image}
+                    src={user.image || noor}
                     alt={user.name}
                     className="w-16 h-16 rounded-full object-cover"
                   />
+                  <div className="flex-1 ml-4">
+                    <h2 className="text-lg font-semibold text-white">
+                      {user.name}
+                    </h2>
+                    <p className="text-gray-300 text-sm">{user.email}</p>
+                  </div>
+                  <span
+                    className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusBadge(
+                      user.status
+                    )}`}
+                  >
+                    {user.status}
+                  </span>
                 </div>
-
-                {/* User Info in Flex Mode */}
-                <div className="flex-1 ml-4">
-                  <h2 className="text-lg font-semibold text-white text-left">{user.name}</h2>
-                  <p className="text-gray-300 text-sm text-left">{user.email}</p>
-                  <p className="text-gray-300 text-sm text-left">{user.role}</p>
-                </div>
-
-                {/* Status Badge */}
-                <span
-                  className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusBadge(user.status)}`}
-                >
-                  {user.status}
-                </span>
-              </div>
-            ))
-          ) : (
-            <div className="text-center text-gray-500 col-span-full">No users found.</div>
+              ))}
+            </div>
           )}
-        </div>
+        </>
       )}
     </div>
   );
