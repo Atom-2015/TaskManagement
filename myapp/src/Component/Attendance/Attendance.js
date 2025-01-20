@@ -12,7 +12,7 @@ const generateAttendanceData = (daysInMonth) => {
     attendance: Array.from({ length: daysInMonth }, () =>
       Math.random() > 0.2 ? "✔️" : "❌"
     ),
-  }));
+  }));  
 };
 
 const Attendance = () => {
@@ -76,8 +76,8 @@ const Attendance = () => {
       <div className="bg-[#2e3e4e] p-2 rounded-lg shadow-[0px_0px_1px_1px_white]  w-full">
         <div className="max-h-[70vh] overflow-y-auto">
           <table className="w-full table-fixed border-collapse">
-            <thead className="sticky top-0 bg-gray-200 shadow-md">
-              <tr>
+            <thead className="sticky top-0 bg-gray-200 shadow-md rounded">
+              <tr className="">
                 <th className="p-3 text-left w-40">User</th>
                 {daysInMonth.map((day, index) => (
                   <th key={index} className="p-3 text-center w-8">
