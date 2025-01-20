@@ -12,6 +12,7 @@ function Addtaskbutton() {
     unittype: '',
     due_date: '',
     project_id: '',
+    project_id:''
   });
 
   const handleInputChange = (e) => {
@@ -31,6 +32,9 @@ function Addtaskbutton() {
   const handleFormSubmit = (e) => {
     e.preventDefault();
     // Dispatch the addtask action here
+    setTaskdata({
+      project_id:localStorage.getItem('Projectid')
+    })
     console.log('New Task Data:', taskdata);
     // Assuming you will dispatch to redux here
     dispatch(addtask(taskdata));
