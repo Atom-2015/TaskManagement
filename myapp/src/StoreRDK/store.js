@@ -2,6 +2,8 @@ import {configureStore} from '@reduxjs/toolkit';
 import analyseDeleteImageSlice from '../FeatureRedux/analyse_delete_image'
 import projectcreationSlice from '../FeatureRedux/projectCreation'
 import  addUser  from '../FeatureRedux/adduserSlice';
+import  allUser  from '../FeatureRedux/alluserSlice';
+import  projectlist  from '../FeatureRedux/projectlistSlice';
  
 
 
@@ -10,7 +12,9 @@ export  const store = configureStore({
         
         DeleteImage:analyseDeleteImageSlice,
         AddProject:projectcreationSlice,
-        addUser:addUser
+        addUser:addUser,
+        allUser:allUser,
+        projectlist:projectlist
     }
 
 
