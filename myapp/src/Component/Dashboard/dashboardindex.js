@@ -9,6 +9,7 @@ import PieChartt from './charts/piechart';
 import GraphChart from './charts/graphchart';
 import LineChart from './charts/linechart';
 import DonutChart from './charts/donutechart';
+import AssignedTask from './componentDashboard/assignedtask'
 // import MyPieChart from './componentDashboard/piechart';  // Correct the import path
 
 function Dashboardindex() {
@@ -18,19 +19,20 @@ function Dashboardindex() {
       <AttendanceSection />
 
          {/* Other components */}
-         <div className='flex flex-row justify-between mb-6 mt-[20px]'>
+         <div className='mt-2 flex gap-2 justify-between mb-6'>
         <Taskview />
-        <LineChart/>
-        {/* <PieChartt/> */}
+        <AssignedTask />
+       
+      
       </div>
 
-      {/* PieChart Added */}
-      <div className="mt-2 flex flex-row" >
+      
+      <div className="mt-2 flex  justify-between mb-6 " >
        
       <Projectview />
-      <GraphChart/>
-       
-        {/* <DonutChart/> */}
+      <LineChart/>
+
+
       </div>
 
    

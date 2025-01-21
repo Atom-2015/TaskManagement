@@ -77,7 +77,7 @@ function LineChart() {
   };
 
   return (
-    <div className="w-[39%] p-3 bg-[#354759] rounded-lg shadow-lg">
+    <div className="w-[50%] p-3 bg-[#354759] rounded-lg shadow-lg">
       <div className='flex justify-around align-middle items-center'>
         <div>
         <div class="relative w-64 ">
