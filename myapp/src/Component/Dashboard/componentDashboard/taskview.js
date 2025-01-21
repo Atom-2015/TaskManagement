@@ -1,32 +1,26 @@
+
 import React, { useState, useEffect } from "react"; 
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { alltaskuserspecific } from '../../../FeatureRedux/alltaskuserspecific';
+import StatusButton from "./statusbutton"; // Importing the new component
 
 function TaskView() {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedTask, setSelectedTask] = useState(null);
-  const [units, setUnits] = useState("");
   const [tasks, setTasks] = useState([]);
   const dispatch = useDispatch();
-
-  // Access tasks from Redux state (with fallback to empty array)
-  // const tasks = useSelector((state) => state.alltaskuserspecific?.data || []);  
 
   useEffect(() => {
     const fetchTasks = async () => {
       try {
         const response = await dispatch(alltaskuserspecific());
-        console.log("Response:", response);
-        
         if (response.payload && Array.isArray(response.payload)) {
           setTasks(response.payload);
         } else {
           console.error("Invalid task data received:", response.payload);
-          setTasks([]); // Fallback to empty array
+          setTasks([]);
         }
       } catch (error) {
         console.error("Error fetching tasks:", error);
-        setTasks([]); // Ensure tasks is always an array
+        setTasks([]);
       }
     };
   
@@ -34,6 +28,7 @@ function TaskView() {
   }, [dispatch]); 
   
   const getStatusClass = (status) => {
+    console.log("hjh")
     switch (status) {
       case "Completed":
         return "bg-green-300 text-green-700";
@@ -47,23 +42,12 @@ function TaskView() {
   };
 
   const openModal = (task) => {
-    setSelectedTask(task);
-    setIsModalOpen(true);
-  };
-
-  const closeModal = () => {
-    setIsModalOpen(false);
-    setUnits("");
-  };
-
-  const handleSubmit = () => {
-    console.log(`Updated units for ${selectedTask?.title}: ${units}`);
-    closeModal();
+    console.log(`Opening modal for task: ${task.title}`);
   };
 
   return (
-    <div className="w-[60%] bg-[#354759] p-4 rounded-lg shadow-md">
-      <h2 className="text-sm font-semibold mb-3 text-white">Task Overview</h2>
+    <div className="w-[50%] bg-[#354759] p-4 rounded-lg shadow-md">
+      <h2 className="text-[25px] font-thin mb-3 text-white">My Task</h2>
 
       {/* Header */}
       <div className="flex justify-between items-center bg-gray-300 text-gray-700 font-medium text-xs py-2 px-3 rounded-t-md">
@@ -93,53 +77,20 @@ function TaskView() {
               </div>
               {/* Task Name */}
               <div className="w-1/4 truncate text-gray-800 font-medium">{task.title}</div>
-              {/* Assigned By */}
               <div className="w-1/4 truncate text-gray-600">{task.assigned_by}</div>
-              {/* Quantity */}
               <div className="w-1/4 truncate text-gray-600">{task.completedUnit}/{task.totalunit}</div>
-              {/* Units */}
               <div className="w-1/4 truncate text-gray-600">{task.unittype}</div>
-              {/* Progress */}
               <div className="w-1/4 truncate text-gray-600">
                 {((task.completedUnit / task.totalunit) * 100).toFixed(2)}%
               </div>
-              {/* Status */}
-              <button
-                className={`w-1/4 text-center text-xs font-medium px-2 py-1 rounded-full ${getStatusClass(task.status)}`}
-                onClick={() => openModal(task)}
-              >
-                {task.status}
-              </button>
-              {/* Today's Update */}
-              <div className="w-1/4 truncate text-gray-600">{task.comments.length > 0 ? task.comments[0] : "No updates"}</div>
+              {/* Status Button Component */}
+           
+              <div className={`w-1/4 truncate text-gray-600 rounded ${getStatusClass(task.status)}`}  >{task.status!=''  ? task.status : "No updates"}</div>
+              <div className="w-1/4 truncate text-gray-800 font-medium"> <button className="bg-primary rounded font-thin text-white ">  <StatusButton/> </button> </div>
             </div>
           ))
         )}
       </div>
-
-      {/* Modal */}
-      {isModalOpen && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-1/3">
-            <h3 className="text-lg font-semibold mb-4">Update Units for {selectedTask?.title}</h3>
-            <input
-              type="text"
-              placeholder="Enter units"
-              className="w-full px-4 py-2 border border-gray-300 rounded-md mb-4"
-              value={units}
-              onChange={(e) => setUnits(e.target.value)}
-            />
-            <div className="flex justify-end gap-2">
-              <button className="px-4 py-2 bg-gray-400 text-white rounded-md" onClick={closeModal}>
-                Cancel
-              </button>
-              <button className="px-4 py-2 bg-blue-500 text-white rounded-md" onClick={handleSubmit}>
-                Submit
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* Custom Scrollbar Styling */}
       <style>
