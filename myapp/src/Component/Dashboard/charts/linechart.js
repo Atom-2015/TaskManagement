@@ -78,7 +78,24 @@ function LineChart() {
 
   return (
     <div className="w-[39%] p-3 bg-[#354759] rounded-lg shadow-lg">
-      <h3 className="text-center text-white text-lg font-semibold mb-4">Animated Line Chart</h3>
+      <div className='flex justify-around align-middle items-center'>
+        <div>
+        <div class="relative w-64 ">
+ 
+  <select id="dropdown" class=" block  p-1 border border-gray-300 rounded-md shadow-sm focus:outline-none bg-[#354759] text-white">
+    <option value="" disabled selected>Choose User</option>
+    <option value="option1">Noor</option>
+    <option value="option2">Divya</option>
+    <option value="option3">Kunal</option>
+    <option value="option3">Deepak</option>
+    <option value="option3">Kamal</option>
+  </select>
+</div>
+          
+          </div>     
+      <h3 className="text-center text-white text-lg font-semibold ">User Bar Graph</h3>
+      </div>
+
       <div className="w-full" style={{ height: '270px' }}> {/* Set a specific height here */}
         <Line data={data} options={options} />
       </div>

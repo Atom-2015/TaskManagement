@@ -1,18 +1,17 @@
 import React from 'react';
 import { NavLink, Outlet } from 'react-router-dom';
+// import ProjectCost from './projectCost';  
 
 function Taskindex() {
   return (
     <div>
-       
-      <nav className="  text-white px-4 py-3 flex justify-between items-center shadow-md rounded-2xl ml-5 ">
-         
+      <nav className="text-white px-4 py-3 flex justify-between items-center shadow-md rounded-2xl ml-5">
         <div className="flex space-x-6">
           <NavLink
             to="/tasks/alltask"
             className={({ isActive }) =>
-              `text-lg font-semibold hover:text-blue-400 transition ${
-                isActive ? 'underline decoration-2 decoration-blue-400' : ''
+              `text-[17px] font-thin no-underline bg-teal-400 text-white px-2 py-1 rounded ${
+                isActive ? 'no-underline' : ''
               }`
             }
           >
@@ -21,12 +20,22 @@ function Taskindex() {
           <NavLink
             to="/tasks/projectdetails"
             className={({ isActive }) =>
-              `text-lg font-semibold hover:text-blue-400 transition ${
-                isActive ? 'underline decoration-2 decoration-blue-400' : ''
+              `text-[17px] font-thin no-underline bg-success text-white px-2 py-1 rounded ${
+                isActive ? 'no-underline' : ''
               }`
             }
           >
             Project Details
+          </NavLink>
+          <NavLink
+            to="/tasks/projectcost"  // ✅ Ensure route matches in your Router
+            className={({ isActive }) =>
+              `text-[17px] font-thin no-underline bg-danger text-white px-2 py-1 rounded ${
+                isActive ? 'no-underline' : ''
+              }`
+            }
+          >
+            Project Cost
           </NavLink>
         </div>
       </nav>
