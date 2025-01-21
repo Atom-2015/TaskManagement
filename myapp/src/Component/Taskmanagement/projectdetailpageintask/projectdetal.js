@@ -25,6 +25,11 @@ function ProjectDetail() {
             <label className="block text-gray-600 font-semibold text-left">Phone Number</label>
             <div className="bg-gray-100 border rounded-md p-2 text-left">+1234567890</div>
           </div>
+
+          <div>
+            <label className="block text-gray-600 font-semibold text-left">Work Order Upload</label>
+            <div className="bg-gray-100 border rounded-md p-2 text-left"><input type='upload'></input></div>
+          </div>
         </div>
       </div>
 
