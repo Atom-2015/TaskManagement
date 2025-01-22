@@ -147,7 +147,7 @@ function AddProjectButton() {
                   </div>
 
                   <div className="w-full">
-                    <label className="block font-medium">Assign To</label>
+                    <label className="block font-medium">Project Head</label>
                     <select
                       onChange={handleUserSelection}
                       className="w-full px-3 py-2 rounded bg-gray-700 text-white border border-gray-600 focus:ring-blue-500"
