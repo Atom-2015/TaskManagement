@@ -20,7 +20,10 @@ function Dashboardindex() {
 
          {/* Other components */}
          <div className='mt-2 flex gap-2 justify-between mb-6'>
+          {/* my pending task */}
         <Taskview />
+
+        {/* Task Assigned By me */}
         <AssignedTask />
        
       
