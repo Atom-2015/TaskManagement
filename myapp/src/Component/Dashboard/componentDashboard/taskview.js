@@ -87,7 +87,7 @@ function TaskView() {
               {/* Status Button Component */}
            
               <div className={`w-1/4 truncate text-gray-600 rounded ${getStatusClass(task.status)}`}  >{task.status!=''  ? task.status : "No updates"}</div>
-              <div className="w-1/4 truncate text-gray-800 font-medium"> <button className="bg-primary rounded font-thin text-white ">  <StatusButton/> </button> </div>
+              <div className="w-1/4 truncate text-gray-800 font-medium"> <button className="bg-primary rounded font-thin text-white ">  <StatusButton taskId={task._id} /> </button> </div>
             </div>
           ))
         )}

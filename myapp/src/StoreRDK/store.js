@@ -7,6 +7,7 @@ import  projectlist  from '../FeatureRedux/projectlistSlice';
 import subtasklist from '../FeatureRedux/subtaskSlice';
 import alltaskuserspecificSlice from '../FeatureRedux/alltaskuserspecific';
 import alltaskcreatedbyme from '../FeatureRedux/task/taskassignedbymeSlice';
+import taskSlice from '../FeatureRedux/task/updatetaskSlice'
 
 
 export  const store = configureStore({
@@ -20,6 +21,7 @@ export  const store = configureStore({
         subtasklist: subtasklist,
         alltaskuserspecificSlice:alltaskuserspecificSlice,
         alltaskcreatedbyme: alltaskcreatedbyme,
+        tasks: taskSlice,
     }
 
 
