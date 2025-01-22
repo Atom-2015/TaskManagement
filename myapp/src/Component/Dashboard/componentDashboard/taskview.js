@@ -73,7 +73,8 @@ function TaskView() {
             >
               {/* Project Name */}
               <div className="w-1/4 truncate text-gray-800 font-medium">
-                {task.project_id.name} {/* Replace with actual project name if necessary */}
+              {task.project_id?.name || 'No Project Name'}
+                 {/* Replace with actual project name if necessary */}
               </div>
               {/* Task Name */}
               <div className="w-1/4 truncate text-gray-800 font-medium">{task.title}</div>

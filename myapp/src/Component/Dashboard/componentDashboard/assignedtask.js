@@ -1,31 +1,18 @@
-import React, { useState, useEffect } from "react"; 
-import { useDispatch } from 'react-redux';
-import { alltaskuserspecific } from '../../../FeatureRedux/alltaskuserspecific';
+import React, { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { assigned_by } from "../../../FeatureRedux/task/taskassignedbymeSlice";
 import StatusButton from "./statusbutton"; // Reusing StatusButton component
 
 function AssignedTasks() {
-  const [tasks, setTasks] = useState([]);
   const dispatch = useDispatch();
+  const { task, isLoading, isError, errorMessage } = useSelector(
+    (state) => state.alltaskcreatedbyme
+  );
 
   useEffect(() => {
-    const fetchTasks = async () => {
-      try {
-        const response = await dispatch(alltaskuserspecific());
-        if (response.payload && Array.isArray(response.payload)) {
-          setTasks(response.payload);
-        } else {
-          console.error("Invalid task data received:", response.payload);
-          setTasks([]);
-        }
-      } catch (error) {
-        console.error("Error fetching tasks:", error);
-        setTasks([]);
-      }
-    };
-  
-    fetchTasks();
-  }, [dispatch]); 
-  
+    dispatch(assigned_by());
+  }, [dispatch]);
+
   const getStatusClass = (status) => {
     switch (status) {
       case "Completed":
@@ -57,24 +44,42 @@ function AssignedTasks() {
 
       {/* Task List */}
       <div className="space-y-2 mt-2 h-72 overflow-y-auto custom-scrollbar">
-        {tasks.length === 0 ? (
+        {isLoading ? (
+          <div className="text-center text-gray-300">Loading...</div>
+        ) : isError ? (
+          <div className="text-center text-red-500">{errorMessage}</div>
+        ) : task.length === 0 ? (
           <div className="text-center text-gray-300">No Tasks Assigned</div>
         ) : (
-          tasks.map((task, index) => (
+          task.map((assignedTask, index) => (
             <div
               key={index}
               className="flex justify-between items-center bg-white shadow-sm rounded-md p-2 hover:shadow-lg transition-shadow text-xs"
             >
-              <div className="truncate font-medium">{task.project_id}</div>
-              <div className="truncate font-medium">{task.title}</div>
-              <div className="truncate text-gray-700">{task.assigned_by}</div>
-              <div className="truncate text-gray-700">{task.completedUnit}/{task.totalunit}</div>
-              <div className="truncate text-gray-700">{task.unittype}</div>
-              <div className="truncate text-gray-700">
-                {((task.completedUnit / task.totalunit) * 100).toFixed(2)}%
+              <div className="truncate font-medium">
+                {assignedTask.project_id?.name || "No Project"}
               </div>
-              <div className={`truncate font-semibold rounded px-2 py-1 text-center ${getStatusClass(task.status)}`}>
-                {task.status || "No updates"}
+              <div className="truncate font-medium">
+                {assignedTask.title || "No Task"}
+              </div>
+              <div className="truncate text-gray-700">
+                {assignedTask.assigned_to || "Not Assigned"}
+              </div>
+              <div className="truncate text-gray-700">
+                {assignedTask.completedUnit}/{assignedTask.totalunit}
+              </div>
+              <div className="truncate text-gray-700">
+                {assignedTask.unittype || "N/A"}
+              </div>
+              <div className="truncate text-gray-700">
+                {((assignedTask.completedUnit / assignedTask.totalunit) * 100).toFixed(2)}%
+              </div>
+              <div
+                className={`truncate font-semibold rounded px-2 py-1 text-center ${getStatusClass(
+                  assignedTask.status
+                )}`}
+              >
+                {assignedTask.status || "No Updates"}
               </div>
               <div className="truncate text-center">
                 <button className="bg-primary text-white py-1 px-2 rounded">
