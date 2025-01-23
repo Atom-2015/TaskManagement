@@ -75,23 +75,7 @@ const StatusButton = ({ taskId }) => {
                 />
               </div>
 
-              {/* Status Dropdown */}
-              <div className="mb-4">
-                <label htmlFor="status" className="block text-gray-300 mb-2">
-                  Status
-                </label>
-                <select
-                  id="status"
-                  name="status"
-                  value={updateData.status}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-2 bg-gray-900 text-white border border-gray-700 rounded focus:ring-2 focus:ring-blue-600"
-                >
-                  <option value="pending">Pending</option>
-                  <option value="active">Active</option>
-                  <option value="inProgress">In Progress</option>
-                </select>
-              </div>
+          
 
               {/* Buttons */}
               <div className="flex justify-end gap-4 mt-4">

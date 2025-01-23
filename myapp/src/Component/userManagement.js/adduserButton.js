@@ -129,7 +129,7 @@ function AdduserButton() {
                                             name="status"
                                             value={formData.status}
                                             onChange={handleInputChange}
-                                            className="w-full border border-gray-600 rounded px-3 py-2 focus:outline-none focus:ring focus:ring-blue-300 bg-gray-800 text-white"
+                                            className=" border border-gray-600 rounded px-3 py-2 focus:outline-none focus:ring focus:ring-blue-300 bg-gray-800 text-white"
                                         >
                                             <option value="Active">Active</option>
                                             <option value="Inactive">Inactive</option>

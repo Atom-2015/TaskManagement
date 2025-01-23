@@ -1,12 +1,9 @@
-
-
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
-// import backgroundImage from '../img/Worldmap.png'; 
-import logo from '../Media/atom1.png';
+import logo from '../Media/vectorsi.avif';
 import { Oval } from 'react-loader-spinner'; 
-import './siginresponsive.css'
+import './siginresponsive.css';
 import axiosInstance from '../../axiosInstance';
 
 function Sign_in() {
@@ -29,8 +26,6 @@ function Sign_in() {
                 localStorage.setItem('token', data.user);
                 localStorage.setItem('company_id', data.company_id);
                 window.location.href = '/dashboard';
-            } else {
-                // alert('Please check your username and password');
             }
         } catch (error) {
             setLoader(false);
@@ -47,94 +42,68 @@ function Sign_in() {
         <>
         {loader ? (
             <div className="loader-container" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-            <Oval
-                height={80}
-                width={80}
-                color="#4fa94d"
-                secondaryColor="#4fa94d"
-                ariaLabel="loading"
-                wrapperStyle={{}}
-                visible={true}
-            />
-        </div>
+                <Oval
+                    height={80}
+                    width={80}
+                    color="#4fa94d"
+                    secondaryColor="#4fa94d"
+                    ariaLabel="loading"
+                    wrapperStyle={{}}
+                    visible={true}
+                />
+            </div>
         ) : (
-            <div 
-                className="d-flex flex-column justify-content-center align-items-center min-vh-100" 
-                style={{
-                    // backgroundImage: `url(${backgroundImage})`, 
-                    // backgroundSize: 'cover', 
-                    // backgroundPosition: 'center',
-                    // backgroundRepeat: 'no-repeat',
-                    // position: 'relative',
-                    // opacity: '1'
-                }}
-            >
-                <div 
-                    style={{
-                        position: 'absolute',
-                        top: 0,
-                        left: 0,
-                        width: '100%',
-                        height: '100%',
-                        backgroundColor: 'rgba(0, 0, 0, 0.7)'
-                    }}
-                ></div>
-                
-                <div className="card p-4 shadow-lg w-100 ]" id='signinMain' style={{ maxWidth: '400px', position: 'relative', zIndex: 1 , background: '#1e1e1e' }}>
-                    <div className='textsign'><h1 className='text-center text-white'>Sign In</h1></div>
-                    <div className='d-flex justify-center'>
-                        <img src={logo} alt="Atom Aviation Logo" className='rounded-2xl mb-3 h-[200px]' id='imagesign' />
-                    </div>
+            <div className="d-flex min-vh-100" style={{ backgroundColor: '#fff' }}>
+                {/* Left side: Image */}
+                <div style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                    <img src={logo} alt="Atom Aviation Logo" className="rounded-2xl" style={{ maxHeight: '80%', maxWidth: '80%' }} />
+                </div>
 
-                    <form onSubmit={HandleSignin}>
-                        <div className="form-group mb-3 emailSign">
-                            <label className="form-label text-white">Email Address</label>
-                            <input 
-                                type="email" 
-                                className="form-control" 
-                                placeholder="Enter Email" 
-                                value={email} 
-                                onChange={(e) => setEmail(e.target.value)} 
-                                required 
-                            />
+                {/* Right side: Form */}
+                <div style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                    <div className="card p-4 shadow-lg w-75" style={{ background: '#fff' }}>
+                        <h1 className="text-center">Sign In</h1>
+                        <form onSubmit={HandleSignin}>
+                            <div className="form-group mb-3">
+                                <label className="form-label">Email Address</label>
+                                <input 
+                                    type="email" 
+                                    className="form-control" 
+                                    placeholder="Enter Email" 
+                                    value={email} 
+                                    onChange={(e) => setEmail(e.target.value)} 
+                                    required 
+                                />
+                            </div>
+
+                            <div className="form-group mb-3">
+                                <label className="form-label">Password</label>
+                                <input 
+                                    type="password" 
+                                    className="form-control" 
+                                    placeholder="Enter Password" 
+                                    value={password} 
+                                    onChange={(e) => setPassword(e.target.value)} 
+                                    required 
+                                />
+                            </div>
+
+                            <div className="d-flex justify-content-between">
+                                <button type="submit" className="btn btn-primary">Submit</button>
+                                <button type="reset" className="btn btn-secondary" onClick={resetpass}>Reset</button>
+                            </div>
+                        </form>
+
+                        <p className="text-center mt-3">
+                            Don't have an account? <Link to="/signup">Sign up here</Link>
+                        </p>
+
+                        <div className="text-center mt-3">
+                            <Link to="/terms" className="me-3">Terms and Conditions</Link>
+                            <Link to="tel:+91980000000">Contact Us</Link>
                         </div>
-
-                        <div className="form-group mb-3 emailSign">
-                            <label className="form-label text-white">Password</label>
-                            <input 
-                                type="password" 
-                                className="form-control" 
-                                placeholder="Enter Password" 
-                                value={password} 
-                                onChange={(e) => setPassword(e.target.value)} 
-                                required 
-                            />
-                        </div>
-
-                        <div className="d-flex justify-content-between">
-                            <button type="submit" className="btn btn-primary">Submit</button>
-                            <button type="reset" className="btn btn-secondary" onClick={resetpass}>Reset</button>
-                        </div>
-                    </form>
-
-                    <p className="text-center mt-3 text-white" id='parasign'>
-                        Don't have an account? <Link to="/signup" className="text-white">Sign up here</Link>
-                    </p>
-
-                    <div className="text-center mt-3" id='para2sign'>
-                        <Link to="/terms" className="text-white me-3">Terms and Conditions</Link>
-                        <Link to="/contact" className="text-white">Contact Us</Link>
                     </div>
                 </div>
-{/* 
-                <footer 
-                    className="position-fixed bottom-0 start-0 p-3"
-                    style={{ left: '0', bottom: '0', backgroundColor: 'rgba(0, 0, 0, 0.7)', color: 'white' }}
-                >
-                    <div className="d-flex align-items-center">
-                        <span className="me-3">v1.0.0</span>
-                    </div>
-                </footer> */}
             </div>
         )}
         </>

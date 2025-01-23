@@ -51,7 +51,7 @@ function Tasklisting() {
     <div className="relative inline-block">
       <button
         onClick={() => handleMenuToggle(index)}
-        className="text-gray-600 hover:text-gray-800"
+        className="text-white hover:text-white"
         aria-expanded={openMenuIndex === index}
       >
         ⋮
@@ -81,7 +81,7 @@ function Tasklisting() {
   return (
     <div className="p-6 bg-[#354759] rounded shadow-md">
       <h1 className="text-2xl font-thin text-white mb-6">Sub Task Listing</h1>
-      <div className="overflow-x-auto">
+      <div className="">
         <table className="w-full border-collapse border border-gray-200">
           <thead>
             <tr className="bg-[#354759]">
@@ -93,7 +93,7 @@ function Tasklisting() {
                 "Deadline",
                 "Quantity",
                 "Units",
-                "Actions",
+                "Action",
               ].map((header) => (
                 <th
                   key={header}

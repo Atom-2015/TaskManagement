@@ -80,9 +80,9 @@ function LineChart() {
     <div className="w-[50%] p-3 bg-[#354759] rounded-lg shadow-lg">
       <div className='flex justify-around align-middle items-center'>
         <div>
-        <div class="relative w-64 ">
+        <div class="relative w-64 gap-2  flex justify-between">
  
-  <select id="dropdown" class=" block  p-1 border border-gray-300 rounded-md shadow-sm focus:outline-none bg-[#354759] text-white">
+  <select id="dropdown" class="block  p-1 border border-gray-300 rounded-md shadow-sm focus:outline-none bg-[#354759] text-white">
     <option value="" disabled selected>Choose User</option>
     <option value="option1">Noor</option>
     <option value="option2">Divya</option>
@@ -90,8 +90,16 @@ function LineChart() {
     <option value="option3">Deepak</option>
     <option value="option3">Kamal</option>
   </select>
+<select id='dropdown' className='block  p-1 border border-gray-300 rounded-md shadow-sm focus:outline-none bg-[#354759] text-white'>
+<option value="" disabled selected>Choose Month</option>
 
-  <select></select>
+    <option value="option2">January</option>
+    <option value="option3">February</option>
+    <option value="option3">March</option>
+    <option value="option3">April</option>
+
+</select>
+ 
 </div>
           
           </div>     
