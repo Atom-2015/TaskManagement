@@ -19,17 +19,16 @@ function Dashboardindex() {
       <AttendanceSection />
 
          {/* Other components */}
-         <div className='mt-2 flex gap-2 justify-between mb-6'>
+         <div className='mt-2  mb-6'>
           {/* my pending task */}
         <Taskview />
 
         {/* Task Assigned By me */}
-        <AssignedTask />
+      
        
       
       </div>
-
-      
+         
       <div className="mt-2 flex  justify-between mb-6 " >
        
       <Projectview />
@@ -37,6 +36,8 @@ function Dashboardindex() {
 
 
       </div>
+<div>  <AssignedTask /></div>
+   
 
    
     </div>

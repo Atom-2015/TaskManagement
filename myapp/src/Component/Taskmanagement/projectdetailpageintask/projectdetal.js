@@ -24,7 +24,7 @@ function ProjectDetail() {
         <div className="flex justify-between items-center cursor-pointer" onClick={() => toggleSection("companyDetails")}>
           <h2 className="text-xl font-bold">Project Company Details</h2>
           <div className="flex gap-2">
-        
+          {/* <FontAwesomeIcon icon={faPencil} className="text-gray-500" /> */}
             <FontAwesomeIcon icon={openSections.companyDetails ? faChevronUp : faChevronDown} className="text-gray-500" />
           </div>
         </div>

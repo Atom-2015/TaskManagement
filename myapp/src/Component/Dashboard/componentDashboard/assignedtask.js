@@ -20,18 +20,18 @@ function AssignedTasks() {
       case "In Progress":
         return "bg-yellow-400 text-black";
       case "Pending":
-        return "bg-red-500 text-white";
+        return "bg-purple-500 text-white";
       default:
         return "bg-gray-400 text-black";
     }
   };
 
   return (
-    <div className="w-[50%] bg-[#354759] p-4 rounded-lg shadow-lg">
+    <div className="w-[full] bg-[#354759] p-4 rounded-lg shadow-lg">
       <h2 className="text-[24px] font-thin mb-3 text-white">Assigned Tasks</h2>
 
       {/* Header */}
-      <div className="grid grid-cols-8 bg-gray-300 text-gray-700 font-medium text-xs py-2 px-3 rounded-t-md">
+      <div className="grid grid-cols-7 bg-gray-300 text-gray-700 font-medium text-xs py-2 px-3 rounded-t-md">
         <div>Project</div>
         <div>Task</div>
         <div>Assigned To</div>
@@ -39,11 +39,11 @@ function AssignedTasks() {
         <div>Units</div>
         <div>Progress</div>
         <div>Status</div>
-        <div>Update</div>
+        
       </div>
 
       {/* Task List */}
-      <div className="space-y-2 mt-2 h-72 overflow-y-auto custom-scrollbar">
+      <div className="space-y-2 mt-2  overflow-y-auto custom-scrollbar">
         {isLoading ? (
           <div className="text-center text-gray-300">Loading...</div>
         ) : isError ? (
@@ -54,7 +54,7 @@ function AssignedTasks() {
           task.map((assignedTask, index) => (
             <div
               key={index}
-              className="flex justify-between items-center bg-white shadow-sm rounded-md p-2 hover:shadow-lg transition-shadow text-xs"
+              className="grid grid-cols-7 bg-white shadow-sm rounded-md p-2 hover:shadow-lg transition-shadow text-xs"
             >
               <div className="truncate font-medium">
                 {assignedTask.project_id?.name || "No Project"}
@@ -81,11 +81,7 @@ function AssignedTasks() {
               >
                 {assignedTask.status || "No Updates"}
               </div>
-              <div className="truncate text-center">
-                <button className="bg-primary text-white py-1 px-2 rounded">
-                  <StatusButton />
-                </button>
-              </div>
+             
             </div>
           ))
         )}
