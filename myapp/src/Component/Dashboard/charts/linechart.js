@@ -90,6 +90,8 @@ function LineChart() {
     <option value="option3">Deepak</option>
     <option value="option3">Kamal</option>
   </select>
+
+  <select></select>
 </div>
           
           </div>     

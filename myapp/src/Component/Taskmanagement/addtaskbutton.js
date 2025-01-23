@@ -392,20 +392,42 @@ function Addtaskbutton() {
                   </div>
                 </div>
 
-                {/* Due Date Input */}
-                <div className="mb-4">
-                  <label className="block text-gray-300 mb-2" htmlFor="due_date">
-                    Due Date
-                  </label>
-                  <input
-                    type="date"
-                    id="due_date"
-                    name="due_date"
-                    value={taskdata.due_date}
-                    onChange={handleInputChange}
-                    className="w-full px-4 py-2 bg-gray-900 text-white border border-gray-700 rounded focus:ring-2 focus:ring-blue-600"
-                  />
-                </div>
+
+
+
+                <div className="flex justify-between gap-4">
+  {/* Unit Type Input */}
+  <div className="mb-4 w-1/2">
+    <label className="block text-gray-300 mb-2" htmlFor="totalunit">
+      Unit Type
+    </label>
+    <input
+      type="text"
+      id="totalunit"
+      name="totalunit"
+      value={taskdata.totalunit}
+      onChange={handleInputChange}
+      className="w-full px-4 py-2 bg-gray-900 text-white border border-gray-700 rounded focus:ring-2 focus:ring-blue-600"
+      placeholder="Enter units"
+    />
+  </div>
+
+  {/* Due Date Input */}
+  <div className="mb-4 w-1/2">
+    <label className="block text-gray-300 mb-2" htmlFor="due_date">
+      Due Date
+    </label>
+    <input
+      type="date"
+      id="due_date"
+      name="due_date"
+      value={taskdata.due_date}
+      onChange={handleInputChange}
+      className="w-full px-4 py-2 bg-gray-900 text-white border border-gray-700 rounded focus:ring-2 focus:ring-blue-600"
+    />
+  </div>
+</div>
+
 
                 {/* Buttons */}
                 <div className="flex justify-end gap-4 mt-4">
