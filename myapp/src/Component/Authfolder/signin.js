@@ -126,7 +126,7 @@ function Sign_in() {
                         <Link to="/contact" className="text-white">Contact Us</Link>
                     </div>
                 </div>
-
+{/* 
                 <footer 
                     className="position-fixed bottom-0 start-0 p-3"
                     style={{ left: '0', bottom: '0', backgroundColor: 'rgba(0, 0, 0, 0.7)', color: 'white' }}
@@ -134,7 +134,7 @@ function Sign_in() {
                     <div className="d-flex align-items-center">
                         <span className="me-3">v1.0.0</span>
                     </div>
-                </footer>
+                </footer> */}
             </div>
         )}
         </>

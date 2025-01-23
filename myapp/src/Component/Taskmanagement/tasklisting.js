@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { alltasks } from "../../FeatureRedux/subtaskSlice";
 
@@ -9,10 +9,24 @@ function Tasklisting() {
   );
 
   const [openMenuIndex, setOpenMenuIndex] = useState(null);
+  const menuRef = useRef(null); // Reference to the dropdown menu
 
   useEffect(() => {
     dispatch(alltasks());
   }, [dispatch]);
+
+  // Close menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setOpenMenuIndex(null); // Close menu when clicking outside
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   const getStatusClass = (status) => {
     switch (status) {
@@ -34,16 +48,19 @@ function Tasklisting() {
   };
 
   const renderActions = (task, index) => (
-    <div className="relative">
+    <div className="relative inline-block">
       <button
         onClick={() => handleMenuToggle(index)}
         className="text-gray-600 hover:text-gray-800"
         aria-expanded={openMenuIndex === index}
       >
-        ...
+        ⋮
       </button>
       {openMenuIndex === index && (
-        <div className="absolute top-full left-0 mt-2 bg-white border border-gray-200 rounded shadow-md z-10">
+        <div
+          ref={menuRef} // Attach the reference here
+          className="absolute right-0 top-full mt-2 bg-white border border-gray-200 rounded shadow-md z-10 whitespace-nowrap"
+        >
           <button
             onClick={() => console.log("Editing task:", task)}
             className="block w-full text-black text-left px-4 py-2 hover:bg-gray-100"
