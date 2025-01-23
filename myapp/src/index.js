@@ -113,6 +113,7 @@ import ProjectSetting from './Component/Settings/NestedComponentSettings/project
 import Taskindex from './Component/Taskmanagement/taskindex';
 import Projectdetal from './Component/Taskmanagement/projectdetailpageintask/projectdetal';
 import Attendanceindex from './Component/Attendance/attendanceindex';
+import Test from './Component/test';
 
 // ProtectedRoute Component
 const ProtectedRoute = ({ element }) => {
@@ -168,6 +169,7 @@ const router = createBrowserRouter([
         ],
       },
       { path: '/attendance', element: <Attendanceindex /> },
+      {path:'/test' ,element:<Test/> }
     ],
   },
   { path: '/signin', element: <Sign_in /> },
