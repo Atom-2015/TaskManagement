@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axiosInstance from "../axiosInstance";
+import axiosInstance from "../../axiosInstance";
 
 // Async Thunk to Add Task
 export const addtask = createAsyncThunk(

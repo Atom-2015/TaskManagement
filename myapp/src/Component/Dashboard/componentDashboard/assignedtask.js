@@ -2,12 +2,20 @@ import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { assigned_by } from "../../../FeatureRedux/task/taskassignedbymeSlice";
 import StatusButton from "./statusbutton"; // Reusing StatusButton component
+import { CirclePlus } from 'lucide-react';
+import AddAssignedTask from "./AssignedAddtask";
+
 
 function AssignedTasks() {
   const dispatch = useDispatch();
   const { task, isLoading, isError, errorMessage } = useSelector(
     (state) => state.alltaskcreatedbyme
   );
+
+  const [isModalOpen,setIsModalOpen]=useState(false)
+  const toggleModal=()=>setIsModalOpen(!isModalOpen)
+
+
 
   useEffect(() => {
     dispatch(assigned_by());
@@ -26,9 +34,15 @@ function AssignedTasks() {
     }
   };
 
+  
+
   return (
     <div className="w-[full] bg-[#354759] p-4 rounded-lg shadow-lg">
-      <h2 className="text-[24px] font-thin mb-3 text-white">Assigned Tasks</h2>
+      <div className="flex flex-row justify-between">
+      <span className=" text-[24px] font-thin mb-3 text-white">Assigned Tasks</span>
+      <span className="text-white hover:cursor-pointer" onClick={toggleModal}>{<CirclePlus/>  }</span>
+      </div>
+      
 
       {/* Header */}
       <div className="grid grid-cols-7 bg-gray-300 text-gray-700 font-medium text-xs py-2 px-3 rounded-t-md">
@@ -102,6 +116,8 @@ function AssignedTasks() {
           }
         `}
       </style>
+
+      {isModalOpen && <AddAssignedTask isModalOpen={isModalOpen} closemodal={()=>setIsModalOpen((val)=> !val)} />} 
     </div>
   );
 }

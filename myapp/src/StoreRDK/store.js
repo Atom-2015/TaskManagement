@@ -9,7 +9,7 @@ import alltaskuserspecificSlice from '../FeatureRedux/alltaskuserspecific';
 import alltaskcreatedbyme from '../FeatureRedux/task/taskassignedbymeSlice';
 import taskSlice from '../FeatureRedux/task/updatetaskSlice';
 import updateUser from '../FeatureRedux/user/updateUser_slice'; // Import the reducer for editing user
-
+import addtask  from '../FeatureRedux/task/addtaskSlice'
 export const store = configureStore({
     reducer: {
         DeleteImage: analyseDeleteImageSlice,
@@ -22,5 +22,6 @@ export const store = configureStore({
         alltaskcreatedbyme: alltaskcreatedbyme,
         tasks: taskSlice,
         user: updateUser, // Add the reducer here
+
     },
 });

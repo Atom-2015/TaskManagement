@@ -113,6 +113,7 @@ import ProjectSetting from './Component/Settings/NestedComponentSettings/project
 import Taskindex from './Component/Taskmanagement/taskindex';
 import Projectdetal from './Component/Taskmanagement/projectdetailpageintask/projectdetal';
 import Attendanceindex from './Component/Attendance/attendanceindex';
+import TaskDashboard from './Component/Dashboard/componentDashboard/TaskDashboard';
 import Test from './Component/test';
 
 // ProtectedRoute Component
@@ -162,6 +163,10 @@ const router = createBrowserRouter([
         ],
       },
       {
+        path:'/taskDashboard',
+        element: <TaskDashboard/>
+      },
+      {
         path: '/settings',
         element: <Settingindex />,
         children: [
@@ -175,6 +180,8 @@ const router = createBrowserRouter([
   { path: '/signin', element: <Sign_in /> },
   { path: '/signup', element: <Sign_up /> },
 ]);
+
+
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
