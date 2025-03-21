@@ -65,7 +65,7 @@ const ProjectCost = () => {
       <h2 className="text-2xl font-bold text-gray-800 mb-6">{projectData.name}</h2>
 
       {/* Editable Project Cost Overview */}
-      <table className="w-full border-collapse border border-gray-300 mb-6">
+      {/* <table className="w-full border-collapse border border-gray-300 mb-6">
         <thead>
           <tr className="bg-gray-100 text-left">
             <th className="border p-3">Project Value (₹)</th>
@@ -78,7 +78,7 @@ const ProjectCost = () => {
               <input
                 type="number"
                 value={projectData.totalAmount}
-                onChange={handleTotalAmountChange}
+                // onChange={handleTotalAmountChange}
                 className="w-full p-2 border rounded"
               />
             </td>
@@ -86,17 +86,17 @@ const ProjectCost = () => {
               <input
                 type="number"
                 value={projectData.totalSpent}
-                onChange={handleTotalSpentChange}
+                // onChange={handleTotalSpentChange}
                 className="w-full p-2 border rounded"
               />
             </td>
           </tr>
         </tbody> 
-      </table>
+      </table> */}
 
       {/* Users Table */}
       <h3 className="text-lg font-semibold text-gray-700 mb-3">User-wise Expenditure</h3>
-      <table className="w-full border-collapse border border-gray-300 text-gray-700">
+      {/* <table className="w-full border-collapse border border-gray-300 text-gray-700">
         <thead>
           <tr className="bg-gray-200 text-left">
             <th className="border p-3">User Name</th>
@@ -127,17 +127,17 @@ const ProjectCost = () => {
             </tr>
           ))}
         </tbody>
-      </table>
+      </table> */}
 
       {/* Add User Button */}
-      <div className="flex justify-center mt-6">
+      {/* <div className="flex justify-center mt-6">
         <button
           onClick={addUser}
           className="bg-blue-500 text-white px-5 py-2 rounded hover:bg-blue-600"
         >
           Add User
         </button>
-      </div>
+      </div> */}
     </div>
   );
 };

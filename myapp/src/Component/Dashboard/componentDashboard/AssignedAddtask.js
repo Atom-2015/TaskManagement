@@ -15,6 +15,8 @@ import Calender from "react-calendar";
 import { Country, State, City } from "country-state-city";
 import { AudioRecorder } from 'react-audio-voice-recorder';
 import { FaClock } from "react-icons/fa";
+import { allUser } from '../../../FeatureRedux/alluserSlice'
+import {projectlist} from '../../../FeatureRedux/projectlistSlice'
 
 import WaveSurfer from 'wavesurfer.js';
 import {
@@ -37,14 +39,14 @@ function AddAssignedTask({ isModalOpen, closemodal }) {
   const [formData, setFormData] = useState({
     title: "",
     ProjectName: "",
-    taskAssign:'',
+    taskAssign: '',
     description: "",
-    taskAssignwith:'',
+    taskAssignwith: '',
     start_date: "",
     end_date: "",
     priority: "LOW",
     fileName: "",
-    
+
     budget: "",
     repeat: [],
     reminder: '',
@@ -126,9 +128,12 @@ function AddAssignedTask({ isModalOpen, closemodal }) {
   }, [repeatType, repeatDays, repeatWeeks, repeatMonths]);
 
 
+const   projectData =   useSelector((s)=> s.projectlist.projects)
+// console.log(JSON.stringify(projectData , null , 2))
 
-
-
+useEffect(()=>{
+   dispatch(projectlist())
+},[])
 
 
   useEffect(() => {
@@ -293,6 +298,14 @@ function AddAssignedTask({ isModalOpen, closemodal }) {
     }));
   };
 
+
+  const user = useSelector((state) => state.allUser.users);
+  console.log(`this is the data of all users ${JSON.stringify(user)}`);
+
+  useEffect(() => {
+    dispatch(allUser())
+  }, [])
+
   return (
     <Dialog open={isModalOpen} TransitionComponent={Fade} transitionDuration={900} onClose={closemodal} fullWidth maxWidth="md">
       <DialogTitle className="text-center bg-gray-800 relative text-gray-100">
@@ -336,9 +349,11 @@ function AddAssignedTask({ isModalOpen, closemodal }) {
               <MenuItem value="">
                 <em>Select User</em>
               </MenuItem>
-              <MenuItem value="Ntpc">Ntpc</MenuItem>
-              <MenuItem value="railway">railway</MenuItem>
-              <MenuItem value="bank">bank</MenuItem>
+              {projectData.map((p) => (
+                <MenuItem key={p._id} value={p.name}>
+                  {p.name}
+                </MenuItem>
+              ))}
             </Select>
             <FormHelperText sx={{ color: "white" }}></FormHelperText>
           </FormControl>
@@ -376,9 +391,15 @@ function AddAssignedTask({ isModalOpen, closemodal }) {
               <MenuItem value="">
                 <em>User Task Assign</em>
               </MenuItem>
-              <MenuItem value="Rahul">Rahul</MenuItem>
-              <MenuItem value="Arun">Arun</MenuItem>
-              <MenuItem value="Varun">Varun</MenuItem>
+              { user ?  user.map((u) => (
+                <MenuItem key={u._id} value={u.name}>
+                  {u.name}
+                </MenuItem>
+              )) : (
+                <MenuItem value="">
+                <em> No User Found</em> 
+              </MenuItem>
+              )}
             </Select>
           </FormControl>
 
@@ -504,9 +525,15 @@ function AddAssignedTask({ isModalOpen, closemodal }) {
               <MenuItem value="">
                 <em>Select in User</em>
               </MenuItem>
-              <MenuItem value="Rahul">Rahul</MenuItem>
-              <MenuItem value="Arun">Arun</MenuItem>
-              <MenuItem value="Varun">Varun</MenuItem>
+              { user ?  user.map((u) => (
+                <MenuItem key={u._id} value={u.name}>
+                  {u.name}
+                </MenuItem>
+              )) : (
+                <MenuItem value="">
+                <em> No User Found</em> 
+              </MenuItem>
+              )}
             </Select>
           </FormControl>
 
@@ -808,7 +835,7 @@ function AddAssignedTask({ isModalOpen, closemodal }) {
                       onStart={() => setIsRecording(true)} // Handle start of recording
                       onError={(error) => console.error('Recording Error:', error)} // Log any recording errors
                     />
-                    
+
                     <button
                       className="mt-2 px-3 py-1 bg-red-500 text-white rounded-md"
                       onClick={() => setIsRecording(false)} // Stop recording when clicked

@@ -300,7 +300,7 @@ function Sidebar() {
 
             {/* Sidebar */}
             <div style={{
-                width: '13%',
+                width: '8%',
                 position: 'fixed',
                 top: '0px',
                 marginTop:'30px',
