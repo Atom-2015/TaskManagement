@@ -173,12 +173,12 @@ function ProjectList1() {
                               >
                                 <span>{project.name}</span>
                                 <button
-                            className="hidden p-1 ml-2 bg-blue-100 text-black rounded-lg"
+                            className="hidden px-2 ml-2  text-blue-600 border-2  border-purple-600  rounded-lg"
                             onClick={() =>  navigate(`/project/${project._id}`)}
                           >
                             {/* <FaEye /> */}
 
-                            <span>View</span>
+                            <span >View Project</span>
                           </button>
 
                               </div>

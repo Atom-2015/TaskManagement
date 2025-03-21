@@ -45,7 +45,7 @@ function AddProjectButton1() {
     country: "", // Default to India
     state: "",
     city: "",
-    Area:""
+    Area: ""
   });
 
   useEffect(() => {
@@ -88,46 +88,56 @@ function AddProjectButton1() {
   const handleCountryChange = (e) => {
     const countryCode = e.target.value;
     setSelectedCountry(countryCode);
+
+    const countryObj = countries.find((c) => c.isoCode === countryCode);
+
+    // Fetch states for the selected country
+    const fetchedStates = State.getStatesOfCountry(countryCode);
+    setStates(fetchedStates);
+
+    // Reset state and city
     setSelectedState("");
     setSelectedCity("");
+    setCities([]);
 
-    const fetchState = State.getStatesOfCountry(countryCode);
-    setStates(fetchState);
-
+    // Update formData
     setFormData((prev) => ({
       ...prev,
-      country: countries.find((c) => c.isoCode === countryCode)?.name || "",
-      state: "",
-      city: "",
+      country: countryObj ? countryObj.name : "",
+      state: "", // Reset state to empty string
+      city: "", // Reset city to empty string
     }));
   };
 
   const handleStateChange = (e) => {
-    const stateCode = e.target.value;
-    setSelectedState(stateCode);
-    setSelectedCity("");
+    const stateCode = e.target.value; // Get the selected state code
+    setSelectedState(stateCode); // Update the selected state
+    setSelectedCity(""); // Reset the selected city
 
-    const fetchCities = City.getCitiesOfState(selectedCountry, stateCode);
-    if (Array.isArray(fetchCities)) {
-      setCities(fetchCities);
-    } else {
-      console.error("No cities returned or invalid data format.");
-    }
+    // Fetch cities for the selected state
+    const fetchedCities = City.getCitiesOfState(selectedCountry, stateCode) || [];
+    setCities(fetchedCities); // Ensure it's always an array
 
+    // Find the state name, or pass an empty string if not found
+    const stateName = states.find((s) => s.isoCode === stateCode)?.name || "";
+
+    // Update formData
     setFormData((prev) => ({
       ...prev,
-      state: states.find((s) => s.isoCode === stateCode)?.name || "",
-      city: "",
+      state: stateName, // Store the state name
+      city: "", // Reset city when state changes
     }));
   };
+
 
   const handleCityChange = (e) => {
     const cityName = e.target.value;
     setSelectedCity(cityName);
 
+    // Update formData
     setFormData((prev) => ({
       ...prev,
-      city: cityName,
+      city: cityName || "", // Pass empty if no city is selected
     }));
   };
 
@@ -149,7 +159,13 @@ function AddProjectButton1() {
       alert("Project Name and Start Date are required.");
       return;
     }
-    dispatch(AddProject(formData));
+    const submissionData = {
+      ...formData,
+      state: formData.state || "", // Pass empty string if state is not available
+      city: formData.city || "", // Pass empty string if city is not available+++++++++++++++++++++++++++++++++++++
+    };
+
+    dispatch(AddProject(submissionData));
 
     setSuccessMessage("Project Submitted Successfully")
     setTimeout(() => {
@@ -171,10 +187,10 @@ function AddProjectButton1() {
         team_members: [],
         status: "",
         budget: "",
-        country: "", // Reset to India
+        country: "india", // Reset to India
         state: "",
         city: "",
-        Area:""
+        Area: ""
       });
     }
   };
@@ -248,11 +264,11 @@ function AddProjectButton1() {
               <div className="flex flex-row gap-4">
                 <div className="flex flex-col flex-1">
                   <label className="font-semibold text-gray-700">Start Date</label>
-                  <input type="date" name="start_date" onClick={(e)=>e.target.showPicker()} value={formData.start_date} onChange={handleChange} className="w-full border border-blue-300 px-1 py-[0.5px] rounded-sm" />
+                  <input type="date" name="start_date" onClick={(e) => e.target.showPicker()} value={formData.start_date} onChange={handleChange} className="w-full border border-blue-300 px-1 py-[0.5px] rounded-sm" />
                 </div>
                 <div className="flex flex-col flex-1">
                   <label className="font-semibold text-gray-700">End Date</label>
-                  <input type="date" name="end_date" onClick={(e)=>e.target.showPicker()} value={formData.end_date} onChange={handleChange} className="w-full border border-blue-300 px-1 py-[0.5px] rounded-sm" />
+                  <input type="date" name="end_date" onClick={(e) => e.target.showPicker()} value={formData.end_date} onChange={handleChange} className="w-full border border-blue-300 px-1 py-[0.5px] rounded-sm" />
                 </div>
               </div>
 
@@ -273,41 +289,81 @@ function AddProjectButton1() {
                 <JoditEditor ref={editor} value={description} onChange={handleDescriptionChange} className="w-full border border-blue-300 px-1 py-[0.5px] rounded-sm" />
               </div>
 
-            <div className="flex flex-row  gap-2">
-              <div className="w-full mt-4">
-                <label className="font-semibold text-gray-700">Country</label>
-                <select onChange={handleCountryChange} value={selectedCountry} className="w-full border border-blue-300 px-2 py-1 rounded-sm">
-                  <option value="" disabled>Select a country</option>
-                  {countries.map((country) => (
-                    <option key={country.isoCode} value={country.isoCode}>{country.name}</option>
-                  ))}
-                </select>
+              <div className="flex flex-row gap-2">
+                {/* Country Dropdown */}
+                <div className="w-full mt-4">
+                  <label className="font-semibold text-gray-700">Country</label>
+                  <select
+                    onChange={handleCountryChange}
+                    value={selectedCountry}
+                    className="w-full border border-blue-300 px-2 py-1 rounded-sm"
+                    required // Add required attribute
+                  >
+                    <option value="" disabled>
+                      Select a country
+                    </option>
+                    {countries.map((country) => (
+                      <option key={country.isoCode} value={country.isoCode}>
+                        {country.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* State Dropdown */}
+                <div className="w-full mt-4">
+                  <label className="font-semibold text-gray-700">State</label>
+                  <select
+                    onChange={handleStateChange}
+                    value={selectedState}
+                    className="w-full border border-blue-300 px-2 py-1 rounded-sm"
+                    required // Add required attribute
+                  >
+                    <option value="" disabled>
+                      Select a state
+                    </option>
+                    {states.length > 0 ? (
+                      states.map((state) => (
+                        <option key={state.isoCode} value={state.isoCode}>
+                          {state.name}
+                        </option>
+                      ))
+                    ) : (
+                      <option value="" disabled>
+                        No states available
+                      </option>
+                    )}
+                  </select>
+                </div>
+
+                {/* City Dropdown */}
+                <div className="w-full mt-4">
+                  <label className="font-semibold text-gray-700">City</label>
+                  <select
+                    onChange={handleCityChange}
+                    value={selectedCity}
+                    className="w-full border border-blue-300 px-2 py-1 rounded-sm"
+                    required // Add required attribute
+                  >
+                    <option value="" disabled>
+                      Select a city
+                    </option>
+                    {cities.length > 0 ? (
+                      cities.map((city) => (
+                        <option key={city.name} value={city.name}>
+                          {city.name}
+                        </option>
+                      ))
+                    ) : (
+                      <option value="" disabled>
+                        No cities available
+                      </option>
+                    )}
+                  </select>
+                </div>
               </div>
 
-              {/* State Dropdown */}
-              <div className="w-full mt-4">
-                <label className="font-semibold text-gray-700">State</label>
-                <select onChange={handleStateChange} value={selectedState} className="w-full border border-blue-300 px-2 py-1 rounded-sm">
-                  <option value="" disabled>Select a state</option>
-                  {states.map((state) => (
-                    <option key={state.isoCode} value={state.isoCode}>{state.name}</option>
-                  ))}
-                </select>
-              </div>
-
-              {/* City Dropdown */}
-              <div className="w-full mt-4">
-                <label className="font-semibold text-gray-700">City</label>
-                <select onChange={handleCityChange} value={selectedCity} className="w-full border border-blue-300 px-2 py-1 rounded-sm">
-                  <option value="" disabled>Select a city</option>
-                  {cities.map((city) => (
-                    <option key={city.name} value={city.name}>{city.name}</option>
-                  ))}
-                </select>
-              </div>
-            </div>
-
-            <div className="flex flex-col items-start">
+              <div className="flex flex-col items-start">
                 <label className="font-semibold text-gray-700">Area</label>
                 <input type="number" min='0' placeholder="Area in KM" name="Area" value={formData.Area} onChange={handleChange} className="w-full border border-blue-300 px-1 py-[0.5px] rounded-sm" />
               </div>

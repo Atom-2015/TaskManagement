@@ -17,10 +17,10 @@ function ProjectDetail() {
   };
 
   return (
-    <div className="bg-white p-8 flex flex-col gap-4 rounded-xl">
+    <div className="bg-white p-8 flex flex-col gap-4 rounded-xl ">
       
       {/* Project Company Details */}
-      <div className="bg-white rounded-lg shadow-lg p-4 w-full border border-[#808080]">
+      <div className="bg-white rounded-lg shadow-lg p-4  border border-[#808080]">
         <div className="flex justify-between items-center cursor-pointer" onClick={() => toggleSection("companyDetails")}>
           <h2 className="text-xl font-bold">Project Company Details</h2>
           <div className="flex gap-2">
