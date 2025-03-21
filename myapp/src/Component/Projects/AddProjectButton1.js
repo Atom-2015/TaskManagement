@@ -324,7 +324,7 @@ function AddProjectButton1() {
 
             {/* Modal Footer */}
             <div className="w-full p-2 flex justify-start space-x-2 shadow-md shadow-gray-500 bg-white">
-              <button onClick={toggleModal} className="text-gray-500 px-4 py-2 hover:bg-red-700 hover:text-white transition duration-300">Cancel</button>
+              <button onClick={toggleModal} className="text-gray-500 px-4 rounded-lg hover:rounded-lg py-2 hover:bg-red-700 hover:text-white transition duration-300">Cancel</button>
               <button onClick={(e) => handleSubmit(e)} className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-800 transition duration-300" disabled={isLoading}>
                 {isLoading ? "Creating..." : "Create"}
               </button>
