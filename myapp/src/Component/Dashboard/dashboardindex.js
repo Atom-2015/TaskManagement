@@ -19,9 +19,15 @@ function Dashboardindex() {
       <AttendanceSection />
 
          {/* Other components */}
-         <div className='mt-2  mb-6'>
+         <div className='mt-2  mb-6 flex flex-row'>
           {/* my pending task */}
-        <Taskview />
+          <div className='w-2/4'>
+                <div>
+                <Taskview />
+                </div>
+
+              
+        </div>
 
         {/* Task Assigned By me */}
       
@@ -36,7 +42,8 @@ function Dashboardindex() {
 
 
       </div>
-<div>  <AssignedTask /></div>
+
+<div className='w-2/4'>  <AssignedTask /></div>
    
 
    
