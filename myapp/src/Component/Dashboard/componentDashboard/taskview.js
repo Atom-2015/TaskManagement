@@ -60,17 +60,20 @@ function TaskView() {
     closeModal();
   };
 
+  // bg-[#354759] 
   return (
-    <div className="w-[full] bg-[#354759] p-4 rounded-lg shadow-md">
-      <h2 className="text-[25px] font-thin mb-3 text-white">My Task</h2>
-
+    <div>
+      <h2 className="text-[25px] font-thin mb-[-2px] mt-2 text-white flex justify-start ">My Task</h2>
+    <div className="w-[full]  bg-[#354759]  p-4 rounded-lg ">
+      
+     <div className=''>
       {/* Header */}
-      <div className="flex justify-between items-center bg-gray-300 text-gray-700 font-medium text-xs py-2 px-3 rounded-t-md">
+      <div className="flex justify-between items-center bg-gray-300  text-gray-700 font-medium text-xs py-2 px-2 rounded-t-md shadow-md">
         <div className="w-1/4">Project Name</div>
         <div className="w-1/4">Task</div>
         <div className="w-1/4">Assigned By</div>
         <div className="w-1/4">Quantity</div>
-        <div className="w-1/4">Units</div>
+        {/* <div className="w-1/4">Units</div> */}
         <div className="w-1/4">Progress</div>
         <div className="w-1/4 text-center">Status</div>
         <div className="w-1/4 text-center">Today's Update</div>
@@ -85,14 +88,14 @@ function TaskView() {
           tasks.map((task, index) => (
             <div
               key={index}
-              className="flex justify-between items-center bg-white shadow-sm rounded-md p-2 hover:shadow-lg transition-shadow text-xs"
+              className="flex justify-between items-center bg-white shadow-sm rounded-md py-2 px-1  gap-1 hover:shadow-lg transition-shadow text-xs"
             >
               {/* Task Details */}
               <div className="w-1/4 truncate text-gray-800 font-medium">{task.project_id?.name || 'No Project Name'}</div>
               <div className="w-1/4 truncate text-gray-800 font-medium">{task.title}</div>
               <div className="w-1/4 truncate text-gray-600">{task.assigned_by}</div>
-              <div className="w-1/4 truncate text-gray-600">{task.completedUnit}/{task.totalunit}</div>
-              <div className="w-1/4 truncate text-gray-600">{task.unittype}</div>
+              <div className="w-1/4 truncate text-gray-600">{task.completedUnit}/{task.totalunit}.{task.unittype}</div>
+             {/* <div className="w-1/4 truncate text-gray-600">{task.unittype}</div> */}
               <div className="w-1/4 truncate text-gray-600">
                 {((task.completedUnit / task.totalunit) * 100).toFixed(2)}%
               </div>
@@ -100,14 +103,14 @@ function TaskView() {
                 {task.status || "No updates"}
               </div>
               <div className="w-1/4 truncate text-gray-800 font-medium">
-                <button className="bg-primary rounded font-thin text-white">
+                <button className="bg-primary rounded font-thin text-white ">
                   <StatusButton taskId={task._id} />
                 </button>
               </div>
               <div className="w-1/4">
                 <button
                   onClick={() => openModal(task)}
-                  className="bg-teal-500 rounded text-white px-2 py-1"
+                  className="bg-teal-500 rounded text-white px-1 py-1"
                 >
                   Add Comment
                 </button>
@@ -145,6 +148,7 @@ function TaskView() {
             </div>
           </div>
         </div>
+        
       )}
 
       {/* Custom Scrollbar Styling */}
@@ -159,6 +163,8 @@ function TaskView() {
           }
         `}
       </style>
+      </div>
+    </div>
     </div>
   );
 }

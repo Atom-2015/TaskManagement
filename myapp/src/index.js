@@ -113,7 +113,9 @@ import ProjectSetting from './Component/Settings/NestedComponentSettings/project
 import Taskindex from './Component/Taskmanagement/taskindex';
 import Projectdetal from './Component/Taskmanagement/projectdetailpageintask/projectdetal';
 import Attendanceindex from './Component/Attendance/attendanceindex';
+import TaskDashboard from './Component/Dashboard/componentDashboard/TaskDashboard';
 import Test from './Component/test';
+import ProjectViewList from './Component/Projects/ProjectViewList';
 import ProjectCost from './Component/Taskmanagement/projectcost/projectcost';
 
 // ProtectedRoute Component
@@ -153,6 +155,7 @@ const router = createBrowserRouter([
     children: [
       { path: '/dashboard', element: <Dashboardindex /> },
       { path: '/projectManagement', element: <ProjectIndex /> },
+      { path:'/project/:id', element:<ProjectViewList/>},
       { path: '/userManagement', element: <UsermanagementIndex /> },
       {
         path: '/tasks',
@@ -164,6 +167,10 @@ const router = createBrowserRouter([
         ],
       },
       {
+        path:'/taskDashboard',
+        element: <TaskDashboard/>
+      },
+      {
         path: '/settings',
         element: <Settingindex />,
         children: [
@@ -171,13 +178,17 @@ const router = createBrowserRouter([
         ],
       },
       { path: '/attendance', element: <Attendanceindex /> },
-      {path:'/test' ,element:<Test/> }
+      {path:'/test' ,element:<Test/> },
+
+     
     ],
   },
   { path: '/signin', element: <Sign_in /> },
   { path: '/signup', element: <Sign_up /> },
   
 ]);
+
+
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(

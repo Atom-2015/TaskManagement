@@ -252,7 +252,8 @@ import React, { useState } from 'react';
  
 import './sidebar.css';
 import { useSelector, useDispatch } from 'react-redux';
-import { Gauge, Briefcase, Users, Settings, CalendarDays } from 'lucide-react';
+import { Gauge, Briefcase, Users, Settings, CalendarDays,TowerControl,AudioWaveform  } from 'lucide-react';
+import { BiTask } from "react-icons/bi";
 import Header from './header';
 
 function Sidebar() {
@@ -335,6 +336,18 @@ function Sidebar() {
                             <span>Dashboard</span>
                         </NavLink>
                     </div>
+                        
+                        {/*TaskDashboard*/}
+                    <div className="mb-4 relative group">
+                        <NavLink
+                            to='/taskDashboard' id='clicksidebar'
+                            className={({ isActive }) =>
+                                ` py-2 px-4 rounded-lg flex align-middle items-center gap-[10px] no-underline ${isActive ? "bg-gray-600 text-white" : "text-white hover:bg-gray-800"}`}
+                        >
+                            <BiTask size={30} />
+                            <span>TaskDashboard</span>
+                        </NavLink>
+                    </div>
 
                     {/* Dashboard Link */}
                     <div className="mb-4 relative group">
@@ -359,7 +372,29 @@ function Sidebar() {
                         </NavLink>
                     </div>
 
-                
+                    {/* leaves */}
+                    <div className="mb-4 relative group">
+                        <NavLink
+                            to='/leaves' id='clicksidebar'
+                            className={({ isActive }) =>
+                                ` py-2 px-4 rounded-lg flex align-middle items-center gap-[10px] no-underline ${isActive ? "bg-gray-600 text-white" : "text-white hover:bg-gray-800"}`}
+                        >
+                            <AudioWaveform size={20} />
+                            <span>Leaves</span>
+                        </NavLink>
+                    </div>
+
+                    {/* Payroll */}
+                    <div className="mb-4 relative group">
+                        <NavLink
+                            to='/Payroll' id='clicksidebar'
+                            className={({ isActive }) =>
+                                ` py-2 px-4 rounded-lg flex align-middle items-center gap-[10px] no-underline ${isActive ? "bg-gray-600 text-white" : "text-white hover:bg-gray-800"}`}
+                        >
+                            <TowerControl size={20} />
+                            <span>Payroll</span>
+                        </NavLink>
+                    </div>
 
                     {/* Billing Link */}
                     <div className="mb-4 relative group">
