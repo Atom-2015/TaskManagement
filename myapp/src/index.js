@@ -115,6 +115,7 @@ import Projectdetal from './Component/Taskmanagement/projectdetailpageintask/pro
 import Attendanceindex from './Component/Attendance/attendanceindex';
 import TaskDashboard from './Component/Dashboard/componentDashboard/TaskDashboard';
 import Test from './Component/test';
+import ProjectViewList from './Component/Projects/ProjectViewList';
 
 // ProtectedRoute Component
 const ProtectedRoute = ({ element }) => {
@@ -153,6 +154,7 @@ const router = createBrowserRouter([
     children: [
       { path: '/dashboard', element: <Dashboardindex /> },
       { path: '/projectManagement', element: <ProjectIndex /> },
+      { path:'/project/:id', element:<ProjectViewList/>},
       { path: '/userManagement', element: <UsermanagementIndex /> },
       {
         path: '/tasks',
@@ -174,7 +176,9 @@ const router = createBrowserRouter([
         ],
       },
       { path: '/attendance', element: <Attendanceindex /> },
-      {path:'/test' ,element:<Test/> }
+      {path:'/test' ,element:<Test/> },
+
+     
     ],
   },
   { path: '/signin', element: <Sign_in /> },

@@ -37,16 +37,16 @@ function AddAssignedTask({ isModalOpen, closemodal }) {
   const [formData, setFormData] = useState({
     title: "",
     ProjectName: "",
+    taskAssign:'',
     description: "",
+    taskAssignwith:'',
     start_date: "",
     end_date: "",
     priority: "LOW",
     fileName: "",
-    country: "",
-    state: "",
-    city: "",
+    
     budget: "",
-    repeatDates: [],
+    repeat: [],
     reminder: '',
     audioFile: null,
   });
@@ -67,9 +67,9 @@ function AddAssignedTask({ isModalOpen, closemodal }) {
   const [showReminder, setShowReminder] = useState(false);
   const [reminderInfo, setReminderInfo] = useState(null);
   const [repeatType, setRepeatType] = useState("daily");
-const [repeatDays, setRepeatDays] = useState([]);
-const [repeatWeeks, setRepeatWeeks] = useState([]);
-const [repeatMonths, setRepeatMonths] = useState([]);
+  const [repeatDays, setRepeatDays] = useState([]);
+  const [repeatWeeks, setRepeatWeeks] = useState([]);
+  const [repeatMonths, setRepeatMonths] = useState([]);
   const [audioBlob, setAudioBlob] = useState(null);
   const waveformRef = useRef(null);
   const wavesurfer = useRef(null);
@@ -81,12 +81,12 @@ const [repeatMonths, setRepeatMonths] = useState([]);
     const pastDaysOfMonth = (today - firstDayOfMonth) / (1000 * 60 * 60 * 24);
     return Math.ceil((pastDaysOfMonth + firstDayOfMonth.getDay() + 1) / 7);
   };
-  
+
   // Handle repeat type change
   const handleRepeatTypeChange = (e) => {
     setRepeatType(e.target.value);
   };
-  
+
   // Handle selecting particular days for daily repeat
   const handleRepeatDaysChange = (day) => {
     setRepeatDays((prevDays) =>
@@ -95,7 +95,7 @@ const [repeatMonths, setRepeatMonths] = useState([]);
         : [...prevDays, day]
     );
   };
-  
+
   // Handle selecting weeks for weekly repeat
   const handleRepeatWeeksChange = (week) => {
     setRepeatWeeks((prevWeeks) =>
@@ -104,7 +104,7 @@ const [repeatMonths, setRepeatMonths] = useState([]);
         : [...prevWeeks, week]
     );
   };
-  
+
   // Handle selecting months for monthly repeat
   const handleRepeatMonthsChange = (month) => {
     setRepeatMonths((prevMonths) =>
@@ -113,7 +113,7 @@ const [repeatMonths, setRepeatMonths] = useState([]);
         : [...prevMonths, month]
     );
   };
-  
+
   // Update form data when repeat options change
   useEffect(() => {
     setFormData((prev) => ({
@@ -124,8 +124,8 @@ const [repeatMonths, setRepeatMonths] = useState([]);
       repeatMonths,
     }));
   }, [repeatType, repeatDays, repeatWeeks, repeatMonths]);
-  
-  
+
+
 
 
 
@@ -345,43 +345,43 @@ const [repeatMonths, setRepeatMonths] = useState([]);
 
 
           <FormControl fullWidth sx={{ bgcolor: "gray.900", marginTop: "10px" }}>
-              <InputLabel id="task-assign-label" sx={{ color: "white", "&.Mui-focused": { color: "white" } }}>
-                User Task Assign
-              </InputLabel>
-              <Select
-                labelId="task-assign-label"
-                id="task-assign"
-                name="taskAssign"
-                value={formData.taskAssign}
-                onChange={handleInputChange}
-                label="User Task Assign"
-                sx={{
-                  color: "white",
-                  borderRadius: "15px",
-                  "& .MuiOutlinedInput-notchedOutline": { borderColor: "gray" },
-                  "&:hover .MuiOutlinedInput-notchedOutline": { borderColor: "white" },
-                  "&.Mui-focused .MuiOutlinedInput-notchedOutline": { borderColor: "white" },
-                  "& .MuiSvgIcon-root": { color: "white" },
-                }}
-                MenuProps={{
-                  PaperProps: {
-                    sx: {
-                      bgcolor: "gray",
-                      color: "white",
-                      "& .MuiMenuItem-root:hover": { bgcolor: "black" },
-                    },
+            <InputLabel id="task-assign-label" sx={{ color: "white", "&.Mui-focused": { color: "white" } }}>
+              User Task Assign
+            </InputLabel>
+            <Select
+              labelId="task-assign-label"
+              id="task-assign"
+              name="taskAssign"
+              value={formData.taskAssign}
+              onChange={handleInputChange}
+              label="User Task Assign"
+              sx={{
+                color: "white",
+                borderRadius: "15px",
+                "& .MuiOutlinedInput-notchedOutline": { borderColor: "gray" },
+                "&:hover .MuiOutlinedInput-notchedOutline": { borderColor: "white" },
+                "&.Mui-focused .MuiOutlinedInput-notchedOutline": { borderColor: "white" },
+                "& .MuiSvgIcon-root": { color: "white" },
+              }}
+              MenuProps={{
+                PaperProps: {
+                  sx: {
+                    bgcolor: "gray",
+                    color: "white",
+                    "& .MuiMenuItem-root:hover": { bgcolor: "black" },
                   },
-                }}
-              >
-                <MenuItem value="">
-                  <em>User Task Assign</em>
-                </MenuItem>
-                <MenuItem value="Rahul">Rahul</MenuItem>
-                <MenuItem value="Arun">Arun</MenuItem>
-                <MenuItem value="Varun">Varun</MenuItem>
-              </Select>
-            </FormControl>
-          
+                },
+              }}
+            >
+              <MenuItem value="">
+                <em>User Task Assign</em>
+              </MenuItem>
+              <MenuItem value="Rahul">Rahul</MenuItem>
+              <MenuItem value="Arun">Arun</MenuItem>
+              <MenuItem value="Varun">Varun</MenuItem>
+            </Select>
+          </FormControl>
+
 
           {/* Task Name */}
           <TextField
@@ -428,7 +428,7 @@ const [repeatMonths, setRepeatMonths] = useState([]);
           {/* Dropdowns - User Task Assign & Category */}
           <div className="flex gap-4">
             {/* User Task Assign */}
-           
+
 
             {/* Category Selection */}
             <FormControl fullWidth sx={{ bgcolor: "gray.900", marginTop: "10px" }}>
@@ -471,7 +471,45 @@ const [repeatMonths, setRepeatMonths] = useState([]);
           </div>
 
           {/* Select User to Keep in Loop */}
-         
+
+          <FormControl fullWidth sx={{ bgcolor: "gray.900", marginTop: "10px" }}>
+            <InputLabel id="task-assign-label" sx={{ color: "white", "&.Mui-focused": { color: "white" } }}>
+              Select User in loop
+            </InputLabel>
+            <Select
+              labelId="task-assign-label"
+              id=""
+              name="taskAssignwith"
+              value={formData.taskAssignwith}
+              onChange={handleInputChange}
+              label="Select User in a loop"
+              sx={{
+                color: "white",
+                borderRadius: "15px",
+                "& .MuiOutlinedInput-notchedOutline": { borderColor: "gray" },
+                "&:hover .MuiOutlinedInput-notchedOutline": { borderColor: "white" },
+                "&.Mui-focused .MuiOutlinedInput-notchedOutline": { borderColor: "white" },
+                "& .MuiSvgIcon-root": { color: "white" },
+              }}
+              MenuProps={{
+                PaperProps: {
+                  sx: {
+                    bgcolor: "gray",
+                    color: "white",
+                    "& .MuiMenuItem-root:hover": { bgcolor: "black" },
+                  },
+                },
+              }}
+            >
+              <MenuItem value="">
+                <em>Select in User</em>
+              </MenuItem>
+              <MenuItem value="Rahul">Rahul</MenuItem>
+              <MenuItem value="Arun">Arun</MenuItem>
+              <MenuItem value="Varun">Varun</MenuItem>
+            </Select>
+          </FormControl>
+
 
           {/* Priority */}
           <div className="flex items-center space-x-4">
@@ -511,34 +549,34 @@ const [repeatMonths, setRepeatMonths] = useState([]);
           </div>
 
           {formData.repeat && (
-  <div>
-  <FormControl fullWidth sx={{ bgcolor: "gray.900", marginTop: "10px" }}>
-    <InputLabel id="repeat-type-label" sx={{ color: "white", "&.Mui-focused": { color: "white" } }}>
-      Repeat Type
-    </InputLabel>
-    <Select
-      labelId="repeat-type-label"
-      id="repeat-type"
-      value={repeatType}
-      onChange={handleRepeatTypeChange}
-      label="Repeat Type"
-      sx={{
-        color: "white",
-        borderRadius: "15px",
-        "& .MuiOutlinedInput-notchedOutline": { borderColor: "gray" },
-        "&:hover .MuiOutlinedInput-notchedOutline": { borderColor: "white" },
-        "&.Mui-focused .MuiOutlinedInput-notchedOutline": { borderColor: "white" },
-        "& .MuiSvgIcon-root": { color: "white" },
-      }}
-    >
-      <MenuItem value="daily">Daily</MenuItem>
-      <MenuItem value="weekly">Weekly</MenuItem>
-      <MenuItem value="monthly">Monthly</MenuItem>
-    </Select>
-  </FormControl>
+            <div>
+              <FormControl fullWidth sx={{ bgcolor: "gray.900", marginTop: "10px" }}>
+                <InputLabel id="repeat-type-label" sx={{ color: "white", "&.Mui-focused": { color: "white" } }}>
+                  Repeat Type
+                </InputLabel>
+                <Select
+                  labelId="repeat-type-label"
+                  id="repeat-type"
+                  value={repeatType}
+                  onChange={handleRepeatTypeChange}
+                  label="Repeat Type"
+                  sx={{
+                    color: "white",
+                    borderRadius: "15px",
+                    "& .MuiOutlinedInput-notchedOutline": { borderColor: "gray" },
+                    "&:hover .MuiOutlinedInput-notchedOutline": { borderColor: "white" },
+                    "&.Mui-focused .MuiOutlinedInput-notchedOutline": { borderColor: "white" },
+                    "& .MuiSvgIcon-root": { color: "white" },
+                  }}
+                >
+                  <MenuItem value="daily">Daily</MenuItem>
+                  <MenuItem value="weekly">Weekly</MenuItem>
+                  <MenuItem value="monthly">Monthly</MenuItem>
+                </Select>
+              </FormControl>
 
-  {/* Daily Repeat Section */}
-  {/* {repeatType === "daily" && (
+              {/* Daily Repeat Section */}
+              {/* {repeatType === "daily" && (
     <div className="mt-4">
       <h4 className="text-white">Select Particular Days</h4>
       <div className="flex flex-wrap gap-2">
@@ -556,48 +594,48 @@ const [repeatMonths, setRepeatMonths] = useState([]);
     </div>
   )} */}
 
-  {/* Weekly Repeat Section */}
-  {repeatType === "weekly" && (
-    <div className="mt-4">
-      <h4 className="text-white">Select Days of the Week</h4>
-      <div className="flex flex-wrap gap-2">
-        {["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"].map((day) => (
-          <button
-            key={day}
-            type="button"
-            onClick={() => handleRepeatDaysChange(day)}
-            className={`px-3 py-1 rounded-md ${repeatDays.includes(day) ? "bg-green-500 text-black font-bold" : "bg-gray-700 text-white"}`}
-          >
-            {repeatDays.includes(day) ? "✔ " : ""} {day}
-          </button>
-        ))}
-      </div>
-    </div>
-  )}
+              {/* Weekly Repeat Section */}
+              {repeatType === "weekly" && (
+                <div className="mt-4">
+                  <h4 className="text-white">Select Days of the Week</h4>
+                  <div className="flex flex-wrap gap-2">
+                    {["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"].map((day) => (
+                      <button
+                        key={day}
+                        type="button"
+                        onClick={() => handleRepeatDaysChange(day)}
+                        className={`px-3 py-1 rounded-md ${repeatDays.includes(day) ? "bg-green-500 text-black font-bold" : "bg-gray-700 text-white"}`}
+                      >
+                        {repeatDays.includes(day) ? "✔ " : ""} {day}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
 
-  {/* Monthly Repeat Section */}
-  {repeatType === "monthly" && (
-    <div className="mt-4">
-      <h4 className="text-white">Select Months</h4>
-      <div className="flex flex-wrap gap-2">
-        {[
-          "January", "February", "March", "April", "May", "June",
-          "July", "August", "September", "October", "November", "December"
-        ].map((month) => (
-          <button
-            key={month}
-            type="button"
-            onClick={() => handleRepeatMonthsChange(month)}
-            className={`px-3 py-1 rounded-md ${repeatMonths.includes(month) ? "bg-green-500 text-black font-bold" : "bg-gray-700 text-white"}`}
-          >
-            {repeatMonths.includes(month) ? "✔ " : ""} {month}
-          </button>
-        ))}
-      </div>
-    </div>
-  )}
-</div>
-)}
+              {/* Monthly Repeat Section */}
+              {repeatType === "monthly" && (
+                <div className="mt-4">
+                  <h4 className="text-white">Select Months</h4>
+                  <div className="flex flex-wrap gap-2">
+                    {[
+                      "January", "February", "March", "April", "May", "June",
+                      "July", "August", "September", "October", "November", "December"
+                    ].map((month) => (
+                      <button
+                        key={month}
+                        type="button"
+                        onClick={() => handleRepeatMonthsChange(month)}
+                        className={`px-3 py-1 rounded-md ${repeatMonths.includes(month) ? "bg-green-500 text-black font-bold" : "bg-gray-700 text-white"}`}
+                      >
+                        {repeatMonths.includes(month) ? "✔ " : ""} {month}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
           {/* Budget */}
           <TextField
             fullWidth
@@ -770,15 +808,7 @@ const [repeatMonths, setRepeatMonths] = useState([]);
                       onStart={() => setIsRecording(true)} // Handle start of recording
                       onError={(error) => console.error('Recording Error:', error)} // Log any recording errors
                     />
-                    {/* <AudioRecorder
-                      onRecordingComplete={addAudioElement}
-                      audioTrackConstraints={{
-                        noiseSuppression: true,
-                        echoCancellation: true,
-                      }}
-                      downloadOnSavePress={true}
-                      downloadFileExtension="webm"
-                    /> */}
+                    
                     <button
                       className="mt-2 px-3 py-1 bg-red-500 text-white rounded-md"
                       onClick={() => setIsRecording(false)} // Stop recording when clicked

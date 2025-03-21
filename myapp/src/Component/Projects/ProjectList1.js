@@ -3,20 +3,27 @@ import { useDispatch, useSelector } from "react-redux";
 import { projectlist } from "../../FeatureRedux/projectlistSlice";
 import moment from "moment";
 import { FaFilter } from "react-icons/fa"; // Import a filter icon
+import { FaEye } from "react-icons/fa";
+import ProjectViewList from "./ProjectViewList";
+import { useNavigate } from "react-router-dom";
+
+
 
 function ProjectList1() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { projects } = useSelector((state) => state.projectlist);
   console.log(`Projects: ${JSON.stringify(projects)}`);
 
   const [filteredProjects, setFilteredProjects] = useState([]);
+  const [selected,setSelected]=useState(null)
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [isSearchVisible, setIsSearchVisible] = useState(false);
   const [sortOrder, setSortOrder] = useState({ field: "id", order: "asc" }); // Track sorting field and order
   const searchInputRef = useRef(null);
-  const []
-  
+
+
   const modalRef = useRef(null);
 
   // Fetch projects on mount
@@ -158,18 +165,35 @@ function ProjectList1() {
                     filteredProjects.map((project) => (
                       <tr key={project._id?.toString()} className="border border-gray-400 bg-white hover:bg-gray-100">
                         <td className="px-4 py-2 border border-gray-400">{project.originalIndex}</td>
-                        <td className="px-4 py-2 border border-gray-400">{project.name}</td>
+                        <td className="px-4 py-2 border border-gray-400 relative">
+                          
+                              <div className=" flex justify-between items-center cursor-pointer" 
+                              onMouseEnter={(e)=>e.currentTarget.querySelector('button').classList.remove('hidden')}
+                              onMouseLeave={(e)=>e.currentTarget.querySelector('button').classList.add('hidden')}
+                              >
+                                <span>{project.name}</span>
+                                <button
+                            className="hidden p-1 ml-2 bg-blue-100 text-black rounded-lg"
+                            onClick={() =>  navigate(`/project/${project._id}`)}
+                          >
+                            {/* <FaEye /> */}
+
+                            <span>View</span>
+                          </button>
+
+                              </div>
+                          
+                          </td>
                         <td className="px-4 py-2 border border-gray-400">
                           <select
-                            className={`px-2 py-1 w-full outline-none rounded text-white cursor-pointer ${
-                              project.status === "Active"
+                            className={`px-2 py-1 w-full outline-none rounded text-white cursor-pointer ${project.status === "Active"
                                 ? "bg-green-500"
                                 : project.status === "In Progress"
-                                ? "bg-blue-500"
-                                : project.status === "Completed"
-                                ? "bg-gray-500"
-                                : "bg-red-500"
-                            }`}
+                                  ? "bg-blue-500"
+                                  : project.status === "Completed"
+                                    ? "bg-gray-500"
+                                    : "bg-red-500"
+                              }`}
                             value={project.status}
                             onChange={(e) => {
                               // Handle status update logic here
@@ -191,11 +215,10 @@ function ProjectList1() {
                             <div
                               className="absolute h-full bg-green-500 transition-all duration-500"
                               style={{
-                                width: `${
-                                  (project.tasks /
+                                width: `${(project.tasks /
                                     Math.max(...filteredProjects.map((p) => p.tasks), 10)) *
                                   100
-                                }%`,
+                                  }%`,
                               }}
                             ></div>
                           </div>

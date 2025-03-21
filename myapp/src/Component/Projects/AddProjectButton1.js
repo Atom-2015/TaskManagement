@@ -4,13 +4,36 @@ import "aos/dist/aos.css";
 import Aos from "aos";
 import { useDispatch, useSelector } from "react-redux";
 import { allUser } from "../../FeatureRedux/alluserSlice";
+
+import { Country, State, City } from "country-state-city";
 import { AddProject } from "../../FeatureRedux/projectCreation"; // Import AddProject action
 
+import {
+  TextField,
+  Button,
+  IconButton,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  Dialog,
+  DialogTitle,
+  FormHelperText,
+  DialogContent,
+  Fade,
+} from "@mui/material";
+
 function AddProjectButton1() {
+  const [countries, setCountries] = useState([]);
+  const [states, setStates] = useState([]);
+  const [cities, setCities] = useState([]);
+  const [selectedCountry, setSelectedCountry] = useState("IN"); // Default to India
+  const [selectedCity, setSelectedCity] = useState("");
+  const [selectedState, setSelectedState] = useState("");
   const dispatch = useDispatch();
   const [isOpen, setIsOpen] = useState(false);
-  const [successMessage,setSuccessMessage]=useState("")
-  const [description, setDescription] = useState(""); 
+  const [successMessage, setSuccessMessage] = useState("")
+  const [description, setDescription] = useState("");
   const [formData, setFormData] = useState({
     name: "",
     description: "",
@@ -19,11 +42,30 @@ function AddProjectButton1() {
     team_members: [],
     status: "",  // ✅ Added status field
     budget: "",
+    country: "", // Default to India
+    state: "",
+    city: "",
+    Area:""
   });
+
+  useEffect(() => {
+    const fetchCountries = Country.getAllCountries();
+    setCountries(fetchCountries);
+
+    // Set India as the default country and fetch its states
+    const indiaStates = State.getStatesOfCountry("IN");
+    setStates(indiaStates);
+
+    // Update formData with the default country
+    setFormData((prev) => ({
+      ...prev,
+      country: "India",
+    }));
+  }, []);
 
   const { isLoading, isError, errorMessage, isAdded } = useSelector((state) => state.AddProject);
   const userlist = useSelector((state) => state.allUser.users);
-  
+
   const editor = useRef(null);
   const modalRef = useRef(null);
 
@@ -43,6 +85,52 @@ function AddProjectButton1() {
     }));
   };
 
+  const handleCountryChange = (e) => {
+    const countryCode = e.target.value;
+    setSelectedCountry(countryCode);
+    setSelectedState("");
+    setSelectedCity("");
+
+    const fetchState = State.getStatesOfCountry(countryCode);
+    setStates(fetchState);
+
+    setFormData((prev) => ({
+      ...prev,
+      country: countries.find((c) => c.isoCode === countryCode)?.name || "",
+      state: "",
+      city: "",
+    }));
+  };
+
+  const handleStateChange = (e) => {
+    const stateCode = e.target.value;
+    setSelectedState(stateCode);
+    setSelectedCity("");
+
+    const fetchCities = City.getCitiesOfState(selectedCountry, stateCode);
+    if (Array.isArray(fetchCities)) {
+      setCities(fetchCities);
+    } else {
+      console.error("No cities returned or invalid data format.");
+    }
+
+    setFormData((prev) => ({
+      ...prev,
+      state: states.find((s) => s.isoCode === stateCode)?.name || "",
+      city: "",
+    }));
+  };
+
+  const handleCityChange = (e) => {
+    const cityName = e.target.value;
+    setSelectedCity(cityName);
+
+    setFormData((prev) => ({
+      ...prev,
+      city: cityName,
+    }));
+  };
+
   // Handle description change
   const handleDescriptionChange = (newContent) => {
     setDescription(newContent);
@@ -56,7 +144,7 @@ function AddProjectButton1() {
   const handleSubmit = (e) => {
     e.preventDefault(); // Prevents the form from reloading the page
     console.log("Form submitted!");
-  
+
     if (!formData.name || !formData.start_date) {
       alert("Project Name and Start Date are required.");
       return;
@@ -64,11 +152,11 @@ function AddProjectButton1() {
     dispatch(AddProject(formData));
 
     setSuccessMessage("Project Submitted Successfully")
-    setTimeout(()=>{
+    setTimeout(() => {
       setSuccessMessage("");
       toggleModal("");
 
-  },1000)
+    }, 1000)
   };
 
   // Toggle modal visibility
@@ -83,6 +171,10 @@ function AddProjectButton1() {
         team_members: [],
         status: "",
         budget: "",
+        country: "", // Reset to India
+        state: "",
+        city: "",
+        Area:""
       });
     }
   };
@@ -115,8 +207,8 @@ function AddProjectButton1() {
         </a>
       </button>
 
-        {/* Success Message */}
-        {successMessage && (
+      {/* Success Message */}
+      {successMessage && (
         <div className="fixed top-10 right-10 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg animate-fadeIn">
           {successMessage}
         </div>
@@ -127,16 +219,16 @@ function AddProjectButton1() {
       {isOpen && (
         <div className="fixed inset-0 z-[9999] flex justify-end bg-gray-900 bg-opacity-50">
           <div ref={modalRef} className="bg-white shadow-none w-[50%] flex flex-col h-full overflow-hidden" data-aos="fade-up-left">
-            
+
             {/* Modal Header */}
             <div className="flex p-2 justify-between text-center items-center border-b pb-2 bg-slate-50 shadow-none">
               <h2 className="text-xl font-semibold px-3">New Project</h2>
-              <button onClick={toggleModal} className="text-gray-600 text-xl hover:text-gray-800">✖</button>
+              <button onClick={toggleModal} className="text-gray-600 text-xl transform hover:text-gray-800 hover:rotate-180 transition-transform duration-300">✖</button>
             </div>
 
             {/* Form */}
             <form className="flex flex-col gap-4 p-6 overflow-y-auto flex-grow">
-              
+
               {/* Project Name */}
               <div className="flex flex-col items-start">
                 <label className="font-semibold text-gray-700">Project Name</label>
@@ -156,11 +248,11 @@ function AddProjectButton1() {
               <div className="flex flex-row gap-4">
                 <div className="flex flex-col flex-1">
                   <label className="font-semibold text-gray-700">Start Date</label>
-                  <input type="date" name="start_date" value={formData.start_date} onChange={handleChange} className="w-full border border-blue-300 px-1 py-[0.5px] rounded-sm" />
+                  <input type="date" name="start_date" onClick={(e)=>e.target.showPicker()} value={formData.start_date} onChange={handleChange} className="w-full border border-blue-300 px-1 py-[0.5px] rounded-sm" />
                 </div>
                 <div className="flex flex-col flex-1">
                   <label className="font-semibold text-gray-700">End Date</label>
-                  <input type="date" name="end_date" value={formData.end_date} onChange={handleChange} className="w-full border border-blue-300 px-1 py-[0.5px] rounded-sm" />
+                  <input type="date" name="end_date" onClick={(e)=>e.target.showPicker()} value={formData.end_date} onChange={handleChange} className="w-full border border-blue-300 px-1 py-[0.5px] rounded-sm" />
                 </div>
               </div>
 
@@ -181,17 +273,59 @@ function AddProjectButton1() {
                 <JoditEditor ref={editor} value={description} onChange={handleDescriptionChange} className="w-full border border-blue-300 px-1 py-[0.5px] rounded-sm" />
               </div>
 
+            <div className="flex flex-row  gap-2">
+              <div className="w-full mt-4">
+                <label className="font-semibold text-gray-700">Country</label>
+                <select onChange={handleCountryChange} value={selectedCountry} className="w-full border border-blue-300 px-2 py-1 rounded-sm">
+                  <option value="" disabled>Select a country</option>
+                  {countries.map((country) => (
+                    <option key={country.isoCode} value={country.isoCode}>{country.name}</option>
+                  ))}
+                </select>
+              </div>
+
+              {/* State Dropdown */}
+              <div className="w-full mt-4">
+                <label className="font-semibold text-gray-700">State</label>
+                <select onChange={handleStateChange} value={selectedState} className="w-full border border-blue-300 px-2 py-1 rounded-sm">
+                  <option value="" disabled>Select a state</option>
+                  {states.map((state) => (
+                    <option key={state.isoCode} value={state.isoCode}>{state.name}</option>
+                  ))}
+                </select>
+              </div>
+
+              {/* City Dropdown */}
+              <div className="w-full mt-4">
+                <label className="font-semibold text-gray-700">City</label>
+                <select onChange={handleCityChange} value={selectedCity} className="w-full border border-blue-300 px-2 py-1 rounded-sm">
+                  <option value="" disabled>Select a city</option>
+                  {cities.map((city) => (
+                    <option key={city.name} value={city.name}>{city.name}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            <div className="flex flex-col items-start">
+                <label className="font-semibold text-gray-700">Area</label>
+                <input type="number" min='0' placeholder="Area in KM" name="Area" value={formData.Area} onChange={handleChange} className="w-full border border-blue-300 px-1 py-[0.5px] rounded-sm" />
+              </div>
+
               {/* Budget */}
               <div className="flex flex-col items-start">
                 <label className="font-semibold text-gray-700">Budget</label>
-                <input type="number" name="budget" value={formData.budget} onChange={handleChange} className="w-full border border-blue-300 px-1 py-[0.5px] rounded-sm" />
+                <input type="number" min='0' name="budget" value={formData.budget} onChange={handleChange} className="w-full border border-blue-300 px-1 py-[0.5px] rounded-sm" />
               </div>
+
+
+
             </form>
 
             {/* Modal Footer */}
             <div className="w-full p-2 flex justify-start space-x-2 shadow-md shadow-gray-500 bg-white">
-              <button onClick={toggleModal} className="text-gray-500 px-4 py-2">Cancel</button>
-              <button onClick={(e) => handleSubmit(e)} className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition" disabled={isLoading}>
+              <button onClick={toggleModal} className="text-gray-500 px-4 py-2 hover:bg-red-700 hover:text-white transition duration-300">Cancel</button>
+              <button onClick={(e) => handleSubmit(e)} className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-800 transition duration-300" disabled={isLoading}>
                 {isLoading ? "Creating..." : "Create"}
               </button>
             </div>
