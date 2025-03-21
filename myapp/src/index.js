@@ -114,6 +114,7 @@ import Taskindex from './Component/Taskmanagement/taskindex';
 import Projectdetal from './Component/Taskmanagement/projectdetailpageintask/projectdetal';
 import Attendanceindex from './Component/Attendance/attendanceindex';
 import Test from './Component/test';
+import ProjectCost from './Component/Taskmanagement/projectcost/projectcost';
 
 // ProtectedRoute Component
 const ProtectedRoute = ({ element }) => {
@@ -159,6 +160,7 @@ const router = createBrowserRouter([
         children: [
           { path: '/tasks/alltask', element: <Taskmanagement /> },
           { path: '/tasks/projectdetails', element: <Projectdetal /> },
+          { path: '/tasks/projectcost', element: <ProjectCost/> },
         ],
       },
       {
@@ -174,6 +176,7 @@ const router = createBrowserRouter([
   },
   { path: '/signin', element: <Sign_in /> },
   { path: '/signup', element: <Sign_up /> },
+  
 ]);
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
