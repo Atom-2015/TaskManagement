@@ -16,6 +16,7 @@ import { Country, State, City } from "country-state-city";
 import { AudioRecorder } from 'react-audio-voice-recorder';
 import { FaClock } from "react-icons/fa";
 import { allUser } from '../../../FeatureRedux/alluserSlice'
+import {projectlist} from '../../../FeatureRedux/projectlistSlice'
 
 import WaveSurfer from 'wavesurfer.js';
 import {
@@ -127,9 +128,12 @@ function AddAssignedTask({ isModalOpen, closemodal }) {
   }, [repeatType, repeatDays, repeatWeeks, repeatMonths]);
 
 
+const   projectData =   useSelector((s)=> s.projectlist.projects)
+// console.log(JSON.stringify(projectData , null , 2))
 
-
-
+useEffect(()=>{
+   dispatch(projectlist())
+},[])
 
 
   useEffect(() => {
@@ -345,9 +349,9 @@ function AddAssignedTask({ isModalOpen, closemodal }) {
               <MenuItem value="">
                 <em>Select User</em>
               </MenuItem>
-              {user.map((u) => (
-                <MenuItem key={u._id} value={u.name}>
-                  {u.name}
+              {projectData.map((p) => (
+                <MenuItem key={p._id} value={p.name}>
+                  {p.name}
                 </MenuItem>
               ))}
             </Select>
@@ -387,9 +391,15 @@ function AddAssignedTask({ isModalOpen, closemodal }) {
               <MenuItem value="">
                 <em>User Task Assign</em>
               </MenuItem>
-              <MenuItem value="Rahul">Rahul</MenuItem>
-              <MenuItem value="Arun">Arun</MenuItem>
-              <MenuItem value="Varun">Varun</MenuItem>
+              { user ?  user.map((u) => (
+                <MenuItem key={u._id} value={u.name}>
+                  {u.name}
+                </MenuItem>
+              )) : (
+                <MenuItem value="">
+                <em> No User Found</em> 
+              </MenuItem>
+              )}
             </Select>
           </FormControl>
 
