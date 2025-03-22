@@ -16,7 +16,7 @@ import { Country, State, City } from "country-state-city";
 import { AudioRecorder } from 'react-audio-voice-recorder';
 import { FaClock } from "react-icons/fa";
 import { allUser } from '../../../FeatureRedux/alluserSlice'
-import {projectlist} from '../../../FeatureRedux/projectlistSlice'
+import { projectlist } from '../../../FeatureRedux/projectlistSlice'
 
 import WaveSurfer from 'wavesurfer.js';
 import {
@@ -41,7 +41,7 @@ function AddAssignedTask({ isModalOpen, closemodal }) {
     ProjectName: "",
     taskAssign: '',
     description: "",
-    taskAssignwith: '',
+    loopUsers: [],
     start_date: "",
     end_date: "",
     priority: "LOW",
@@ -128,12 +128,12 @@ function AddAssignedTask({ isModalOpen, closemodal }) {
   }, [repeatType, repeatDays, repeatWeeks, repeatMonths]);
 
 
-const   projectData =   useSelector((s)=> s.projectlist.projects)
-// console.log(JSON.stringify(projectData , null , 2))
+  const projectData = useSelector((s) => s.projectlist.projects)
+  // console.log(JSON.stringify(projectData , null , 2))
 
-useEffect(()=>{
-   dispatch(projectlist())
-},[])
+  useEffect(() => {
+    dispatch(projectlist())
+  }, [])
 
 
   useEffect(() => {
@@ -250,13 +250,25 @@ useEffect(()=>{
   };
 
   const handleInputChange = (e) => {
-    const { name, value, type, checked } = e.target;
+    const { name, value } = e.target;
 
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: type === "checkbox" ? checked : value,
-    }));
+    if (name === "loopUsers") {
+      console.log("tjhis is value",value)
+      
+      // Handle multiple selections for loopUsers
+      setFormData((prevData) => ({
+        
+        ...prevData,
+        [name]: Array.isArray(value) ? value : [value], // ✅ Correct way to handle multiple selections
+      }));
+    } else {
+      setFormData((prevData) => ({
+        ...prevData,
+        [name]: value,
+      }));
+    }
   };
+
 
   const handlePriorityChange = (newPriority) => {
     setFormData((prevState) => ({
@@ -278,6 +290,7 @@ useEffect(()=>{
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
     dispatch(addtask(formData));
   };
 
@@ -300,7 +313,7 @@ useEffect(()=>{
 
 
   const user = useSelector((state) => state.allUser.users);
-  console.log(`this is the data of all users ${JSON.stringify(user)}`);
+  // console.log(`this is the data of all users ${JSON.stringify(user)}`);
 
   useEffect(() => {
     dispatch(allUser())
@@ -391,14 +404,14 @@ useEffect(()=>{
               <MenuItem value="">
                 <em>User Task Assign</em>
               </MenuItem>
-              { user ?  user.map((u) => (
+              {user ? user.map((u) => (
                 <MenuItem key={u._id} value={u.name}>
                   {u.name}
                 </MenuItem>
               )) : (
                 <MenuItem value="">
-                <em> No User Found</em> 
-              </MenuItem>
+                  <em> No User Found</em>
+                </MenuItem>
               )}
             </Select>
           </FormControl>
@@ -498,12 +511,13 @@ useEffect(()=>{
               Select User in loop
             </InputLabel>
             <Select
-              labelId="task-assign-label"
-              id=""
-              name="taskAssignwith"
-              value={formData.taskAssignwith}
+              labelId="loop-users-label"
+              id="loop-users"
+              name="loopUsers"
+              multiple // ✅ Added `multiple` prop
+              value={formData.loopUsers}
               onChange={handleInputChange}
-              label="Select User in a loop"
+              label="Select User in Loop"
               sx={{
                 color: "white",
                 borderRadius: "15px",
@@ -522,17 +536,14 @@ useEffect(()=>{
                 },
               }}
             >
-              <MenuItem value="">
-                <em>Select in User</em>
-              </MenuItem>
-              { user ?  user.map((u) => (
-                <MenuItem key={u._id} value={u.name}>
+              {user ? user.map((u) => (
+                <MenuItem key={u._id} value={u._id}>
                   {u.name}
                 </MenuItem>
               )) : (
                 <MenuItem value="">
-                <em> No User Found</em> 
-              </MenuItem>
+                  <em> No User Found</em>
+                </MenuItem>
               )}
             </Select>
           </FormControl>
