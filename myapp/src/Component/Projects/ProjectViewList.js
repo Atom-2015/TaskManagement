@@ -30,6 +30,7 @@ const ProjectViewList = () => {
         <table className="w-full border-collapse border p-4 border-gray-300">
           <thead>
             <tr className="bg-gray-200">
+            <th className="border border-gray-300 p-2">ID</th>
               <th className="border border-gray-300 p-2">Task Title</th>
               <th className="border border-gray-300 p-2">Task Status</th>
               <th className="border border-gray-300 p-2">Task Priority</th>
@@ -41,6 +42,7 @@ const ProjectViewList = () => {
             {projects.task?.tasks?.length > 0 ? (
               projects.task.tasks.map((task, index) => (
                 <tr key={task._id || index}>
+                   <td className="border border-gray-300 p-2">{index+1}</td>
                   <td className="border border-gray-300 p-2">{task.title}</td>
                   <td className="border border-gray-300 p-2">{task.status}</td>
                   <td className="border border-gray-300 p-2">{task.priority}</td>
