@@ -117,6 +117,9 @@ import TaskDashboard from './Component/Dashboard/componentDashboard/TaskDashboar
 import Test from './Component/test';
 import ProjectViewList from './Component/Projects/ProjectViewList';
 import ProjectCost from './Component/Taskmanagement/projectcost/projectcost';
+import AddTaskForm from './Component/Projects/AddTaskForm';
+import ProjectViewSubTask from './Component/Projects/ProjectViewSubTask';
+import ProjectViewSubTaskDetails from './Component/Projects/ProjectViewSubTaskDetails';
 
 // ProtectedRoute Component
 const ProtectedRoute = ({ element }) => {
@@ -154,9 +157,20 @@ const router = createBrowserRouter([
     element: <ProtectedRoute element={<App />} />,
     children: [
       { path: '/dashboard', element: <Dashboardindex /> },
-      { path: '/projectManagement', element: <ProjectIndex /> },
-      { path:'/project/:id', element:<ProjectViewList/>},
+      { path: '/projectManagement', element: <ProjectIndex /> } ,
+     { path:'/project/:id', element:<ProjectViewList/>},
+     { path: '/project/:id/add-task', element: <AddTaskForm /> },
       { path: '/userManagement', element: <UsermanagementIndex /> },
+      { path:"/project/:id/subtask/:taskId" ,element:<ProjectViewSubTask  isStandalone={true}/> },
+      // {path:"/project/:id/subtask/:taskId/subtaskwithin/View",  element:<ProjectViewSubTaskDetails/>},
+      // { path:"/project/:id/subtask/:taskId/subtaskwithin/:subtaskName/View", element:<ProjectViewSubTaskDetails />} ,
+      // {path:"/project/${id}/subtask/${task.id}/subtaskwithin/${subtask.id}/View",element:<ProjectViewSubTaskDetails/>},
+      {
+        path: "/project/:id/subtask/:taskId/subtaskwithin/View",
+        element: <ProjectViewSubTaskDetails />
+      },
+    
+      
       {
         path: '/tasks',
         element: <Taskindex />,
@@ -164,6 +178,8 @@ const router = createBrowserRouter([
           { path: '/tasks/alltask', element: <Taskmanagement /> },
           { path: '/tasks/projectdetails', element: <Projectdetal /> },
           { path: '/tasks/projectcost', element: <ProjectCost/> },
+        
+
         ],
       },
       {
@@ -192,9 +208,9 @@ const router = createBrowserRouter([
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <React.StrictMode>
+  
     <Provider store={store}>
       <RouterProvider router={router} />
     </Provider>
-  </React.StrictMode>
+  
 );

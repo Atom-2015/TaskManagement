@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Projectlist from "./projectlist";
 import AddProjectButton from "./addProjectButton";
+
 import AddProjectButton1 from "./AddProjectButton1";
 import ProjectList1 from "./ProjectList1";
  
@@ -20,7 +21,7 @@ function ProjectIndex() {
       </div>
        {/* <Projectlist />    */}
        <ProjectList1/> 
-    
+     
       
     </div>
   );

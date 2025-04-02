@@ -253,11 +253,11 @@ function AddAssignedTask({ isModalOpen, closemodal }) {
     const { name, value } = e.target;
 
     if (name === "loopUsers") {
-      console.log("tjhis is value",value)
-      
+      console.log("tjhis is value", value)
+
       // Handle multiple selections for loopUsers
       setFormData((prevData) => ({
-        
+
         ...prevData,
         [name]: Array.isArray(value) ? value : [value], // ✅ Correct way to handle multiple selections
       }));
@@ -363,7 +363,7 @@ function AddAssignedTask({ isModalOpen, closemodal }) {
                 <em>Select User</em>
               </MenuItem>
               {projectData.map((p) => (
-                <MenuItem key={p._id} value={p.name}>
+                <MenuItem key={p._id} value={p._id}>
                   {p.name}
                 </MenuItem>
               ))}
@@ -613,24 +613,24 @@ function AddAssignedTask({ isModalOpen, closemodal }) {
                 </Select>
               </FormControl>
 
-              {/* Daily Repeat Section */}
-              {/* {repeatType === "daily" && (
-    <div className="mt-4">
-      <h4 className="text-white">Select Particular Days</h4>
-      <div className="flex flex-wrap gap-2">
-        {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].map((day) => (
-          <button
-            key={day}
-            type="button"
-            onClick={() => handleRepeatDaysChange(day)}
-            className={`px-3 py-1 rounded-md ${repeatDays.includes(day) ? "bg-green-500 text-black font-bold" : "bg-gray-700 text-white"}`}
-          >
-            {repeatDays.includes(day) ? "✔ " : ""} {day}
-          </button>
-        ))}
-      </div>
-    </div>
-  )} */}
+                                      {/* Daily Repeat Section */}
+                                      {/* {repeatType === "daily" && (
+                            <div className="mt-4">
+                              <h4 className="text-white">Select Particular Days</h4>
+                              <div className="flex flex-wrap gap-2">
+                                {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].map((day) => (
+                                  <button
+                                    key={day}
+                                    type="button"
+                                    onClick={() => handleRepeatDaysChange(day)}
+                                    className={`px-3 py-1 rounded-md ${repeatDays.includes(day) ? "bg-green-500 text-black font-bold" : "bg-gray-700 text-white"}`}
+                                  >
+                                    {repeatDays.includes(day) ? "✔ " : ""} {day}
+                                  </button>
+                                ))}
+                              </div>
+                            </div>
+                          )} */}
 
               {/* Weekly Repeat Section */}
               {repeatType === "weekly" && (

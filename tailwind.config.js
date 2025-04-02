@@ -12,5 +12,8 @@ module.exports = {
   plugins: {
     tailwindcss: {},
     autoprefixer: {},
+    extend: {
+      opacity: ['group-hover'],
+    }
   },
 }

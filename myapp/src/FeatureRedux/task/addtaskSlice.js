@@ -8,7 +8,7 @@ export const addtask = createAsyncThunk(
         try {
             const response = await axiosInstance.post('/api/task/createTask', taskdata, {
                 headers: {
-                    'x-project-id':localStorage.getItem('Projectid')
+                    'x-project-id':taskdata.ProjectName
                 }
             });
             return response.data;  // Ensure the data is returned here

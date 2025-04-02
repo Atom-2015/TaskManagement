@@ -6,7 +6,7 @@ import { FaFilter } from "react-icons/fa"; // Import a filter icon
 import { FaEye } from "react-icons/fa";
 import ProjectViewList from "./ProjectViewList";
 import { useNavigate } from "react-router-dom";
-
+import { FaSearch } from "react-icons/fa";
 
 
 function ProjectList1() {
@@ -16,12 +16,14 @@ function ProjectList1() {
   console.log(`Projects: ${JSON.stringify(projects)}`);
 
   const [filteredProjects, setFilteredProjects] = useState([]);
-  const [selected,setSelected]=useState(null)
+  const [selected, setSelected] = useState(null)
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [isSearchVisible, setIsSearchVisible] = useState(false);
   const [sortOrder, setSortOrder] = useState({ field: "id", order: "asc" }); // Track sorting field and order
   const searchInputRef = useRef(null);
+
+
 
 
   const modalRef = useRef(null);
@@ -36,9 +38,12 @@ function ProjectList1() {
     if (projects.length > 0) {
       const projectsWithIndex = projects.map((project, index) => ({
         ...project,
-        originalIndex: index + 1, // Add sequential number (1, 2, 3, ...)
+        originalIndex: index + 1, // Add sequential number
       }));
-      setFilteredProjects(projectsWithIndex);
+
+
+      const sortedProjects = projectsWithIndex.reverse()
+      setFilteredProjects(sortedProjects);
     }
   }, [projects]);
 
@@ -47,12 +52,12 @@ function ProjectList1() {
     if (filteredProjects.length > 0) {
       let updatedProjects = [...filteredProjects];
 
-      // Filter based on search term
-      if (searchTerm.trim() !== "") {
-        updatedProjects = updatedProjects.filter((proj) =>
-          proj.name.toLowerCase().includes(searchTerm.toLowerCase())
-        );
-      }
+      // // Filter based on search term
+      // if (searchTerm.trim() !== "") {
+      //   updatedProjects = updatedProjects.filter((proj) =>
+      //     proj.name.toLowerCase().includes(searchTerm.toLowerCase())
+      //   );
+      // }
 
       // Sorting logic
       if (sortOrder.field === "id") {
@@ -83,6 +88,20 @@ function ProjectList1() {
       order: prev.field === field && prev.order === "asc" ? "desc" : "asc",
     }));
   };
+
+  useEffect(() => {
+    let updatedProjects = [...projects];
+
+
+    if (searchTerm.trim() !== "") {
+      const searching = searchTerm.toLowerCase();
+
+      updatedProjects = updatedProjects.filter((proj) => searching.split(".").every((char) => proj.name.toLowerCase().includes(char)))
+    }
+
+    setFilteredProjects(updatedProjects);
+
+  }, [searchTerm, projects])
 
   // Close search input when clicking outside
   useEffect(() => {
@@ -131,7 +150,7 @@ function ProjectList1() {
                           onClick={() => setIsSearchVisible(!isSearchVisible)}
                           className="p-1 hover:bg-gray-200 rounded-full"
                         >
-                          <FaFilter className="text-gray-600" />
+                          <FaSearch className="text-gray-600" />
                         </button>
                       </div>
                       {isSearchVisible && (
@@ -162,37 +181,34 @@ function ProjectList1() {
                       </td>
                     </tr>
                   ) : (
-                    filteredProjects.map((project) => (
+                    filteredProjects.map((project, index) => (
                       <tr key={project._id?.toString()} className="border border-gray-400 bg-white hover:bg-gray-100">
-                        <td className="px-4 py-2 border border-gray-400">{project.originalIndex}</td>
-                        <td className="px-4 py-2 border border-gray-400 relative">
-                          
-                              <div className=" flex justify-between items-center cursor-pointer" 
-                              onMouseEnter={(e)=>e.currentTarget.querySelector('button').classList.remove('hidden')}
-                              onMouseLeave={(e)=>e.currentTarget.querySelector('button').classList.add('hidden')}
-                              >
-                                <span>{project.name}</span>
-                                <button
-                            className="hidden px-2 ml-2  text-blue-600 border-2  border-purple-600  rounded-lg"
-                            onClick={() =>  navigate(`/project/${project._id}`)}
+                        <td className="px-4 py-2 border border-gray-400">{index+1}</td>
+                        <td className="border bg-white border-gray-50 p-1 text-start relative font-semibold">
+                          <div
+                            className="flex justify-between items-center cursor-pointer whitespace-nowrap relative"
+                            onMouseEnter={(e) => e.currentTarget.querySelector('button').classList.replace('opacity-0', 'opacity-100')}
+                            onMouseLeave={(e) => e.currentTarget.querySelector('button').classList.replace('opacity-100', 'opacity-0')}
                           >
-                            {/* <FaEye /> */}
+                            <span className="flex-1 truncate">{project.name}</span>
+                            <button
+                              className="absolute right-0 px-2 text-sm ml-2 text-blue-600 border-2 border-purple-600 rounded-lg opacity-0 transition-opacity duration-200"
+                              onClick={() => navigate(`/project/${project._id}`)}
+                            >
+                              <span>View Project</span>
+                            </button>
+                          </div>
+                        </td>
 
-                            <span >View Project</span>
-                          </button>
-
-                              </div>
-                          
-                          </td>
                         <td className="px-4 py-2 border border-gray-400">
                           <select
                             className={`px-2 py-1 w-full outline-none rounded text-white cursor-pointer ${project.status === "Active"
-                                ? "bg-green-500"
-                                : project.status === "In Progress"
-                                  ? "bg-blue-500"
-                                  : project.status === "Completed"
-                                    ? "bg-gray-500"
-                                    : "bg-red-500"
+                              ? "bg-green-500"
+                              : project.status === "In Progress"
+                                ? "bg-blue-500"
+                                : project.status === "Completed"
+                                  ? "y-500"
+                                  : "bg-red-500"
                               }`}
                             value={project.status}
                             onChange={(e) => {
@@ -216,7 +232,7 @@ function ProjectList1() {
                               className="absolute h-full bg-green-500 transition-all duration-500"
                               style={{
                                 width: `${(project.tasks /
-                                    Math.max(...filteredProjects.map((p) => p.tasks), 10)) *
+                                  Math.max(...filteredProjects.map((p) => p.tasks), 10)) *
                                   100
                                   }%`,
                               }}
@@ -224,10 +240,10 @@ function ProjectList1() {
                           </div>
                         </td>
                         <td className="px-4 py-2 border border-gray-400">
-                          {moment(project.start_date).format("YYYY-MM-DD")}
+                          {moment(project.start_date).format("DD-MM-YYYY")}
                         </td>
                         <td className="px-4 py-2 border border-gray-400">
-                          {moment(project.end_date).format("YYYY-MM-DD")}
+                          {moment(project.end_date).format("DD-MM-YYYY")}
                         </td>
                         <td className="px-4 py-2 border border-gray-400">
                           {moment(project.end_date).diff(moment(project.start_date), "days")} Days remaining

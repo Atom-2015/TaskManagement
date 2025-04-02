@@ -300,7 +300,7 @@ function Sidebar() {
 
             {/* Sidebar */}
             <div style={{
-                width: '8%',
+                width: '12%',
                 position: 'fixed',
                 top: '0px',
                 marginTop:'30px',
@@ -344,8 +344,8 @@ function Sidebar() {
                             className={({ isActive }) =>
                                 ` py-2 px-4 rounded-lg flex align-middle items-center gap-[10px] no-underline ${isActive ? "bg-gray-600 text-white" : "text-white hover:bg-gray-800"}`}
                         >
-                            <BiTask size={30} />
-                            <span>TaskDashboard</span>
+                            <BiTask size={20} />
+                            <span>Task</span>
                         </NavLink>
                     </div>
 
