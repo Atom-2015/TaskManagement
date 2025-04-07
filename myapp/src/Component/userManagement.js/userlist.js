@@ -310,7 +310,10 @@ function Userlist() {
                 <tbody>
                   {filteredUsers.map((user) => (
                     <tr key={user.id} className="hover:bg-[#3a4b5b] border-b">
-                      <td className="px-4 py-2 text-center">{user.name}</td>
+                     
+                     <td className="px-4 py-2 text-center">{user.name}</td>
+                    
+
                       <td className="px-4 py-2 text-center">{user.email}</td>
                       <td className="px-4 py-2 text-center">{user.role}</td>
                       <td className="px-4 py-2 text-center">
@@ -367,7 +370,9 @@ function Userlist() {
                     className="w-16 h-16 rounded-full object-cover"
                   />
                   <div className="flex-1 ml-4">
-                    <h2 className="text-lg font-semibold text-white">{user.name}</h2>
+                    <h2 className="text-lg font-semibold text-white">{user.name} </h2>
+                   
+                   
                     <p className="text-gray-300 text-sm">{user.email}</p>
                   </div>
                   <div>

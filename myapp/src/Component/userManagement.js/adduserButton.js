@@ -3,6 +3,9 @@ import { useDispatch } from 'react-redux';
 import { addUser } from '../../FeatureRedux/adduserSlice';
 import yourImage from '../Media/user.jpg';
 import { Country, State, City } from "country-state-city";
+import Swal from 'sweetalert2';
+
+
 
 function AdduserButton() {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -10,10 +13,10 @@ function AdduserButton() {
     const [cities, setCities] = useState([]);
     const [selectedState, setSelectedState] = useState("");
     const [formData, setFormData] = useState({
-        first_name: "",
+        name: "",
         last_name: "",
         email: "",
-        contact: "",
+        phone: "",
         password: "",
         role: "",
         state: "",
@@ -21,7 +24,7 @@ function AdduserButton() {
         designation: "",
         Department: "",
         dob: "",
-        status: "User"
+        status: "Active"
     });
 
     const dispatch = useDispatch();
@@ -66,19 +69,23 @@ function AdduserButton() {
 
     const handleFormSubmit = (e) => {
         e.preventDefault();
-        console.log("New User Created:", formData);
 
-        // Prepare the data to be dispatched
         const userData = {
             ...formData,
-            // Ensure city is included even if empty
-            city: formData.city || "", 
-            // Include state name (not just ISO code)
+            city: formData.city || "",
             state: states.find(s => s.isoCode === selectedState)?.name || ""
         };
 
         dispatch(addUser(userData));
         setIsModalOpen(false);
+
+        Swal.fire({
+            title: 'User Created!',
+            text: `${formData.name} ${formData.last_name} has been added successfully.`,
+            icon: 'success',
+            confirmButtonColor: '#3085d6',
+            confirmButtonText: 'OK'
+        });
     };
 
     return (
@@ -114,9 +121,9 @@ function AdduserButton() {
                                         <label className="block text-gray-300 font-medium mb-2">First Name</label>
                                         <input
                                             type="text"
-                                            name="first_name"
-                                            placeholder="First name"
-                                            value={formData.first_name}
+                                            name="name"
+                                            placeholder="name"
+                                            value={formData.name}
                                             onChange={handleInputChange}
                                             className="w-full border border-gray-600 rounded px-3 py-2 focus:outline-none focus:ring focus:ring-blue-300 bg-gray-800 text-white"
                                             required
@@ -154,9 +161,9 @@ function AdduserButton() {
                                         <label className="block text-gray-300 font-medium mb-2">Contact No.</label>
                                         <input
                                             type="tel"
-                                            name="contact"
+                                            name="phone"
                                             placeholder="Contact number"
-                                            value={formData.contact}
+                                            value={formData.phone}
                                             onChange={handleInputChange}
                                             className="w-full border border-gray-600 rounded px-3 py-2 focus:outline-none focus:ring focus:ring-blue-300 bg-gray-800 text-white"
                                             required

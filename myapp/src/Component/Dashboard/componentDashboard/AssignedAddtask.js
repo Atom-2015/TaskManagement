@@ -37,7 +37,7 @@ import {
 function AddAssignedTask({ isModalOpen, closemodal }) {
   const dispatch = useDispatch();
   const [formData, setFormData] = useState({
-    title: "",
+    name: "",
     ProjectName: "",
     taskAssign: '',
     description: "",
@@ -291,7 +291,8 @@ function AddAssignedTask({ isModalOpen, closemodal }) {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    dispatch(addtask(formData));
+    // dispatch(addtask(formData));
+    dispatch(addtask({data : formData , id:formData.ProjectName}));
   };
 
   const handleMultpleDay = (date) => {
@@ -420,10 +421,10 @@ function AddAssignedTask({ isModalOpen, closemodal }) {
           {/* Task Name */}
           <TextField
             fullWidth
-            label="Task Title"
+            label="Task name"
             variant="outlined"
-            name="title"
-            value={formData.title}
+            name="name"
+            value={formData.name}
             onChange={handleInputChange}
             InputLabelProps={{ style: { color: "#fff" } }}
             sx={{

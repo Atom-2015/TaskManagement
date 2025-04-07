@@ -7,25 +7,11 @@ import { allUser } from "../../FeatureRedux/alluserSlice";
 
 import { Country, State, City } from "country-state-city";
 import { AddProject } from "../../FeatureRedux/projectCreation";
-import { ToWords } from 'to-words';
+import { ToWords } from "to-words";
 import Select from "react-select";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
-
-import {
-  TextField,
-  Button,
-  IconButton,
-
-  MenuItem,
-  FormControl,
-  InputLabel,
-  Dialog,
-  DialogTitle,
-  FormHelperText,
-  DialogContent,
-  Fade,
-} from "@mui/material";
+import Swal from "sweetalert2";
 
 function AddProjectButton1() {
   const [countries, setCountries] = useState([]);
@@ -36,7 +22,8 @@ function AddProjectButton1() {
   const [selectedState, setSelectedState] = useState("");
   const dispatch = useDispatch();
   const [isOpen, setIsOpen] = useState(false);
-  const [successMessage, setSuccessMessage] = useState("")
+  const [successMessage, setSuccessMessage] = useState("");
+  const [isFormOpen, setIsFormOpen] = useState(false);
   const [description, setDescription] = useState("");
   const [formData, setFormData] = useState({
     name: "",
@@ -44,13 +31,13 @@ function AddProjectButton1() {
     start_date: "",
     end_date: "",
     team_members: "",
-    status: "",  // ✅ Added status field
+    sector: "", // ✅ Added status field
     budget: "",
     country: "", // Default to India
     state: "",
     city: "",
     Area: "",
-    areaUnit: "KM"
+    areaUnit: "KM",
   });
 
   const toWords = new ToWords();
@@ -70,7 +57,9 @@ function AddProjectButton1() {
     }));
   }, []);
 
-  const { isLoading, isError, errorMessage, isAdded } = useSelector((state) => state.AddProject);
+  const { isLoading, isError, errorMessage, isAdded } = useSelector(
+    (state) => state.AddProject
+  );
   const userlist = useSelector((state) => state.allUser.users);
 
   const editor = useRef(null);
@@ -84,20 +73,42 @@ function AddProjectButton1() {
   }, [dispatch]);
 
   // Handle form field changes
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
+  // const handleChange = (e) => {
+  //   const { name, value } = e.target;
+  //   setFormData((prev) => ({
+  //     ...prev,
+  //     [name]: value,
+  //   }));
+  // };
 
   useEffect(() => {
     console.log("Current team_members value:", formData.team_members);
-    console.log("Selected option:", userlist?.find(user => user.id === formData.team_members));
+    console.log(
+      "Selected option:",
+      userlist?.find((user) => user.id === formData.team_members)
+    );
   }, [formData.team_members, userlist]);
 
+  const [showInput, setShowInput] = useState(false);
 
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+
+    // Special case for sector to toggle input
+    if (name === "sector" && value === "add_new") {
+      setShowInput(true);
+      setFormData((prev) => ({ ...prev, sector: "" }));
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
+  };
+
+  const handleInputChange = (e) => {
+    setFormData({ ...formData, sector: e.target.value });
+  };
   const customStyles = {
     control: (provided) => ({
       ...provided,
@@ -160,7 +171,8 @@ function AddProjectButton1() {
     setSelectedCity(""); // Reset the selected city
 
     // Fetch cities for the selected state
-    const fetchedCities = City.getCitiesOfState(selectedCountry, stateCode) || [];
+    const fetchedCities =
+      City.getCitiesOfState(selectedCountry, stateCode) || [];
     setCities(fetchedCities); // Ensure it's always an array
 
     // Find the state name, or pass an empty string if not found
@@ -173,7 +185,6 @@ function AddProjectButton1() {
       city: "", // Reset city when state changes
     }));
   };
-
 
   const handleCityChange = (e) => {
     const cityName = e.target.value;
@@ -190,7 +201,8 @@ function AddProjectButton1() {
   const handleDescriptionChange = (newContent) => {
     setDescription(newContent);
     setFormData((prev) => ({
-      ...prev, description: newContent,
+      ...prev,
+      description: newContent,
     }));
   };
 
@@ -199,26 +211,30 @@ function AddProjectButton1() {
     e.preventDefault(); // Prevents the form from reloading the page
     console.log("Form submitted!");
 
-    if (!formData.name || !formData.start_date) {
-      alert("Project Name and Start Date are required.");
-      return;
-    }
+    // if (!formData.name || !formData.start_date) {
+    //   alert("Project Name and Start Date are required.");
+    //   return;
+    // }
     const submissionData = {
       ...formData,
       state: formData.state || "", // Pass empty string if state is not available
       city: formData.city || "", // Pass empty string if city is not available+++++++++++++++++++++++++++++++++++++
     };
 
-    dispatch(AddProject(submissionData));
+    try {
+      dispatch(AddProject(submissionData));
 
-    setSuccessMessage("Project Submitted Successfully")
-    setTimeout(() => {
-      setSuccessMessage("");
-      toggleModal("");
-
-    }, 1000)
+      Swal.fire({
+        title: "Project Created Successfully",
+        text: "Added",
+        icon: "success",
+        confirmButtonColor: "#3085d6",
+        confirmButtonText: "OK",
+      }).then(() => {});
+    } catch (error) {
+      Swal.fire("Error in Adding Project");
+    }
   };
-
 
   const modules = {
     toolbar: [
@@ -244,12 +260,12 @@ function AddProjectButton1() {
         start_date: "",
         end_date: "",
         team_members: [],
-        status: "",
+        sector: "",
         budget: "",
         country: "india", // Reset to India
         state: "",
         city: "",
-        Area: ""
+        Area: "",
       });
     }
   };
@@ -260,7 +276,6 @@ function AddProjectButton1() {
       setIsOpen(false);
     }
   };
-
 
   // Convert userlist from backend into react-select format
   const teamOptions = userlist?.map((user) => ({
@@ -283,7 +298,10 @@ function AddProjectButton1() {
     <div className="relative">
       {/* Add Project Button */}
       <button onClick={toggleModal} className="flex justify-start">
-        <a href="#_" className="relative inline-flex items-center px-12 py-2 overflow-hidden text-lg font-medium text-indigo-50 border-2 border-indigo-50 rounded hover:text-white group hover:bg-gray-50">
+        <a
+          href="#_"
+          className="relative inline-flex items-center px-12 py-2 overflow-hidden text-lg font-medium text-indigo-50 border-2 border-indigo-50 rounded hover:text-white group hover:bg-gray-50"
+        >
           <span className="absolute left-0 block w-full h-0 transition-all bg-indigo-600 opacity-100 group-hover:h-full top-1/2 group-hover:top-0 duration-700 ease"></span>
           <span className="relative">Add Project</span>
         </a>
@@ -296,60 +314,142 @@ function AddProjectButton1() {
         </div>
       )}
 
-
       {/* Modal */}
       {isOpen && (
         <div className="fixed inset-0 z-[9999] flex justify-end bg-gray-900 bg-opacity-50">
-          <div ref={modalRef} className="bg-white shadow-none w-[50%] flex flex-col h-full overflow-hidden" data-aos="fade-up-left">
-
+          <div
+            ref={modalRef}
+            className="bg-white shadow-none w-[50%] flex flex-col h-full overflow-hidden"
+            data-aos="fade-up-left"
+          >
             {/* Modal Header */}
             <div className="flex p-2 justify-between text-center items-center border-b pb-2 bg-slate-50 shadow-none">
               <h2 className="text-xl font-semibold px-3">New Project</h2>
-              <button onClick={toggleModal} className="text-gray-600 text-xl transform hover:text-gray-800 hover:rotate-180 transition-transform duration-300">✖</button>
+              <button
+                onClick={toggleModal}
+                className="text-gray-600 text-xl transform hover:text-gray-800 hover:rotate-180 transition-transform duration-300"
+              >
+                ✖
+              </button>
             </div>
 
             {/* Form */}
             <form className="flex flex-col gap-4 p-6 overflow-y-auto flex-grow">
-
               {/* Project Name */}
               <div className="flex flex-col items-start">
-                <label className="font-semibold text-gray-700">Project Name</label>
-                <input type="text" name="name" value={formData.name} onChange={handleChange} className="w-full border border-blue-300 px-1 py-[0.5px] rounded-sm" />
+                <label className="font-semibold text-gray-700">
+                  Project Name
+                </label>
+                <input
+                  require
+                  type="text"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  required
+                  className="w-full border border-blue-300 px-1 py-[0.5px] rounded-sm"
+                />
               </div>
 
               {/* Team Members */}
               <div className="flex flex-col items-start">
-                <label className="font-semibold text-gray-700">Project Manager</label>
-                <select name="team_members" value={formData.team_members} onChange={handleChange} className="w-full border border-blue-300 px-1 py-[0.5px] rounded-sm">
-                  <option value="" disabled>Select a team member</option>
-                  {userlist && userlist.map((user) => <option key={user.id} value={user.id}>{user.name}</option>)}
+                <label className="font-semibold text-gray-700">
+                  Project Manager
+                </label>
+                <select
+                  name="team_members"
+                  value={formData.team_members}
+                  onChange={handleChange}
+                  required
+                  className="w-full border border-blue-300 px-1 py-[0.5px] rounded-sm"
+                >
+                  <option value="" disabled>
+                    Select a team member
+                  </option>
+                  {userlist &&
+                    userlist.map((user) => (
+                      <option key={user.id} value={user.id}>
+                        {user.name}
+                      </option>
+                    ))}
                 </select>
               </div>
-
-
-
 
               {/* Dates */}
               <div className="flex flex-row gap-4">
                 <div className="flex flex-col flex-1">
-                  <label className="font-semibold text-gray-700">Start Date</label>
-                  <input type="date" name="start_date" onClick={(e) => e.target.showPicker()} value={formData.start_date} onChange={handleChange} className="w-full border border-blue-300 px-1 py-[0.5px] rounded-sm" />
+                  <label className="font-semibold text-gray-700">
+                    Start Date
+                  </label>
+                  <input
+                    type="date"
+                    name="start_date"
+                    onClick={(e) => e.target.showPicker()}
+                    value={formData.start_date}
+                    onChange={handleChange}
+                    required
+                    className="w-full border border-blue-300 px-1 py-[0.5px] rounded-sm"
+                  />
                 </div>
                 <div className="flex flex-col flex-1">
-                  <label className="font-semibold text-gray-700">End Date</label>
-                  <input type="date" name="end_date" onClick={(e) => e.target.showPicker()} value={formData.end_date} onChange={handleChange} className="w-full border border-blue-300 px-1 py-[0.5px] rounded-sm" />
+                  <label className="font-semibold text-gray-700">
+                    End Date
+                  </label>
+                  <input
+                    type="date"
+                    name="end_date"
+                    onClick={(e) => e.target.showPicker()}
+                    value={formData.end_date}
+                    onChange={handleChange}
+                    required
+                    className="w-full border border-blue-300 px-1 py-[0.5px] rounded-sm"
+                  />
                 </div>
               </div>
 
               {/* Project Status */}
-              <div className="flex flex-col items-start">
-                <label className="font-semibold text-gray-700">Project Status</label>
-                <select name="status" value={formData.status} onChange={handleChange} className="w-full border border-blue-300 px-1 py-[0.5px] rounded-sm">
-                  <option value="" disabled>Select Status</option>
-                  <option value="Active">Active</option>
-                  <option value="Completed">Completed</option>
-                  <option value="On Hold">On Hold</option>
+              {/* <div className="flex flex-col items-start">
+                <label className="font-semibold text-gray-700">Sector</label>
+                <select name="sector" value={formData.sector} onChange={handleChange} className="w-full border border-blue-300 px-1 py-[0.5px] rounded-sm">
+                  <option value="" disabled>Add New Sector</option>
+                  <option value="Active">Highways</option>
+                  <option value="Completed">Railways</option>
+                  <option value="Residential">Residential</option>
+                  <option value="Commercial">Commercial</option>
+                  <option value="Factory">Factory</option>
                 </select>
+              </div> */}
+
+              <div className="flex flex-col items-start ">
+                <label className="font-semibold text-gray-700">Sector</label>
+
+                {!showInput ? (
+                  <select
+                    name="sector"
+                    value={formData.sector}
+                    onChange={handleChange}
+                    className="w-full border border-blue-300 px-2 py-0 rounded-sm"
+                  >
+                    <option value="" disabled>
+                      Select Sector
+                    </option>
+                    <option value="add_new"> Add New Sector by clicking</option>
+                    <option value="Highways">Highways</option>
+                    <option value="Railways">Railways</option>
+                    <option value="Residential">Residential</option>
+                    <option value="Commercial">Commercial</option>
+                    <option value="Factory">Factory</option>
+                  </select>
+                ) : (
+                  <input
+                    type="text"
+                    name="sector"
+                    value={formData.sector}
+                    onChange={handleInputChange}
+                    placeholder="Type new sector"
+                    className="w-full border border-blue-300 px-2 py-0 rounded-sm"
+                  />
+                )}
               </div>
 
               {/* Description */}
@@ -359,7 +459,9 @@ function AddProjectButton1() {
               </div> */}
 
               <div className="w-full">
-                <label className="font-semibold text-gray-700">Description</label>
+                <label className="font-semibold text-gray-700">
+                  Description
+                </label>
                 <ReactQuill
                   theme="snow"
                   value={description} // Use description from state
@@ -457,6 +559,7 @@ function AddProjectButton1() {
                     min="0"
                     placeholder="Enter Area"
                     name="Area"
+                    required
                     value={formData.Area}
                     onChange={handleChange}
                     className="w-1/4 border border-blue-300 px-2 py-1 rounded-l-sm"
@@ -481,28 +584,36 @@ function AddProjectButton1() {
               {/* Budget */}
               <div className="flex w-1/4 flex-col items-start">
                 <label className="font-semibold text-gray-700">Budget</label>
-                <input type="number" min='0' name="budget" value={formData.budget} onChange={handleChange} className="w-full border border-blue-300 px-1 py-[0.5px] rounded-sm" />
+                <input
+                  type="number"
+                  min="0"
+                  name="budget"
+                  value={formData.budget}
+                  onChange={handleChange}
+                  required
+                  className="w-full border border-blue-300 px-1 py-[0.5px] rounded-sm"
+                />
                 {formData.budget && (
                   <p className="text-gray-600 text-sm">
                     {toWords.convert(parseInt(formData.budget))} Rupee Only
                   </p>
-                )
-
-                }
-
-
+                )}
               </div>
-
-
-
-
-
             </form>
 
             {/* Modal Footer */}
             <div className="w-full p-2 flex justify-start space-x-2 shadow-md shadow-gray-500 bg-white">
-              <button onClick={toggleModal} className="text-gray-500 px-4 rounded-lg hover:rounded-lg py-2 hover:bg-red-700 hover:text-white transition duration-300">Cancel</button>
-              <button onClick={(e) => handleSubmit(e)} className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-800 transition duration-300" disabled={isLoading}>
+              <button
+                onClick={toggleModal}
+                className="text-gray-500 px-4 rounded-lg hover:rounded-lg py-2 hover:bg-red-700 hover:text-white transition duration-300"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={(e) => handleSubmit(e)}
+                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-800 transition duration-300"
+                disabled={isLoading}
+              >
                 {isLoading ? "Creating..." : "Create"}
               </button>
             </div>

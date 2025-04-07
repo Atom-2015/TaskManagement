@@ -261,7 +261,7 @@ const ProjectViewList = () => {
                                       onMouseEnter={(e) => e.currentTarget.querySelector('button').classList.add('opacity-100')}
                                       onMouseLeave={(e) => e.currentTarget.querySelector('button').classList.remove('opacity-100')}
                                     >
-                                      <span className="flex-1 truncate">{task.title}</span>
+                                      <span className="flex-1 truncate">{task.name}</span>
                                       <button onClick={() => handleViewSubTask(task.id)} className="absolute right-0 px-2 text-sm ml-2 text-blue-600 border-2 border-purple-600 rounded-lg opacity-0 transition-opacity duration-200">
                                         <span>View Task</span>
                                       </button>

@@ -7,6 +7,11 @@ import { RxCross2 } from "react-icons/rx";
 import GanttChart from "./GanttChart";
 import AddSubTaskForm from "./AddSubTaskForm";
 
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+
+
 const ProjectViewSubTask = ({ isStandalone }) => {
   const { project, id, taskId } = useParams();
   const navigate = useNavigate();
@@ -34,7 +39,55 @@ const ProjectViewSubTask = ({ isStandalone }) => {
   const [selectedTask, setSelectedTask] = useState(null);
   const inputRef = useRef(null);
   const [open, setOpen] = useState(false);
-  const [openSubTask,setOpenSubTask]=useState(false)
+  const [openSubTask, setOpenSubTask] = useState(false);
+  const [edittask, setEdittask] = useState(false);
+
+  // State for column widths
+  const [columnWidths, setColumnWidths] = useState({
+    checkbox: 50,
+    id: 80,
+    subTask: 200,
+    assigned: 150,
+    checklist: 100,
+    priority: 100,
+    startDate: 120,
+    endDate: 120,
+    duration: 100,
+    cost: 120,
+    status: 120,
+    dateColumns: 200
+  });
+
+  // State for resizing
+  const [resizing, setResizing] = useState({
+    isResizing: false,
+    column: null,
+    startX: 0,
+    startWidth: 0
+  });
+
+  // Get date range for all tasks
+  const getDateRange = () => {
+    if (subTasks.length === 0) return [];
+
+    const dates = [];
+    const startDates = subTasks.map(task => new Date(task.startDate));
+    const endDates = subTasks.map(task => new Date(task.endDate));
+
+    const minDate = new Date(Math.min(...startDates));
+    const maxDate = new Date(Math.max(...endDates));
+
+    let currentDate = new Date(minDate);
+
+    while (currentDate <= maxDate) {
+      dates.push(new Date(currentDate));
+      currentDate.setDate(currentDate.getDate() + 1);
+    }
+
+    return dates;
+  };
+
+  const dateColumns = getDateRange();
 
   const calculateDuration = (start, end) => {
     if (!start || !end) return "0 days";
@@ -49,6 +102,25 @@ const ProjectViewSubTask = ({ isStandalone }) => {
     const diffTime = Math.abs(endDate - startDate);
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     return `${diffDays} days`;
+  };
+
+  const formatDateHeader = (date) => {
+    const days = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+    const dayName = days[date.getDay()];
+    return `${date.getDate()} ${dayName}`;
+  };
+
+  const isTaskActiveOnDate = (task, date) => {
+    const taskStart = new Date(task.startDate);
+    const taskEnd = new Date(task.endDate);
+    const currentDate = new Date(date);
+
+    // Reset time components to compare only dates
+    taskStart.setHours(0, 0, 0, 0);
+    taskEnd.setHours(0, 0, 0, 0);
+    currentDate.setHours(0, 0, 0, 0);
+
+    return currentDate >= taskStart && currentDate <= taskEnd;
   };
 
   const handleAddSubTask = () => {
@@ -116,6 +188,20 @@ const ProjectViewSubTask = ({ isStandalone }) => {
             field === 'startDate' ? value : task.startDate,
             field === 'endDate' ? value : task.endDate
           );
+          
+          // Show toast for date changes
+          toast.success(`${field === 'startDate' ? 'Start' : 'End'} date updated`, {
+            position: "top-right",
+            autoClose: 1500,
+            hideProgressBar: true,
+          });
+        } else if (field === 'subTaskName') {
+          // Show toast for name changes
+          toast.success('Task name updated', {
+            position: "top-right",
+            autoClose: 1500,
+            hideProgressBar: true,
+          });
         }
 
         return updatedTask;
@@ -166,8 +252,6 @@ const ProjectViewSubTask = ({ isStandalone }) => {
     }
   };
 
-  const [edittask, setEdittask] = useState(false)
-
   const handleSingleClick = (taskId, field) => {
     setEditingTask(taskId);
     setEditingField(field);
@@ -178,17 +262,84 @@ const ProjectViewSubTask = ({ isStandalone }) => {
     return `₹${parseInt(value).toLocaleString('en-IN')}`;
   };
 
+  // Column resizing handlers
+  const startResizing = (column, e) => {
+    setResizing({
+      isResizing: true,
+      column,
+      startX: e.clientX,
+      startWidth: columnWidths[column]
+    });
+  };
+
+  const handleResize = (e) => {
+    if (resizing.isResizing) {
+      const delta = e.clientX - resizing.startX;
+      const newWidth = resizing.startWidth + delta;
+
+      setColumnWidths(prev => ({
+        ...prev,
+        [resizing.column]: Math.max(50, newWidth) // Minimum width of 50px
+      }));
+    }
+  };
+
+  // const stopResizing = () => {
+  //   setResizing({
+  //     isResizing: false,
+  //     column: null,
+  //     startX: 0,
+  //     startWidth: 0
+  //   });
+  // };
+
+  const stopResizing = () => {
+    if (resizing.isResizing) {
+      // toast.success(`Column Size updated`, {
+      //   position: "top-right",
+      //   autoClose: 1500,
+      //   hideProgressBar: true,
+      //   closeOnClick: true,
+      //   pauseOnHover: true,
+      //   draggable: true,
+      // });
+    }
+    
+    setResizing({
+      isResizing: false,
+      column: null,
+      startX: 0,
+      startWidth: 0
+    });
+  };
+
+  useEffect(() => {
+    if (resizing.isResizing) {
+      window.addEventListener('mousemove', handleResize);
+      window.addEventListener('mouseup', stopResizing);
+    } else {
+      window.removeEventListener('mousemove', handleResize);
+      window.removeEventListener('mouseup', stopResizing);
+    }
+
+    return () => {
+      window.removeEventListener('mousemove', handleResize);
+      window.removeEventListener('mouseup', stopResizing);
+    };
+  }, [resizing.isResizing]);
+
   useEffect(() => {
     inputRef.current?.focus();
   }, []);
 
   return (
     <div className="w-full bg-white h-full p-2">
+          <ToastContainer />
       <div className="overflow-x-auto">
         {isStandalone && (
           <div className="flex flex-row justify-between items-center mb-2">
             <h2 className="text-lg font-semibold">SubTasks</h2>
-            <button className="p-1 px-2"><AddSubTaskForm/></button>
+            <button className="p-1 px-2"><AddSubTaskForm /></button>
             <button
               className="hover:rotate-180 transition duration-700"
               onClick={() => navigate(-1)}
@@ -204,26 +355,52 @@ const ProjectViewSubTask = ({ isStandalone }) => {
               <div {...provided.droppableProps} ref={provided.innerRef} className="w-full">
                 <table className="w-full border-collapse border border-gray-300 table-fixed">
                   <colgroup>
-                    <col className="w-10" /> {/* Checkbox */}
-                    <col className="w-16" /> {/* ID */}
-                    <col className="w-48" /> {/* Sub Task */}
-                    <col className="w-32" /> {/* Assigned */}
-                    <col className="w-24" /> {/* Priority */}
-                    <col className="w-24" /> {/* Start */}
-                    <col className="w-24" /> {/* End */}
-                    <col className="w-24" /> {/* Duration */}
-                    <col className="w-32" /> {/* Cost */}
-                    <col className="w-24" /> {/* Status */}
+                    <col style={{ width: `${columnWidths.checkbox}px` }} />
+                    <col style={{ width: `${columnWidths.id}px` }} />
+                    <col style={{ width: "300px" }} />
+                    <col style={{ width: `${columnWidths.assigned}px` }} />
+                    <col style={{ width: `${columnWidths.checklist}px` }} />
+                    <col style={{ width: `${columnWidths.priority}px` }} />
+                    <col style={{ width: `${columnWidths.startDate}px` }} />
+                    <col style={{ width: `${columnWidths.endDate}px` }} />
+                    <col style={{ width: `${columnWidths.duration}px` }} />
+                    <col style={{ width: `${columnWidths.cost}px` }} />
+                    <col style={{ width: `${columnWidths.status}px` }} />
+                    {dateColumns.map((date, index) => (
+                      <col key={index} style={{ width: '30px' }} />
+                    ))}
                   </colgroup>
+
                   <thead className="sticky top-0 z-10 bg-gray-100">
                     <tr>
                       <th className="border border-gray-300 p-2"></th>
-                      {["ID", "Sub Task", "Assigned", "Checklist", "Priority", "Start", "End", "Duration", "Cost", "Status", "Work Chart"].map((col, index) => (
+                      {[
+                        { name: "ID", key: "id" },
+                        { name: "Sub Task", key: "subTask" },
+                        { name: "Assigned", key: "assigned" },
+                        { name: "Checklist", key: "checklist" },
+                        { name: "Priority", key: "priority" },
+                        { name: "Start", key: "startDate" },
+                        { name: "End", key: "endDate" },
+                        { name: "Duration", key: "duration" },
+                        { name: "Cost", key: "cost" },
+                        { name: "Status", key: "status" },
+                        ...dateColumns.map((date, index) => ({
+                          name: formatDateHeader(date),
+                          key: `date-${index}`
+                        }))
+                      ].map((col, index) => (
                         <th
                           key={index}
-                          className="border border-gray-300 p-2 text-center text-sm font-medium text-gray-700"
+                          className="border border-gray-300 p-2 text-center text-sm font-medium text-gray-700 relative"
                         >
-                          {col}
+                          {col.name}
+                          {col.key !== 'id' && col.key !== 'subTask' && (
+                            <div
+                              className="absolute right-0 top-0 h-full w-1 cursor-col-resize bg-gray-300 hover:bg-blue-500"
+                              onMouseDown={(e) => startResizing(col.key, e)}
+                            />
+                          )}
                         </th>
                       ))}
                     </tr>
@@ -257,17 +434,12 @@ const ProjectViewSubTask = ({ isStandalone }) => {
                               >
                                 ST-{index + 1}
                               </td>
-                              {/* <td
-                                className="border border-gray-300 p-2 text-sm font-semibold text-center overflow-hidden"
-                                onClick={() => handleSingleClick(task.id, 'subTaskName')}
-                              > */}
                               <td className="border bg-white border-gray-300 p-2 text-start relative group">
                                 <div
                                   className="flex items-center justify-between w-full min-h-[40px] relative"
                                   onMouseEnter={(e) => e.currentTarget.querySelector('button').classList.replace('opacity-0', 'opacity-100')}
                                   onMouseLeave={(e) => e.currentTarget.querySelector('button').classList.replace('opacity-100', 'opacity-0')}
                                 >
-                                  {/* Task Name */}
                                   <div className="flex-1 truncate pr-2">
                                     {editingTask === task.id && editingField === 'subTaskName' ? (
                                       <input
@@ -283,21 +455,20 @@ const ProjectViewSubTask = ({ isStandalone }) => {
                                     )}
                                   </div>
 
-                                  {/* View Project Button */}
                                   <button
-  className="px-2 py-1 text-sm font-medium rounded-lg transition-opacity duration-200
-             border-2 border-purple-600 text-purple-600 hover:bg-purple-50
-             opacity-0 group-hover:opacity-100 absolute right-0"
-  onClick={() => navigate(`/project/${id}/subtask/${task.id}/subtaskwithin/View`, { 
-    state: { 
-      subtaskData: task,
-      projectId: id,
-      parentTaskId: taskId
-    } 
-  })}
->
-  View Project
-</button>
+                                    className="px-2 opacity-0  right bg-purple-50  py-1 text-sm font-medium rounded-lg  duration-200
+             border-1 border-purple-600 text-purple-600 hover:bg-purple-50
+              group-hover:opacity-100 absolute right-0"
+                                    onClick={() => navigate(`/project/${id}/subtask/${task.id}/subtaskwithin/View`, {
+                                      state: {
+                                        subtaskData: task,
+                                        projectId: id,
+                                        parentTaskId: taskId
+                                      }
+                                    })}
+                                  >
+                                    View
+                                  </button>
                                 </div>
                               </td>
 
@@ -321,7 +492,6 @@ const ProjectViewSubTask = ({ isStandalone }) => {
                                 <div>
                                   <label>
                                     <input type="checkbox" checked={open} onChange={handleTable} />
-
                                   </label>
 
                                   {open && (
@@ -425,7 +595,6 @@ const ProjectViewSubTask = ({ isStandalone }) => {
                                                 <input type="checkbox" defaultValue="" />
                                               </td>
                                             </tr>
-
                                           </tbody>
                                         </table>
                                         <div className="flex gap-6">
@@ -439,7 +608,6 @@ const ProjectViewSubTask = ({ isStandalone }) => {
                                       </form>
                                     </div>
                                   )}
-
                                 </div>
                               </td>
                               <td
@@ -449,9 +617,6 @@ const ProjectViewSubTask = ({ isStandalone }) => {
                                   }`}
                                 onClick={() => {
                                   setEdittask(true)
-                                  // setEditingTask(task.id);
-                                  // setEditingField('priority');
-
                                 }}
                               >
                                 {edittask ? (
@@ -461,7 +626,6 @@ const ProjectViewSubTask = ({ isStandalone }) => {
                                     className="absolute left-0 top-0 w-full h-full text-center appearance-none bg-transparent focus:ring-0 focus:outline-none"
                                     autoFocus
                                     onBlur={() => {
-
                                       setEditingTask(null);
                                       setEditingField(null);
                                     }}
@@ -482,7 +646,9 @@ const ProjectViewSubTask = ({ isStandalone }) => {
                                   <input
                                     type="date"
                                     defaultValue={task.startDate}
-                                    onChange={(e) => handleUpdateTask(task.id, 'startDate', e.target.value)}
+                                    onChange={(e) => handleUpdateTask(task.id, 'startDate', e.target.value)
+
+                                    }
                                     className="w-full text-center p-0 border-0 bg-transparent focus:ring-0 focus:outline-none"
                                   />
                                 ) : (
@@ -539,10 +705,24 @@ const ProjectViewSubTask = ({ isStandalone }) => {
                                   }
                                 }}
                               >
+                                
                                 {editingTask === task.id && editingField === 'status' ? (
                                   <select
                                     defaultValue={task.status}
-                                    onChange={(e) => handleUpdateTask(task.id, 'status', e.target.value)}
+                                    // onChange={(e) => handleUpdateTask(task.id, 'status', e.target.value)
+
+                                      
+                                    // }
+
+                                    onChange={(e) => {
+                                      handleUpdateTask(task.id, 'status', e.target.value);
+                                      toast.success('Status updated', {
+                                        position: "top-right",
+                                        autoClose: 1000,
+                                        hideProgressBar: true,
+                                      });
+                                    }}
+                                    
                                     className="absolute left-0 top-0 w-full h-full text-center appearance-none bg-transparent focus:ring-0 focus:outline-none"
                                     autoFocus
                                     onBlur={() => {
@@ -559,39 +739,141 @@ const ProjectViewSubTask = ({ isStandalone }) => {
                                 )}
                               </td>
 
-                              <style>{`
-  .scrollable-gantt {
-    overflow-x: auto;
-    max-width: 200px; /* Adjust as needed */
-    white-space: nowrap;
-  }
-  .gantt-container {
-    display: inline-block;
-    min-width: 100%;
-  }
-`}</style>
+                              {/* ganth chart of the */}
+
+                              {/* Date columns */}
+                              {/* {dateColumns.map((date, colIndex) => {
+                                const isActive = isTaskActiveOnDate(task, date);
+                                return (
+                                  <td
+                                    key={`${task.id}-${colIndex}`}
+                                    className={`border border-gray-300 p-1 ${isActive ? 'bg-blue-400' : ''}`}
+                                    title={`${date.toDateString()}`}
+                                  >
+                                    {isActive ? '' : ''}
+                                  </td>
+                                );
+                              })} */}
+                              {dateColumns.map((date, colIndex) => {
+                                const isActive = isTaskActiveOnDate(task, date);
+                                const isStart = isActive && (colIndex === 0 || !isTaskActiveOnDate(task, dateColumns[colIndex - 1]));
+                                const isEnd = isActive && (colIndex === dateColumns.length - 1 || !isTaskActiveOnDate(task, dateColumns[colIndex + 1]));
+                                const isToday = date.toDateString() === new Date().toDateString();
+
+                                return (
+                                  <td
+                                    key={`${task.id}-${colIndex}`}
+                                    className={`
+        relative 
+        h-8 
+        p-0 
+        border border-gray-100
+        group
+        ${isToday ? 'bg-yellow-50' : ''}
+      `}
+                                    style={{ minWidth: '28px' }}
+                                    title={`${date.toDateString()}${isActive ? `\n${task.subTaskName}` : ''}`}
+                                  >
+                                    {/* Background cell */}
+                                    <div className={`
+        absolute 
+        inset-0 
+        flex 
+        items-center 
+        justify-center
+        ${isToday ? 'border-t-2 border-t-yellow-400' : ''}
+      `}>
+                                      {date.getDate() === 1 && (
+                                        <span className="text-xs text-gray-400 absolute top-0 left-0 px-0.5">
+                                          {date.toLocaleString('default', { month: 'short' })}
+                                        </span>
+                                      )}
+                                    </div>
+
+                                    {/* Gantt bar */}
+                                    {isActive && (
+                                      <div className={`
+          absolute
+          top-1/2
+          -translate-y-1/2
+          h-6
+          left-0
+          right-0
+          ${isStart ? 'rounded-l-full' : ''}
+          ${isEnd ? 'rounded-r-full' : ''}
+          ${task.priority === "High" ? 'bg-gradient-to-r from-red-500 to-red-600' :
+                                          task.priority === "Medium" ? 'bg-gradient-to-r from-green-500 to-green-600' :
+                                            'bg-gradient-to-r from-blue-500 to-blue-600'
 
 
-                              {/* Work Chart Column - Replace with Gantt Calendar */}
-                              <td className="border p-1">
-                                <div style={{ width: '500px', overflowX: 'auto' }}>
-                                  <GanttChart
-                                    duration={task.duration}
-                                    startDate={task.startDate}
-                                    endDate={task.endDate}
-                                  />
-                                </div>
-                              </td>
+                                        }
+          shadow-md
+          transition-all
+          duration-200
+          hover:h-7
+          hover:shadow-lg
+          flex
+          items-center
+          justify-center
+          overflow-hidden
+        `}>
+                                        {/* Progress indicator */}
+                                        <div
+                                          className={`
+              absolute 
+              left-0 
+              top-0 
+              bottom-0 
+              ${task.status === "Completed" ? 'bg-green-300' : 'bg-white'}
+              bg-opacity-30
+            `}
+                                          style={{
+                                            width: `${task.progress || 0}%`,
+                                            transition: 'width 0.3s ease'
+                                          }}
+                                        />
 
+                                        {/* Date label on hover */}
+                                        <span className="
+            text-white 
+            text-xs 
+            font-medium 
+            opacity-0 
+            group-hover:opacity-100
+            transition-opacity
+            duration-200
+            whitespace-nowrap
+            z-10
+          ">
+                                          {colIndex % 5 === 0 || isStart || isEnd ? formatDateHeader(date) : ''}
+                                        </span>
+                                      </div>
+                                    )}
 
-
+                                    {/* Current day marker */}
+                                    {isToday && !isActive && (
+                                      <div className="
+          absolute 
+          top-1/2 
+          left-1/2 
+          -translate-x-1/2 
+          -translate-y-1/2
+          w-1 
+          h-1 
+          rounded-full 
+          bg-yellow-500
+        "/>
+                                    )}
+                                  </td>
+                                );
+                              })}
 
 
                             </tr>
 
                             {task.checked && (
                               <tr className="bg-blue-50">
-                                <td colSpan="10" className="border border-gray-300 p-2">
+                                <td colSpan={11 + dateColumns.length} className="border border-gray-300 p-2">
                                   <div className="flex justify-center space-x-2">
                                     <button
                                       onClick={() => handleDeleteTask(task.id)}
@@ -744,9 +1026,12 @@ const ProjectViewSubTask = ({ isStandalone }) => {
                               <option value="Completed">Completed</option>
                             </select>
                           </td>
+                          {dateColumns.map((date, index) => (
+                            <td key={`new-${index}`} className="border border-gray-300 p-1"></td>
+                          ))}
                         </>
                       ) : (
-                        <td colSpan={7} className="border border-gray-300 p-2 text-sm">
+                        <td colSpan={9 + dateColumns.length} className="border border-gray-300 p-2 text-sm">
                           {/* Empty cells when form is collapsed */}
                         </td>
                       )}

@@ -46,6 +46,8 @@ function AddTaskForm({ projectId, onSubmit, onCancel }) {
         (state) => state.addtask || { isLoading: false, isError: false, errorMessage: "", isAdded: false }
     );
 
+    console.logg(`yo hai project id ${projectId}`)
+
     const [repeatType, setRepeatType] = useState("daily");
     const [repeatDays, setRepeatDays] = useState([]);
     const [repeatWeeks, setRepeatWeeks] = useState([]);

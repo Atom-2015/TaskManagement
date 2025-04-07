@@ -120,6 +120,8 @@ import ProjectCost from './Component/Taskmanagement/projectcost/projectcost';
 import AddTaskForm from './Component/Projects/AddTaskForm';
 import ProjectViewSubTask from './Component/Projects/ProjectViewSubTask';
 import ProjectViewSubTaskDetails from './Component/Projects/ProjectViewSubTaskDetails';
+import Company from './Component/Company/Company';
+import AddTaskForm1 from './Component/Projects/AddTaskForm1';
 
 // ProtectedRoute Component
 const ProtectedRoute = ({ element }) => {
@@ -159,7 +161,7 @@ const router = createBrowserRouter([
       { path: '/dashboard', element: <Dashboardindex /> },
       { path: '/projectManagement', element: <ProjectIndex /> } ,
      { path:'/project/:id', element:<ProjectViewList/>},
-     { path: '/project/:id/add-task', element: <AddTaskForm /> },
+     { path: '/project/:id/add-task', element: <AddTaskForm1 /> },
       { path: '/userManagement', element: <UsermanagementIndex /> },
       { path:"/project/:id/subtask/:taskId" ,element:<ProjectViewSubTask  isStandalone={true}/> },
       // {path:"/project/:id/subtask/:taskId/subtaskwithin/View",  element:<ProjectViewSubTaskDetails/>},
@@ -195,6 +197,14 @@ const router = createBrowserRouter([
       },
       { path: '/attendance', element: <Attendanceindex /> },
       {path:'/test' ,element:<Test/> },
+
+      {
+        path:"/Company", element:<Company/>
+      }
+
+      // {
+      //   path:"/Client",element:<Client/>
+      // }
 
      
     ],

@@ -7,6 +7,9 @@ import { allUser } from "../../FeatureRedux/alluserSlice";
 
 import { Country, State, City } from "country-state-city";
 import { AddProject } from "../../FeatureRedux/projectCreation"; // Import AddProject action
+import { addtask } from "../../FeatureRedux/task/addtaskSlice";
+import { MdConfirmationNumber } from "react-icons/md";
+import Swal from "sweetalert2";
 
 
 
@@ -34,7 +37,7 @@ function AddTaskForm1({projectId, onSubmit, onCancel}) {
     city: "",
     Area: ""
   });
-
+  console.log(`yo hai project id ${projectId}`)
   useEffect(() => {
     const fetchCountries = Country.getAllCountries();
     setCountries(fetchCountries);
@@ -62,7 +65,7 @@ function AddTaskForm1({projectId, onSubmit, onCancel}) {
 
     return () => Aos.refresh();
   }, [dispatch]);
-
+  console.log(`yo hai project id ${projectId}`)
   // Handle form field changes
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -151,15 +154,33 @@ function AddTaskForm1({projectId, onSubmit, onCancel}) {
       state: formData.state || "", // Pass empty string if state is not available
       city: formData.city || "", // Pass empty string if city is not available+++++++++++++++++++++++++++++++++++++
     };
+  
+    try{
+    // dispatch(AddProject(submissionData));
+    dispatch(addtask({data : submissionData , id:projectId}));
 
-    dispatch(AddProject(submissionData));
 
-    setSuccessMessage("Project Submitted Successfully")
-    setTimeout(() => {
-      setSuccessMessage("");
-      toggleModal("");
+    Swal.fire({
+      title:"Task Created Successfully",
+      text:"Added",
+      icon:"success",
+       confirmButtonColor: '#3085d6',
+            confirmButtonText: 'OK'
+    }).then(()=>{
+      onCancel();
+    })
+  }
+  catch(error){
+    console.log(error)
+    Swal.fire("Error somehting went Wrong")
+  }
 
-    }, 1000)
+    // setSuccessMessage("Project Submitted Successfully")
+    // setTimeout(() => {
+    //   setSuccessMessage("");
+    //   toggleModal("");
+
+    // }, 1000)
   };
 
   // Toggle modal visibility

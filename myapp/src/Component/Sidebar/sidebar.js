@@ -249,6 +249,7 @@
 import { Navigate, NavLink, Outlet, useNavigate } from 'react-router-dom';
 import React, { useState } from 'react';
 // import ankit from '../Media/thumb-1920-665825.jpg';
+import { LiaCompressArrowsAltSolid } from "react-icons/lia";
  
 import './sidebar.css';
 import { useSelector, useDispatch } from 'react-redux';
@@ -330,7 +331,7 @@ function Sidebar() {
                         <NavLink
                             to='/dashboard' id='clicksidebar'
                             className={({ isActive }) =>
-                                ` py-2 px-4 rounded-lg flex align-middle items-center gap-[10px] no-underline ${isActive ? "bg-gray-600 text-white" : "text-white hover:bg-gray-800"}`}
+                                ` py-2 px-4 rounded-lg flex align-middle items-center gap-[10px] no-underline ${isActive ? "bg-gray-600 text-white" : "text-white hover:bg-gray-600"}`}
                         >
                             <Gauge size={20} />
                             <span>Dashboard</span>
@@ -342,7 +343,7 @@ function Sidebar() {
                         <NavLink
                             to='/taskDashboard' id='clicksidebar'
                             className={({ isActive }) =>
-                                ` py-2 px-4 rounded-lg flex align-middle items-center gap-[10px] no-underline ${isActive ? "bg-gray-600 text-white" : "text-white hover:bg-gray-800"}`}
+                                ` py-2 px-4 rounded-lg flex align-middle items-center gap-[10px] no-underline ${isActive ? "bg-gray-600 text-white" : "text-white hover:bg-gray-600"}`}
                         >
                             <BiTask size={20} />
                             <span>Task</span>
@@ -354,7 +355,7 @@ function Sidebar() {
                         <NavLink
                             to='/projectManagement'
                             className={({ isActive }) =>
-                                ` py-2 px-4 rounded-lg flex align-middle items-center gap-[10px] no-underline ${isActive ? "bg-gray-600 text-white" : "text-white hover:bg-gray-800"}`}
+                                ` py-2 px-4 rounded-lg flex align-middle items-center gap-[10px] no-underline ${isActive ? "bg-gray-600 text-white" : "text-white hover:bg-gray-600"}`}
                         >
                             <Briefcase size={20} />
                             <span>Projects</span>
@@ -366,7 +367,7 @@ function Sidebar() {
                         <NavLink
                             to='/userManagement'
                             className={({ isActive }) =>
-                                `py-2 px-4 rounded-lg flex align-middle items-center gap-[10px] no-underline ${isActive ? "bg-gray-600 text-white" : "text-white hover:bg-gray-800"}`}>
+                                `py-2 px-4 rounded-lg flex align-middle items-center gap-[10px] no-underline ${isActive ? "bg-gray-600 text-white" : "text-white hover:bg-gray-600"}`}>
                             <Users size={20} />
                             <span>Users</span>
                         </NavLink>
@@ -377,7 +378,7 @@ function Sidebar() {
                         <NavLink
                             to='/leaves' id='clicksidebar'
                             className={({ isActive }) =>
-                                ` py-2 px-4 rounded-lg flex align-middle items-center gap-[10px] no-underline ${isActive ? "bg-gray-600 text-white" : "text-white hover:bg-gray-800"}`}
+                                ` py-2 px-4 rounded-lg flex align-middle items-center gap-[10px] no-underline ${isActive ? "bg-gray-600 text-white" : "text-white hover:bg-gray-600"}`}
                         >
                             <AudioWaveform size={20} />
                             <span>Leaves</span>
@@ -389,7 +390,7 @@ function Sidebar() {
                         <NavLink
                             to='/Payroll' id='clicksidebar'
                             className={({ isActive }) =>
-                                ` py-2 px-4 rounded-lg flex align-middle items-center gap-[10px] no-underline ${isActive ? "bg-gray-600 text-white" : "text-white hover:bg-gray-800"}`}
+                                ` py-2 px-4 rounded-lg flex align-middle items-center gap-[10px] no-underline ${isActive ? "bg-gray-600 text-white" : "text-white hover:bg-gray-600"}`}
                         >
                             <TowerControl size={20} />
                             <span>Payroll</span>
@@ -401,10 +402,21 @@ function Sidebar() {
                         <NavLink
                             to='/settings'
                             className={({ isActive }) =>
-                                `py-2 px-4 rounded-lg flex align-middle items-center gap-[10px] no-underline ${isActive ? "bg-gray-600 text-white" : "text-white hover:bg-gray-800"}`}
+                                `py-2 px-4 rounded-lg flex align-middle items-center gap-[10px] no-underline ${isActive ? "bg-gray-600 text-white" : "text-white hover:bg-gray-600"}`}
                         >
                             <Settings size={20} />
                             <span>Settings</span>
+                        </NavLink>
+                    </div>
+                    {/*Company link*/}
+                    <div className="mb-4 relative group">
+                        <NavLink
+                            to='/Company'
+                            className={({ isActive }) =>
+                                `py-2 px-4 rounded-lg flex align-middle items-center gap-[10px] no-underline ${isActive ? "bg-gray-600 text-white" : "text-white hover:bg-gray-600"}`}
+                        >
+                            <LiaCompressArrowsAltSolid  size={20} />
+                            <span>Company</span>
                         </NavLink>
                     </div>
 
@@ -412,7 +424,7 @@ function Sidebar() {
                         <NavLink
                             to='/attendance'
                             className={({ isActive }) =>
-                                `py-2 px-4 rounded-lg flex align-middle items-center gap-[10px] no-underline ${isActive ? "bg-gray-600 text-white" : "text-white hover:bg-gray-800"}`}
+                                `py-2 px-4 rounded-lg flex align-middle items-center gap-[10px] no-underline ${isActive ? "bg-gray-600 text-white" : "text-white hover:bg-gray-600"}`}
                         >
                             <CalendarDays size={20} />
                             <span>Attendance</span>

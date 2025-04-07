@@ -2,13 +2,15 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axiosInstance from "../../axiosInstance";
 
 // Async Thunk to Add Task
+// data : submissionData , id:projectId
 export const addtask = createAsyncThunk(
     'additionoftask',
-    async (taskdata, { rejectWithValue }) => {
+    async ({data , id}, { rejectWithValue }) => {
         try {
-            const response = await axiosInstance.post('/api/task/createTask', taskdata, {
-                headers: {
-                    'x-project-id':taskdata.ProjectName
+            const response = await axiosInstance.post('/api/task/createTask', data, {
+                headers: { 
+                    'x-project-id':id
+                    // 'x-project-id':taskdata.ProjectName
                 }
             });
             return response.data;  // Ensure the data is returned here

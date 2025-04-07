@@ -22,6 +22,7 @@ export const store = configureStore({
         alltaskuserspecificSlice: alltaskuserspecificSlice,
         alltaskcreatedbyme: alltaskcreatedbyme,
         tasks: taskSlice,
+        addtask:addtask,
         user: updateUser, // Add the reducer here
         projectdetails:projectdetails,
 
