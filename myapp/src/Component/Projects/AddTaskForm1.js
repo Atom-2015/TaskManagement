@@ -11,9 +11,7 @@ import { addtask } from "../../FeatureRedux/task/addtaskSlice";
 import { MdConfirmationNumber } from "react-icons/md";
 import Swal from "sweetalert2";
 
-
-
-function AddTaskForm1({projectId, onSubmit, onCancel}) {
+function AddTaskForm1({ projectId, onSubmit, onCancel }) {
   const [countries, setCountries] = useState([]);
   const [states, setStates] = useState([]);
   const [cities, setCities] = useState([]);
@@ -22,7 +20,7 @@ function AddTaskForm1({projectId, onSubmit, onCancel}) {
   const [selectedState, setSelectedState] = useState("");
   const dispatch = useDispatch();
   const [isOpen, setIsOpen] = useState(false);
-  const [successMessage, setSuccessMessage] = useState("")
+  const [successMessage, setSuccessMessage] = useState("");
   const [description, setDescription] = useState("");
   const [formData, setFormData] = useState({
     name: "",
@@ -30,14 +28,15 @@ function AddTaskForm1({projectId, onSubmit, onCancel}) {
     start_date: "",
     end_date: "",
     team_members: [],
-    status: "",  // ✅ Added status field
+    status: "", // ✅ Added status field
     budget: "",
     country: "", // Default to India
     state: "",
     city: "",
-    Area: ""
+    Area: "",
+    
   });
-  console.log(`yo hai project id ${projectId}`)
+  console.log(`yo hai project id ${projectId}`);
   useEffect(() => {
     const fetchCountries = Country.getAllCountries();
     setCountries(fetchCountries);
@@ -53,7 +52,9 @@ function AddTaskForm1({projectId, onSubmit, onCancel}) {
     }));
   }, []);
 
-  const { isLoading, isError, errorMessage, isAdded } = useSelector((state) => state.AddProject);
+  const { isLoading, isError, errorMessage, isAdded } = useSelector(
+    (state) => state.AddProject
+  );
   const userlist = useSelector((state) => state.allUser.users);
 
   const editor = useRef(null);
@@ -65,7 +66,7 @@ function AddTaskForm1({projectId, onSubmit, onCancel}) {
 
     return () => Aos.refresh();
   }, [dispatch]);
-  console.log(`yo hai project id ${projectId}`)
+  console.log(`yo hai project id ${projectId}`);
   // Handle form field changes
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -105,7 +106,8 @@ function AddTaskForm1({projectId, onSubmit, onCancel}) {
     setSelectedCity(""); // Reset the selected city
 
     // Fetch cities for the selected state
-    const fetchedCities = City.getCitiesOfState(selectedCountry, stateCode) || [];
+    const fetchedCities =
+      City.getCitiesOfState(selectedCountry, stateCode) || [];
     setCities(fetchedCities); // Ensure it's always an array
 
     // Find the state name, or pass an empty string if not found
@@ -118,7 +120,6 @@ function AddTaskForm1({projectId, onSubmit, onCancel}) {
       city: "", // Reset city when state changes
     }));
   };
-
 
   const handleCityChange = (e) => {
     const cityName = e.target.value;
@@ -145,35 +146,33 @@ function AddTaskForm1({projectId, onSubmit, onCancel}) {
     e.preventDefault(); // Prevents the form from reloading the page
     console.log("Form submitted!");
 
-    if (!formData.name || !formData.start_date) {
-      alert("Project Name and Start Date are required.");
-      return;
-    }
+    // if (!formData.name || !formData.start_date) {
+    //   alert("Project Name and Start Date are required.");
+    //   return;
+    // }
     const submissionData = {
       ...formData,
       state: formData.state || "", // Pass empty string if state is not available
       city: formData.city || "", // Pass empty string if city is not available+++++++++++++++++++++++++++++++++++++
     };
-  
-    try{
-    // dispatch(AddProject(submissionData));
-    dispatch(addtask({data : submissionData , id:projectId}));
 
+    try {
+      // dispatch(AddProject(submissionData));
+      dispatch(addtask({ data: submissionData, id: projectId }));
 
-    Swal.fire({
-      title:"Task Created Successfully",
-      text:"Added",
-      icon:"success",
-       confirmButtonColor: '#3085d6',
-            confirmButtonText: 'OK'
-    }).then(()=>{
-      onCancel();
-    })
-  }
-  catch(error){
-    console.log(error)
-    Swal.fire("Error somehting went Wrong")
-  }
+      Swal.fire({
+        title: "Task Created Successfully",
+        text: "Added",
+        icon: "success",
+        confirmButtonColor: "#3085d6",
+        confirmButtonText: "OK",
+      }).then(() => {
+        onCancel();
+      });
+    } catch (error) {
+      console.log(error);
+      Swal.fire("Error somehting went Wrong");
+    }
 
     // setSuccessMessage("Project Submitted Successfully")
     // setTimeout(() => {
@@ -198,7 +197,7 @@ function AddTaskForm1({projectId, onSubmit, onCancel}) {
         country: "india", // Reset to India
         state: "",
         city: "",
-        Area: ""
+        Area: "",
       });
     }
   };
@@ -225,7 +224,10 @@ function AddTaskForm1({projectId, onSubmit, onCancel}) {
     <div className="relative">
       {/* Add Project Button */}
       <button onClick={toggleModal} className="flex justify-start">
-        <a href="#_" className="relative inline-flex items-center px-12 py-2 overflow-hidden text-lg font-medium text-indigo-50 border-2 border-indigo-50 rounded hover:text-white group hover:bg-gray-50">
+        <a
+          href="#_"
+          className="relative inline-flex items-center px-12 py-2 overflow-hidden text-lg font-medium text-indigo-50 border-2 border-indigo-50 rounded hover:text-white group hover:bg-gray-50"
+        >
           <span className="absolute left-0 block w-full h-0 transition-all bg-indigo-600 opacity-100 group-hover:h-full top-1/2 group-hover:top-0 duration-700 ease"></span>
           <span className="relative">Add Task</span>
         </a>
@@ -238,68 +240,122 @@ function AddTaskForm1({projectId, onSubmit, onCancel}) {
         </div>
       )}
 
-
       {/* Modal */}
-      
-        <div className="fixed inset-0 z-[9999] flex justify-end bg-gray-900 bg-opacity-50">
-          <div ref={modalRef} className="bg-white shadow-none w-[50%] flex flex-col h-full overflow-hidden" data-aos="fade-left">
 
-            {/* Modal Header */}
-            <div className="flex p-2 justify-between text-center items-center border-b pb-2 bg-slate-50 shadow-none">
-              <h2 className="text-xl font-semibold px-3">Add Task</h2>
-              <button onClick={onCancel} className="text-gray-600 text-xl transform hover:text-gray-800 hover:rotate-180 transition-transform duration-300">✖</button>
+      <div className="fixed inset-0 z-[9999] flex justify-end bg-gray-900 bg-opacity-50">
+        <div
+          ref={modalRef}
+          className="bg-white shadow-none w-[50%] flex flex-col h-full overflow-hidden"
+          data-aos="fade-left"
+        >
+          {/* Modal Header */}
+          <div className="flex p-2 justify-between text-center items-center border-b pb-2 bg-slate-50 shadow-none">
+            <h2 className="text-xl font-semibold px-3">Add Task</h2>
+            <button
+              onClick={onCancel}
+              className="text-gray-600 text-xl transform hover:text-gray-800 hover:rotate-180 transition-transform duration-300"
+            >
+              ✖
+            </button>
+          </div>
+
+          {/* Form */}
+          <form className="flex flex-col gap-4 p-6 overflow-y-auto flex-grow">
+            {/* Project Name */}
+            <div className="flex flex-col items-start">
+              <label className="font-semibold text-gray-700">Task Name</label>
+              <input
+                type="text"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                className="w-full border border-blue-300 px-1 py-[0.5px] rounded-sm"
+              />
             </div>
 
-            {/* Form */}
-            <form className="flex flex-col gap-4 p-6 overflow-y-auto flex-grow">
+            {/* Team Members */}
+            <div className="flex flex-col items-start">
+              <label className="font-semibold text-gray-700">
+                Team Members
+              </label>
+              <select
+                name="team_members"
+                value={formData.team_members}
+                onChange={handleChange}
+                className="w-full border border-blue-300 px-1 py-[0.5px] rounded-sm"
+              >
+                <option value="" disabled>
+                  Select a team member
+                </option>
+                {userlist &&
+                  userlist.map((user) => (
+                    <option key={user.id} value={user.id}>
+                      {user.name}
+                    </option>
+                  ))}
+              </select>
+            </div>
 
-              {/* Project Name */}
-              <div className="flex flex-col items-start">
-                <label className="font-semibold text-gray-700">Task Name</label>
-                <input type="text" name="name" value={formData.name} onChange={handleChange} className="w-full border border-blue-300 px-1 py-[0.5px] rounded-sm" />
+            {/* Dates */}
+            <div className="flex flex-row gap-4">
+              <div className="flex flex-col flex-1">
+                <label className="font-semibold text-gray-700">
+                  Start Date
+                </label>
+                <input
+                  type="date"
+                  name="start_date"
+                  onClick={(e) => e.target.showPicker()}
+                  value={formData.start_date}
+                  onChange={handleChange}
+                  className="w-full border border-blue-300 px-1 py-[0.5px] rounded-sm"
+                />
               </div>
-
-              {/* Team Members */}
-              <div className="flex flex-col items-start">
-                <label className="font-semibold text-gray-700">Team Members</label>
-                <select name="team_members"   value={formData.team_members} onChange={handleChange} className="w-full border border-blue-300 px-1 py-[0.5px] rounded-sm">
-                  <option value="" disabled>Select a team member</option>
-                  {userlist && userlist.map((user) => <option key={user.id} value={user.id}>{user.name}</option>)}
-                </select>
+              <div className="flex flex-col flex-1">
+                <label className="font-semibold text-gray-700">End Date</label>
+                <input
+                  type="date"
+                  name="end_date"
+                  onClick={(e) => e.target.showPicker()}
+                  value={formData.end_date}
+                  onChange={handleChange}
+                  className="w-full border border-blue-300 px-1 py-[0.5px] rounded-sm"
+                />
               </div>
+            </div>
 
-              {/* Dates */}
-              <div className="flex flex-row gap-4">
-                <div className="flex flex-col flex-1">
-                  <label className="font-semibold text-gray-700">Start Date</label>
-                  <input type="date" name="start_date" onClick={(e) => e.target.showPicker()} value={formData.start_date} onChange={handleChange} className="w-full border border-blue-300 px-1 py-[0.5px] rounded-sm" />
-                </div>
-                <div className="flex flex-col flex-1">
-                  <label className="font-semibold text-gray-700">End Date</label>
-                  <input type="date" name="end_date" onClick={(e) => e.target.showPicker()} value={formData.end_date} onChange={handleChange} className="w-full border border-blue-300 px-1 py-[0.5px] rounded-sm" />
-                </div>
-              </div>
+            {/* Project Status */}
+            <div className="flex flex-col items-start">
+              <label className="font-semibold text-gray-700">Task Status</label>
+              <select
+                name="status"
+                value={formData.status}
+                onChange={handleChange}
+                className="w-full border border-blue-300 px-1 py-[0.5px] rounded-sm"
+              >
+                <option value="" disabled>
+                  Select Status
+                </option>
+                <option value="Active">Active</option>
+                <option value="Completed">Completed</option>
+                <option value="On Hold">On Hold</option>
+              </select>
+            </div>
 
-              {/* Project Status */}
-              <div className="flex flex-col items-start">
-                <label className="font-semibold text-gray-700">Task Status</label>
-                <select name="status" value={formData.status} onChange={handleChange} className="w-full border border-blue-300 px-1 py-[0.5px] rounded-sm">
-                  <option value="" disabled>Select Status</option>
-                  <option value="Active">Active</option>
-                  <option value="Completed">Completed</option>
-                  <option value="On Hold">On Hold</option>
-                </select>
-              </div>
+            {/* Description */}
+            <div className="w-full">
+              <label className="font-semibold text-gray-700">Description</label>
+              <JoditEditor
+                ref={editor}
+                value={description}
+                onChange={handleDescriptionChange}
+                className="w-full border border-blue-300 px-1 py-[0.5px] rounded-sm"
+              />
+            </div>
 
-              {/* Description */}
-              <div className="w-full">
-                <label className="font-semibold text-gray-700">Description</label>
-                <JoditEditor ref={editor} value={description} onChange={handleDescriptionChange} className="w-full border border-blue-300 px-1 py-[0.5px] rounded-sm" />
-              </div>
-
-              {/* <div className="flex flex-row gap-2">
+            {/* <div className="flex flex-row gap-2">
                 {/* Country Dropdown */}
-                {/* <div className="w-full mt-4">
+            {/* <div className="w-full mt-4">
                   <label className="font-semibold text-gray-700">Country</label>
                   <select
                     onChange={handleCountryChange}
@@ -318,8 +374,8 @@ function AddTaskForm1({projectId, onSubmit, onCancel}) {
                   </select>
                 </div> */}
 
-                {/* State Dropdown */}
-                {/* <div className="w-full mt-4">
+            {/* State Dropdown */}
+            {/* <div className="w-full mt-4">
                   <label className="font-semibold text-gray-700">State</label>
                   <select
                     onChange={handleStateChange}
@@ -344,8 +400,8 @@ function AddTaskForm1({projectId, onSubmit, onCancel}) {
                   </select>
                 </div> */}
 
-                {/* City Dropdown */}
-                {/* <div className="w-full mt-4">
+            {/* City Dropdown */}
+            {/* <div className="w-full mt-4">
                   <label className="font-semibold text-gray-700">City</label>
                   <select
                     onChange={handleCityChange}
@@ -369,33 +425,53 @@ function AddTaskForm1({projectId, onSubmit, onCancel}) {
                     )}
                   </select>
                 </div> */}
-              {/* </div> */} 
+            {/* </div> */}
 
-              <div className="flex flex-col items-start">
-                <label className="font-semibold text-gray-700">Area</label>
-                <input type="number" min='0' placeholder="Area in KM" name="Area" value={formData.Area} onChange={handleChange} className="w-full border border-blue-300 px-1 py-[0.5px] rounded-sm" />
-              </div>
-
-              {/* Budget */}
-              <div className="flex flex-col items-start">
-                <label className="font-semibold text-gray-700">Budget</label>
-                <input type="number" min='0' name="budget" value={formData.budget} onChange={handleChange} className="w-full border border-blue-300 px-1 py-[0.5px] rounded-sm" />
-              </div>
-
-
-
-            </form>
-
-            {/* Modal Footer */}
-            <div className="w-full p-2 flex justify-start space-x-2 shadow-md shadow-gray-500 bg-white">
-              <button onClick={onCancel} className="text-gray-500 px-4 rounded-lg hover:rounded-lg py-2 hover:bg-red-700 hover:text-white transition duration-300">Cancel</button>
-              <button onClick={(e) => handlaAddTaskSubmit(e)} className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-800 transition duration-300" disabled={isLoading}>
-                {isLoading ? "Creating..." : "Create"}
-              </button>
+            <div className="flex flex-col items-start">
+              <label className="font-semibold text-gray-700">Area</label>
+              <input
+                type="number"
+                min="0"
+                placeholder="Area in KM"
+                name="Area"
+                value={formData.Area}
+                onChange={handleChange}
+                className="w-full border border-blue-300 px-1 py-[0.5px] rounded-sm"
+              />
             </div>
+
+            {/* Budget */}
+            <div className="flex flex-col items-start">
+              <label className="font-semibold text-gray-700">Budget</label>
+              <input
+                type="number"
+                min="0"
+                name="budget"
+                value={formData.budget}
+                onChange={handleChange}
+                className="w-full border border-blue-300 px-1 py-[0.5px] rounded-sm"
+              />
+            </div>
+          </form>
+
+          {/* Modal Footer */}
+          <div className="w-full p-2 flex justify-start space-x-2 shadow-md shadow-gray-500 bg-white">
+            <button
+              onClick={onCancel}
+              className="text-gray-500 px-4 rounded-lg hover:rounded-lg py-2 hover:bg-red-700 hover:text-white transition duration-300"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={(e) => handlaAddTaskSubmit(e)}
+              className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-800 transition duration-300"
+              disabled={isLoading}
+            >
+              {isLoading ? "Creating..." : "Create"}
+            </button>
           </div>
         </div>
-      
+      </div>
     </div>
   );
 }

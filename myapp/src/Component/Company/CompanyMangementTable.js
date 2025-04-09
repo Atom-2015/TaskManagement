@@ -13,6 +13,7 @@ const CompanyTable = () => {
       company_email: "contact@techsolutions.com",
       company_joinDate: "2023-12-31",
       company_validity:"2027-12-31",
+      cost:20000,
       permission_location: [
         {
           country: "India",
@@ -28,6 +29,7 @@ const CompanyTable = () => {
       company_email: "info@globalent.com",
       company_joinDate: "2024-06-30",
       company_validity:"2026-12-31",
+      cost:20000,
       permission_location: [
         {
           country: "India",
@@ -43,6 +45,7 @@ const CompanyTable = () => {
       company_email: "info@example.com",
       company_joinDate: "2023-09-30",
       company_validity:"2029-12-31",
+      cost:20000,
       permission_location: [
         {
           country: "Germany",
@@ -58,6 +61,7 @@ const CompanyTable = () => {
       company_email: "test@testsolutions.com",
       company_joinDate: "2024-05-20",
       company_validity:"2028-1-31",
+      cost:20000,
       permission_location: [
         {
           country: "France",
@@ -73,6 +77,7 @@ const CompanyTable = () => {
       company_email: "page@pagination.com",
       company_joinDate: "2023-12-15",
       company_validity:"2029-12-1",
+      cost:20000,
       permission_location: [
         {
           country: "Japan",
@@ -88,6 +93,7 @@ const CompanyTable = () => {
       company_email: "contact@another.com",
       company_joinDate: "2024-02-28",
       company_validity:"2026-12-12",
+      cost:2000000,
       permission_location: [
         {
           country: "Brazil",
@@ -133,10 +139,39 @@ const CompanyTable = () => {
     }
   };
 
+
+  const calculateDuration=(start,end)=>{
+    if(!start || !end){
+      return " 0 days"
+    };
+
+    const startDate=new Date(start);
+    const endDate=new Date(end);
+
+    if(isNaN(startDate.getTime())){
+      return "invalid start date";
+    }
+    if(isNaN(endDate.getTime())){
+      return "invalid end date";
+    }
+    if(endDate < startDate){
+      return "inavlid date range"
+    }
+
+    const diffTime=Math.abs(endDate-startDate);
+    const diffDays=Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+    return `${diffDays} days`;
+  }
+    
+
   const handleEdit = (company) => {
     setEditingCompany(company);
     setShowForm(true);
   };
+
+  const formatCost=(cost)=>{
+    return cost.toLocaleString('en-IN')
+  }
 
   // Filter companies based on search term
   const filteredCompanies = companies.filter(company =>
@@ -154,9 +189,9 @@ const CompanyTable = () => {
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   return (
-    <div className="bg-gray-600 rounded-lg shadow-lg overflow-hidden p-4">
+    <div className="bg-gray-100 rounded-lg shadow-lg overflow-hidden p-4">
       <div className="flex justify-between items-center mb-4">
-        <div className="text-start text-white text-2xl">Company List</div>
+        <div className="text-start text-blue-700 text-2xl">Company List</div>
         <div className="flex items-center space-x-2">
           {/* <button
             onClick={() => setShowSearch(!showSearch)}
@@ -195,19 +230,19 @@ const CompanyTable = () => {
       </AnimatePresence>
 
       <table className="w-full relative">
-        <thead className="bg-gray-800 border-1">
+        <thead className="bg-gray-200 border-1">
           <tr className="border-1 border-gray-400">
-            <th className="p-3 text-center text-gray-200 border-1 border-gray-400 relative">
+            <th className="p-3 text-center text-gray-800 border-1 border-gray-400 relative">
             <div className="flex items-center justify-center gap-2">
                 Company Name
                 <button 
                   onClick={() => setShowSearch(!showSearch)}
-                  className="text-gray-300 hover:text-white transition-colors"
+                  className="text-gray-800 hover:text-red-800 transition-colors"
                 >
                   <Search size={16} />
                 </button>
                 {showSearch && (
-                  <div className="absolute top-0 left-0 right-0 -mt-10 mx-auto w-full">
+                  <div className="absolute top-0 text-gray-800 left-0 right-0 -mt-10 mx-auto w-full">
                     <input
                       type="text"
                       placeholder="Search companies..."
@@ -224,7 +259,7 @@ const CompanyTable = () => {
                 )}
               </div>
             </th>
-            <th className="p-3 text-center text-gray-200 border-1 border-gray-400 relative">
+            <th className="p-3 text-center text-gray-800 border-1 border-gray-400 relative">
               <div className='flex items-center justify-center gap-2'>
               Client Name
                 <button>
@@ -232,21 +267,30 @@ const CompanyTable = () => {
                 </button>
               </div>
             </th>
-            <th className="p-3 text-center text-gray-200 border-1 border-gray-400">
+            <th className="p-3 text-center text-gray-800 border-1 border-gray-400">
               Email
             </th>
-            <th className="p-3 text-center text-gray-200 border-1 border-gray-400">
+            <th className="p-3 text-center text-gray-800 border-1 border-gray-400">
               COI Date
             </th>
 
-            <th className='p-3 text-center text-gray-200 border-1 border-gray-400'>
+            <th className='p-3 text-center text-gray-800 border-1 border-gray-400'>
                 Validity Date
             </th>
 
-            <th className="p-3 text-center text-gray-200 border-1 border-gray-400">
+            
+            <th className='p-3 text-center text-gray-800 border-1 border-gray-400'>
+                Duration
+            </th>
+
+            <th className='p-3 text-center text-gray-800 border-1 border-gray-400'>
+                Renew Cost
+            </th>
+
+            <th className="p-3 text-center text-gray-800 border-1 border-gray-400">
               Locations
             </th>
-            <th className="p-3 text-center text-gray-200 border-1 border-gray-400">
+            <th className="p-3 text-center text-gray-800 border-1 border-gray-400">
               Actions
             </th>
           </tr>
@@ -256,29 +300,35 @@ const CompanyTable = () => {
             currentItems.map((company) => (
               <tr
                 key={company._id}
-                className="border-1 border-gray-400 hover:bg-gray-700"
+                className="border-1 border-gray-400 hover:bg-gray-200"
               >
-                <td className="p-3 border-1 border-gray-400 text-gray-100">
+                <td className="p-3 border-1 border-gray-400 text-gray-700">
                   {company.company_name}
                 </td>
-                <td className="p-3 border-1 border-gray-400 text-gray-100">
+                <td className="p-3 border-1 border-gray-400 text-gray-700">
                   {company.Owner}
                 </td>
-                <td className="p-3 border-1 border-gray-400 text-gray-100">
+                <td className="p-3 border-1 border-gray-400 text-gray-700">
                   {company.company_email}
                 </td>
-                <td className="p-3 border-1 border-gray-400 text-gray-100">
+                <td className="p-3 border-1 border-gray-400 text-gray-700">
                   {company.company_joinDate}
                 </td>
-                <td className="p-3 border-1 border-gray-400 text-gray-100">
+                <td className="p-3 border-1 border-gray-400 text-gray-700">
                   {company.company_validity}
                 </td>
-                <td className="p-3 border-1 border-gray-400 text-gray-100">
+                <td className="p-3 border-1 border-gray-400 text-gray-700">
+                  {calculateDuration(company.company_joinDate, company.company_validity)}
+                </td>
+                <td className="p-3 border-1 border-gray-400 text-gray-700">
+                  {formatCost(company.cost)}
+                </td>
+                <td className="p-3 border-1 border-gray-400 text-gray-700">
                   {company.permission_location.map((location, idx) => (
                     <div key={idx} className="mb-1 last:mb-0">
                       <strong className="text-blue-300">{location.country}</strong> -{" "}
                       {location.state}:{" "}
-                      <span className="text-gray-300">
+                      <span className="text-red-800">
                         {location.cities.join(", ")}
                       </span>
                     </div>

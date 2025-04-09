@@ -12,6 +12,7 @@ import Select from "react-select";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import Swal from "sweetalert2";
+import { projectlist } from "../../FeatureRedux/projectlistSlice";
 
 function AddProjectButton1() {
   const [countries, setCountries] = useState([]);
@@ -57,6 +58,20 @@ function AddProjectButton1() {
     }));
   }, []);
 
+
+  const nameRef = useRef(null);
+  const managerRef = useRef(null);
+  const startDateRef = useRef(null);
+  const endDateRef = useRef(null);
+  const sectorRef = useRef(null);
+  const descriptionRef = useRef(null);
+  const countryRef = useRef(null);
+  const stateRef = useRef(null);
+  const cityRef = useRef(null);
+  const areaRef = useRef(null);
+  const budgetRef = useRef(null);
+
+
   const { isLoading, isError, errorMessage, isAdded } = useSelector(
     (state) => state.AddProject
   );
@@ -81,6 +96,9 @@ function AddProjectButton1() {
   //   }));
   // };
 
+
+  
+
   useEffect(() => {
     console.log("Current team_members value:", formData.team_members);
     console.log(
@@ -90,6 +108,15 @@ function AddProjectButton1() {
   }, [formData.team_members, userlist]);
 
   const [showInput, setShowInput] = useState(false);
+
+
+  const handlekeydown=(e,nextRef)=>{
+    if(e.key === "Enter" && nextRef.current){
+      nextRef.current.focus()
+    }
+
+  }
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -222,7 +249,13 @@ function AddProjectButton1() {
     };
 
     try {
-      dispatch(AddProject(submissionData));
+      dispatch(AddProject(submissionData))
+      
+      .then(()=>{
+        dispatch(projectlist());
+      })
+      
+     
 
       Swal.fire({
         title: "Project Created Successfully",
@@ -344,6 +377,8 @@ function AddProjectButton1() {
                   require
                   type="text"
                   name="name"
+                 onKeyDown={(e)=>handlekeydown(e,managerRef)}
+                 ref={nameRef}
                   value={formData.name}
                   onChange={handleChange}
                   required
@@ -360,6 +395,8 @@ function AddProjectButton1() {
                   name="team_members"
                   value={formData.team_members}
                   onChange={handleChange}
+                  onKeyDown={(e)=>handlekeydown(e,startDateRef)}
+                  ref={managerRef}
                   required
                   className="w-full border border-blue-300 px-1 py-[0.5px] rounded-sm"
                 >
@@ -384,6 +421,8 @@ function AddProjectButton1() {
                   <input
                     type="date"
                     name="start_date"
+                    ref={startDateRef}
+                    onKeyDown={(e)=>handlekeydown(e,endDateRef)}
                     onClick={(e) => e.target.showPicker()}
                     value={formData.start_date}
                     onChange={handleChange}
@@ -398,6 +437,8 @@ function AddProjectButton1() {
                   <input
                     type="date"
                     name="end_date"
+                    ref={endDateRef}
+                    onKeyDown={(e)=>handlekeydown(e,sectorRef)}
                     onClick={(e) => e.target.showPicker()}
                     value={formData.end_date}
                     onChange={handleChange}
@@ -427,6 +468,8 @@ function AddProjectButton1() {
                   <select
                     name="sector"
                     value={formData.sector}
+                    ref={sectorRef}
+                    onKeyDown={(e)=>handlekeydown(e,descriptionRef)}
                     onChange={handleChange}
                     className="w-full border border-blue-300 px-2 py-0 rounded-sm"
                   >
@@ -464,6 +507,8 @@ function AddProjectButton1() {
                 </label>
                 <ReactQuill
                   theme="snow"
+                  ref={descriptionRef}
+                  onKeyDown={(e)=>handlekeydown(e,countryRef)}
                   value={description} // Use description from state
                   onChange={handleDescriptionChange} // Ensure proper update
                   className="w-full border border-blue-300 rounded-sm"
@@ -477,6 +522,8 @@ function AddProjectButton1() {
                   <label className="font-semibold text-gray-700">Country</label>
                   <select
                     onChange={handleCountryChange}
+                    ref={countryRef}
+                    onKeyDown={(e)=>handlekeydown(e,stateRef)}
                     value={selectedCountry}
                     className="w-full border border-blue-300 px-2 py-1 rounded-sm"
                     required // Add required attribute
@@ -497,6 +544,8 @@ function AddProjectButton1() {
                   <label className="font-semibold text-gray-700">State</label>
                   <select
                     onChange={handleStateChange}
+                    ref={stateRef}
+                    onKeyDown={(e)=>handlekeydown(e,cityRef)}
                     value={selectedState}
                     className="w-full border border-blue-300 px-2 py-1 rounded-sm"
                     required // Add required attribute
@@ -522,7 +571,10 @@ function AddProjectButton1() {
                 <div className="w-full mt-4">
                   <label className="font-semibold text-gray-700">City</label>
                   <select
+
+                    ref={cityRef}
                     onChange={handleCityChange}
+                    onKeyDown={(e)=>handlekeydown(e,areaRef)}
                     value={selectedCity}
                     className="w-full border border-blue-300 px-2 py-1 rounded-sm"
                     required // Add required attribute
@@ -560,6 +612,8 @@ function AddProjectButton1() {
                     placeholder="Enter Area"
                     name="Area"
                     required
+                    ref={areaRef}
+                    onKeyDown={(e)=>handlekeydown(e,budgetRef)}
                     value={formData.Area}
                     onChange={handleChange}
                     className="w-1/4 border border-blue-300 px-2 py-1 rounded-l-sm"
@@ -588,6 +642,7 @@ function AddProjectButton1() {
                   type="number"
                   min="0"
                   name="budget"
+                  ref={budgetRef}
                   value={formData.budget}
                   onChange={handleChange}
                   required

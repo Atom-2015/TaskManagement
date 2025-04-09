@@ -8,6 +8,7 @@ import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { RxCross1 } from "react-icons/rx";
 import { MdKeyboardArrowDown, MdKeyboardArrowRight } from "react-icons/md";
 import ProjectViewSubTask from "./ProjectViewSubTask";
+import AddTaskForm from "./AddTaskForm";
 
 const ProjectViewList = () => {
   const { id } = useParams();
@@ -51,6 +52,7 @@ const ProjectViewList = () => {
 
   const handleAddTaskSubmit = (projectId, newTask) => {
     dispatch(addtask({ projectId, task: newTask }));
+    
   };
 
   const handleToggleExpand = (taskId) => {
@@ -185,7 +187,7 @@ const ProjectViewList = () => {
         </div>
 
         {showTask && (
-          <AddTaskForm1
+          <AddTaskForm
             projectId={id}
             onSubmit={handleAddTaskSubmit}
             onCancel={() => setShowTask(false)}

@@ -27,6 +27,7 @@ const CompanyAddForm = ({
     company_email: editingCompany?.company_email || "",
     company_joinDate: editingCompany?.company_joinDate || "",
     company_validity:editingCompany?.company_validity ||"",
+    cost:editingCompany?.cost||"",
     permission_location: editingCompany?.permission_location || [
       {
         country: defaultCountry,
@@ -216,7 +217,7 @@ useEffect(() => {
         transition={{ type: "spring", damping: 30, stiffness: 150, mass: 0.2 }}
         className="fixed inset-0 flex items-center justify-center z-[105] transform-gpu will-change-transform"
       >
-        <div className="bg-gray-700 rounded-lg shadow-lg w-full max-w-2xl mx-4 p-6 relative max-h-[80vh] overflow-hidden">
+        <div className="bg-gray-200 rounded-lg shadow-lg w-full max-w-2xl mx-4 p-6 relative max-h-[80vh] overflow-hidden">
           <button
             className="absolute top-3 right-3 bg-gray-600 w-8 h-8 border border-gray-500 shadow-md flex items-center justify-center rounded-full hover:bg-gray-500 transition-colors z-10"
             onClick={onClose}
@@ -225,14 +226,14 @@ useEffect(() => {
             <X size={18} className="text-white" />
           </button>
 
-          <h2 className="text-xl font-bold text-white mb-4">
+          <h2 className="text-xl font-bold text-gray-800 mb-4">
             {editingCompany ? "Edit Company" : "Add New Company"}
           </h2>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
                   Company Name
                 </label>
                 <input
@@ -240,13 +241,13 @@ useEffect(() => {
                   name="company_name"
                   value={formData.company_name}
                   onChange={handleChange}
-                  className="w-full bg-gray-600 border border-gray-500 rounded-md p-2 text-white"
+                  className="w-full bg-gray-100 border border-gray-500 rounded-md p-2 text-gray-700"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
                   Client Name
                 </label>
                 <input
@@ -254,13 +255,13 @@ useEffect(() => {
                   name="Owner"
                   value={formData.Owner}
                   onChange={handleChange}
-                  className="w-full bg-gray-600 border border-gray-500 rounded-md p-2 text-white"
+                  className="w-full bg-gray-100 border border-gray-500 rounded-md p-2 text-gray-700"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
                   Email
                 </label>
                 <input
@@ -268,13 +269,13 @@ useEffect(() => {
                   name="company_email"
                   value={formData.company_email}
                   onChange={handleChange}
-                  className="w-full bg-gray-600 border border-gray-500 rounded-md p-2 text-white"
+                  className="w-full bg-gray-100 border border-gray-500 rounded-md p-2 text-gray-700"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
                   Password
                 </label>
                 <input
@@ -282,13 +283,13 @@ useEffect(() => {
                   name="company_password"
                   value={formData.company_password}
                   onChange={handleChange}
-                  className="w-full bg-gray-600 border border-gray-500 rounded-md p-2 text-white"
+                  className="w-full bg-gray-100 border border-gray-500 rounded-md p-2 text-gray-700"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
                   COI Date
                 </label>
                 <input
@@ -297,12 +298,12 @@ useEffect(() => {
                   value={formData.company_joinDate}
                   onClick={(e)=>e.target.showPicker()}
                   onChange={handleChange}
-                  className="w-full bg-gray-600 border border-gray-500 rounded-md p-2 text-white"
+                  className="w-full bg-gray-100 border border-gray-500 rounded-md p-2 text-gray-700"
                   required
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
                   Validity Date
                 </label>
                 <input
@@ -311,14 +312,29 @@ useEffect(() => {
                   value={formData.company_validity}
                   onClick={(e)=>e.target.showPicker()}
                   onChange={handleChange}
-                  className="w-full bg-gray-600 border border-gray-500 rounded-md p-2 text-white"
+                  className="w-full bg-gray-100 border border-gray-500 rounded-md p-2 text-gray-700"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Cost
+                </label>
+                <input
+                  type="number"
+                  name="cost"
+                  value={formData.cost}
+                 
+                  onChange={handleChange}
+                  className="w-full bg-gray-100 border border-gray-500 rounded-md p-2 text-gray-700"
                   required
                 />
               </div>
             </div>
 
             <div className="space-y-2">
-              <label className="block text-sm font-medium text-gray-300">
+              <label className="block text-sm font-medium text-gray-700">
                 Locations
               </label>
               {formData.permission_location.map((loc, index) => (
@@ -327,7 +343,7 @@ useEffect(() => {
                   className="grid grid-cols-1 md:grid-cols-3 gap-2"
                 >
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-1">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
                       Country
                     </label>
                     <select
@@ -338,7 +354,7 @@ useEffect(() => {
                         handleLocationChange(index, "state", "");
                         handleLocationChange(index, "cities", []);
                       }}
-                      className="w-full bg-gray-600 border border-gray-500 rounded-md p-2 text-white"
+                      className="w-full bg-gray-100 border border-gray-500 rounded-md p-2 text-gray-700"
                     >
                       {Country.getAllCountries().map((country) => (
                         <option key={country.isoCode} value={country.name}>
@@ -348,7 +364,7 @@ useEffect(() => {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-1">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
                       State
                     </label>
                     <select
@@ -359,7 +375,7 @@ useEffect(() => {
                         handleLocationChange(index, "cities", []);
                       }}
                       disabled={!loc.country}
-                      className="w-full bg-gray-600 border border-gray-500 rounded-md p-2 text-white disabled:opacity-50"
+                      className="w-full bg-gray-100 border border-gray-500 rounded-md p-2 text-gray-700 disabled:opacity-50"
                     >
                       <option value="">Select State</option>
                       {loc.country &&
@@ -375,7 +391,7 @@ useEffect(() => {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-1">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
                       City
                     </label>
                     <select
@@ -385,7 +401,7 @@ useEffect(() => {
                         handleLocationChange(index, "cities", [cityName]);
                       }}
                       disabled={!loc.state}
-                      className="w-full bg-gray-600 border border-gray-500 rounded-md p-2 text-white disabled:opacity-50"
+                      className="w-full bg-gray-100 border border-gray-500 rounded-md p-2 text-gray-700 disabled:opacity-50"
                     >
                       <option value="">Select City</option>
                       {loc.state &&

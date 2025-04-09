@@ -4,6 +4,7 @@ import { addUser } from '../../FeatureRedux/adduserSlice';
 import yourImage from '../Media/user.jpg';
 import { Country, State, City } from "country-state-city";
 import Swal from 'sweetalert2';
+import { allUser } from "../../FeatureRedux/alluserSlice";
 
 
 
@@ -76,15 +77,38 @@ function AdduserButton() {
             state: states.find(s => s.isoCode === selectedState)?.name || ""
         };
 
-        dispatch(addUser(userData));
-        setIsModalOpen(false);
+        dispatch(addUser(userData))
+        .unwrap()
+        .then(() => {
+            dispatch(allUser()); // ✅ Call only after addUser is successful
+            setIsModalOpen(false);
 
-        Swal.fire({
-            title: 'User Created!',
-            text: `${formData.name} ${formData.last_name} has been added successfully.`,
-            icon: 'success',
-            confirmButtonColor: '#3085d6',
-            confirmButtonText: 'OK'
+            setFormData({
+                name: "",
+                last_name: "",
+                email: "",
+                phone: "",
+                password: "",
+                role: "",
+                state: "",
+                city: "",
+                designation: "",
+                Department: "",
+                dob: "",
+                status: "Active"
+            });
+            setSelectedState("");
+
+            Swal.fire({
+                title: 'User Created!',
+                text: `${formData.name} ${formData.last_name} has been added successfully.`,
+                icon: 'success',
+                confirmButtonColor: '#3085d6',
+                confirmButtonText: 'OK'
+            });
+        })
+        .catch((error) => {
+            Swal.fire('Error', error, 'error');
         });
     };
 
