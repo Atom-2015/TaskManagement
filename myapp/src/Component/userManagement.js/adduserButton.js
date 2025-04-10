@@ -1,12 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useDispatch } from 'react-redux';
 import { addUser } from '../../FeatureRedux/adduserSlice';
 import yourImage from '../Media/user.jpg';
 import { Country, State, City } from "country-state-city";
 import Swal from 'sweetalert2';
 import { allUser } from "../../FeatureRedux/alluserSlice";
-
-
 
 function AdduserButton() {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -28,6 +26,22 @@ function AdduserButton() {
         status: "Active"
     });
 
+    // Create refs for all input fields
+    const inputRefs = {
+        name: useRef(null),
+        last_name: useRef(null),
+        email: useRef(null),
+        phone: useRef(null),
+        password: useRef(null),
+        role: useRef(null),
+        state: useRef(null),
+        city: useRef(null),
+        designation: useRef(null),
+        Department: useRef(null),
+        dob: useRef(null),
+        status: useRef(null)
+    };
+
     const dispatch = useDispatch();
 
     const handleInputChange = (e) => {
@@ -36,6 +50,16 @@ function AdduserButton() {
             ...prevData,
             [name]: value,
         }));
+    };
+
+    // Handle Enter key press to move to next field
+    const handleKeyDown = (e, nextField) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            if (nextField && inputRefs[nextField]?.current) {
+                inputRefs[nextField].current.focus();
+            }
+        }
     };
 
     // Default country: India (ISO Code: "IN")
@@ -149,6 +173,8 @@ function AdduserButton() {
                                             placeholder="name"
                                             value={formData.name}
                                             onChange={handleInputChange}
+                                            onKeyDown={(e) => handleKeyDown(e, 'last_name')}
+                                            ref={inputRefs.name}
                                             className="w-full border border-gray-600 rounded px-3 py-2 focus:outline-none focus:ring focus:ring-blue-300 bg-gray-800 text-white"
                                             required
                                         />
@@ -161,6 +187,8 @@ function AdduserButton() {
                                             placeholder="Last name"
                                             value={formData.last_name}
                                             onChange={handleInputChange}
+                                            onKeyDown={(e) => handleKeyDown(e, 'email')}
+                                            ref={inputRefs.last_name}
                                             className="w-full border border-gray-600 rounded px-3 py-2 focus:outline-none focus:ring focus:ring-blue-300 bg-gray-800 text-white"
                                             required
                                         />
@@ -177,6 +205,8 @@ function AdduserButton() {
                                             placeholder="Email"
                                             value={formData.email}
                                             onChange={handleInputChange}
+                                            onKeyDown={(e) => handleKeyDown(e, 'phone')}
+                                            ref={inputRefs.email}
                                             className="w-full border border-gray-600 rounded px-3 py-2 focus:outline-none focus:ring focus:ring-blue-300 bg-gray-800 text-white"
                                             required
                                         />
@@ -189,6 +219,8 @@ function AdduserButton() {
                                             placeholder="Contact number"
                                             value={formData.phone}
                                             onChange={handleInputChange}
+                                            onKeyDown={(e) => handleKeyDown(e, 'password')}
+                                            ref={inputRefs.phone}
                                             className="w-full border border-gray-600 rounded px-3 py-2 focus:outline-none focus:ring focus:ring-blue-300 bg-gray-800 text-white"
                                             required
                                         />
@@ -205,6 +237,8 @@ function AdduserButton() {
                                             placeholder="Password"
                                             value={formData.password}
                                             onChange={handleInputChange}
+                                            onKeyDown={(e) => handleKeyDown(e, 'role')}
+                                            ref={inputRefs.password}
                                             className="w-full border border-gray-600 rounded px-3 py-2 focus:outline-none focus:ring focus:ring-blue-300 bg-gray-800 text-white"
                                             required
                                         />
@@ -215,6 +249,8 @@ function AdduserButton() {
                                             name="role"
                                             value={formData.role}
                                             onChange={handleInputChange}
+                                            onKeyDown={(e) => handleKeyDown(e, 'state')}
+                                            ref={inputRefs.role}
                                             className="w-full border border-gray-600 rounded px-3 py-2 focus:outline-none focus:ring focus:ring-blue-300 bg-gray-800 text-white"
                                             required
                                         >
@@ -237,6 +273,8 @@ function AdduserButton() {
                                                 setSelectedState(e.target.value);
                                                 handleInputChange(e);
                                             }}
+                                            onKeyDown={(e) => handleKeyDown(e, 'city')}
+                                            ref={inputRefs.state}
                                             className="w-full border border-gray-600 rounded px-3 py-2 focus:outline-none focus:ring focus:ring-blue-300 bg-gray-800 text-white"
                                             required
                                         >
@@ -254,6 +292,8 @@ function AdduserButton() {
                                             name="city"
                                             value={formData.city}
                                             onChange={handleInputChange}
+                                            onKeyDown={(e) => handleKeyDown(e, 'designation')}
+                                            ref={inputRefs.city}
                                             className="w-full border border-gray-600 rounded px-3 py-2 focus:outline-none focus:ring focus:ring-blue-300 bg-gray-800 text-white"
                                             required
                                             disabled={!selectedState || cities.length === 0}
@@ -282,6 +322,8 @@ function AdduserButton() {
                                             name="designation"
                                             value={formData.designation}
                                             onChange={handleInputChange}
+                                            onKeyDown={(e) => handleKeyDown(e, 'Department')}
+                                            ref={inputRefs.designation}
                                             className="w-full border border-gray-600 rounded px-3 py-2 focus:outline-none focus:ring focus:ring-blue-300 bg-gray-800 text-white"
                                             required
                                         >
@@ -297,6 +339,8 @@ function AdduserButton() {
                                             name="Department"
                                             value={formData.Department}
                                             onChange={handleInputChange}
+                                            onKeyDown={(e) => handleKeyDown(e, 'dob')}
+                                            ref={inputRefs.Department}
                                             className="w-full border border-gray-600 rounded px-3 py-2 focus:outline-none focus:ring focus:ring-blue-300 bg-gray-800 text-white"
                                             required
                                         >
@@ -319,6 +363,8 @@ function AdduserButton() {
                                             value={formData.dob}
                                             onChange={handleInputChange}
                                             onClick={(e) => e.target.showPicker()}
+                                            onKeyDown={(e) => handleKeyDown(e, 'status')}
+                                            ref={inputRefs.dob}
                                             className="w-full border border-gray-600 rounded px-3 py-2 focus:outline-none focus:ring focus:ring-blue-300 bg-gray-800 text-white"
                                             required
                                         />
@@ -329,10 +375,18 @@ function AdduserButton() {
                                             name="status"
                                             value={formData.status}
                                             onChange={handleInputChange}
+                                            onKeyDown={(e) => {
+                                                if (e.key === 'Enter') {
+                                                    e.preventDefault();
+                                                    // Focus on the submit button when Enter is pressed on the last field
+                                                    document.querySelector('button[type="submit"]').focus();
+                                                }
+                                            }}
+                                            ref={inputRefs.status}
                                             className="w-full border border-gray-600 rounded px-3 py-2 focus:outline-none focus:ring focus:ring-blue-300 bg-gray-800 text-white"
                                         >
-                                            <option value="User">User</option>
-                                            <option value="Admin">Admin</option>
+                                            <option value="Active">Active</option>
+                                            <option value="Inactive">Inactive</option>
                                         </select>
                                     </div>
                                 </div>

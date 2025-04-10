@@ -58,7 +58,6 @@ function AddProjectButton1() {
     }));
   }, []);
 
-
   const nameRef = useRef(null);
   const managerRef = useRef(null);
   const startDateRef = useRef(null);
@@ -70,7 +69,6 @@ function AddProjectButton1() {
   const cityRef = useRef(null);
   const areaRef = useRef(null);
   const budgetRef = useRef(null);
-
 
   const { isLoading, isError, errorMessage, isAdded } = useSelector(
     (state) => state.AddProject
@@ -96,9 +94,6 @@ function AddProjectButton1() {
   //   }));
   // };
 
-
-  
-
   useEffect(() => {
     console.log("Current team_members value:", formData.team_members);
     console.log(
@@ -109,14 +104,11 @@ function AddProjectButton1() {
 
   const [showInput, setShowInput] = useState(false);
 
-
-  const handlekeydown=(e,nextRef)=>{
-    if(e.key === "Enter" && nextRef.current){
-      nextRef.current.focus()
+  const handlekeydown = (e, nextRef) => {
+    if (e.key === "Enter" && nextRef.current) {
+      nextRef.current.focus();
     }
-
-  }
-
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -249,13 +241,9 @@ function AddProjectButton1() {
     };
 
     try {
-      dispatch(AddProject(submissionData))
-      
-      .then(()=>{
+      dispatch(AddProject(submissionData)).then(() => {
         dispatch(projectlist());
-      })
-      
-     
+      });
 
       Swal.fire({
         title: "Project Created Successfully",
@@ -377,8 +365,8 @@ function AddProjectButton1() {
                   require
                   type="text"
                   name="name"
-                 onKeyDown={(e)=>handlekeydown(e,managerRef)}
-                 ref={nameRef}
+                  onKeyDown={(e) => handlekeydown(e, managerRef)}
+                  ref={nameRef}
                   value={formData.name}
                   onChange={handleChange}
                   required
@@ -395,7 +383,7 @@ function AddProjectButton1() {
                   name="team_members"
                   value={formData.team_members}
                   onChange={handleChange}
-                  onKeyDown={(e)=>handlekeydown(e,startDateRef)}
+                  onKeyDown={(e) => handlekeydown(e, startDateRef)}
                   ref={managerRef}
                   required
                   className="w-full border border-blue-300 px-1 py-[0.5px] rounded-sm"
@@ -422,7 +410,7 @@ function AddProjectButton1() {
                     type="date"
                     name="start_date"
                     ref={startDateRef}
-                    onKeyDown={(e)=>handlekeydown(e,endDateRef)}
+                    onKeyDown={(e) => handlekeydown(e, endDateRef)}
                     onClick={(e) => e.target.showPicker()}
                     value={formData.start_date}
                     onChange={handleChange}
@@ -438,7 +426,7 @@ function AddProjectButton1() {
                     type="date"
                     name="end_date"
                     ref={endDateRef}
-                    onKeyDown={(e)=>handlekeydown(e,sectorRef)}
+                    onKeyDown={(e) => handlekeydown(e, sectorRef)}
                     onClick={(e) => e.target.showPicker()}
                     value={formData.end_date}
                     onChange={handleChange}
@@ -461,38 +449,53 @@ function AddProjectButton1() {
                 </select>
               </div> */}
 
-              <div className="flex flex-col items-start ">
-                <label className="font-semibold text-gray-700">Sector</label>
+              {/* Sector */}
+              <div className="flex flex-col w-full">
+                {/* Label + +Button in same row */}
+                <div className="flex justify-between items-center w-full mb-1">
+                  <label className="font-semibold text-gray-700">Sector</label>
+                  {!showInput && (
+                    <button
+                      type="button"
+                      onClick={() => setShowInput(true)}
+                      className="text-black rounded-full px-2 py-0 hover:bg-blue-600 hover:text-white"
+                    >
+                      Add New Sector +
+                    </button>
+                  )}
+                </div>
 
-                {!showInput ? (
-                  <select
-                    name="sector"
-                    value={formData.sector}
-                    ref={sectorRef}
-                    onKeyDown={(e)=>handlekeydown(e,descriptionRef)}
-                    onChange={handleChange}
-                    className="w-full border border-blue-300 px-2 py-0 rounded-sm"
-                  >
-                    <option value="" disabled>
-                      Select Sector
-                    </option>
-                    <option value="add_new"> Add New Sector by clicking</option>
-                    <option value="Highways">Highways</option>
-                    <option value="Railways">Railways</option>
-                    <option value="Residential">Residential</option>
-                    <option value="Commercial">Commercial</option>
-                    <option value="Factory">Factory</option>
-                  </select>
-                ) : (
-                  <input
-                    type="text"
-                    name="sector"
-                    value={formData.sector}
-                    onChange={handleInputChange}
-                    placeholder="Type new sector"
-                    className="w-full border border-blue-300 px-2 py-0 rounded-sm"
-                  />
-                )}
+                {/* Input row below */}
+                <div className="flex items-center w-full">
+                  {!showInput ? (
+                    <select
+                      name="sector"
+                      value={formData.sector}
+                      ref={sectorRef}
+                      onKeyDown={(e) => handlekeydown(e, descriptionRef)}
+                      onChange={handleChange}
+                      className="w-full border border-blue-300 px-2 py-1 rounded-sm"
+                    >
+                      <option value="" disabled>
+                        Select Sector
+                      </option>
+                      <option value="Highways">Highways</option>
+                      <option value="Railways">Railways</option>
+                      <option value="Residential">Residential</option>
+                      <option value="Commercial">Commercial</option>
+                      <option value="Factory">Factory</option>
+                    </select>
+                  ) : (
+                    <input
+                      type="text"
+                      name="sector"
+                      value={formData.sector}
+                      onChange={handleInputChange}
+                      placeholder="Type new sector"
+                      className="w-full border border-blue-300 px-2 py-1 rounded-sm"
+                    />
+                  )}
+                </div>
               </div>
 
               {/* Description */}
@@ -508,7 +511,7 @@ function AddProjectButton1() {
                 <ReactQuill
                   theme="snow"
                   ref={descriptionRef}
-                  onKeyDown={(e)=>handlekeydown(e,countryRef)}
+                  onKeyDown={(e) => handlekeydown(e, countryRef)}
                   value={description} // Use description from state
                   onChange={handleDescriptionChange} // Ensure proper update
                   className="w-full border border-blue-300 rounded-sm"
@@ -523,7 +526,7 @@ function AddProjectButton1() {
                   <select
                     onChange={handleCountryChange}
                     ref={countryRef}
-                    onKeyDown={(e)=>handlekeydown(e,stateRef)}
+                    onKeyDown={(e) => handlekeydown(e, stateRef)}
                     value={selectedCountry}
                     className="w-full border border-blue-300 px-2 py-1 rounded-sm"
                     required // Add required attribute
@@ -545,7 +548,7 @@ function AddProjectButton1() {
                   <select
                     onChange={handleStateChange}
                     ref={stateRef}
-                    onKeyDown={(e)=>handlekeydown(e,cityRef)}
+                    onKeyDown={(e) => handlekeydown(e, cityRef)}
                     value={selectedState}
                     className="w-full border border-blue-300 px-2 py-1 rounded-sm"
                     required // Add required attribute
@@ -571,10 +574,9 @@ function AddProjectButton1() {
                 <div className="w-full mt-4">
                   <label className="font-semibold text-gray-700">City</label>
                   <select
-
                     ref={cityRef}
                     onChange={handleCityChange}
-                    onKeyDown={(e)=>handlekeydown(e,areaRef)}
+                    onKeyDown={(e) => handlekeydown(e, areaRef)}
                     value={selectedCity}
                     className="w-full border border-blue-300 px-2 py-1 rounded-sm"
                     required // Add required attribute
@@ -613,7 +615,7 @@ function AddProjectButton1() {
                     name="Area"
                     required
                     ref={areaRef}
-                    onKeyDown={(e)=>handlekeydown(e,budgetRef)}
+                    onKeyDown={(e) => handlekeydown(e, budgetRef)}
                     value={formData.Area}
                     onChange={handleChange}
                     className="w-1/4 border border-blue-300 px-2 py-1 rounded-l-sm"
