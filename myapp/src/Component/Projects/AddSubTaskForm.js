@@ -8,10 +8,12 @@ import { allUser } from "../../FeatureRedux/alluserSlice";
 import { Country, State, City } from "country-state-city";
 import { AddProject } from "../../FeatureRedux/projectCreation"; // Import AddProject action
 import ReactQuill from "react-quill";
+import { subcreatetasks } from "../../FeatureRedux/subTaskSlices/addsubTaskslice";
 
 
 
-function AddSubTaskForm({ open, close }) {
+
+function AddSubTaskForm({ open, close , taskid }) {
   const [countries, setCountries] = useState([]);
   const [states, setStates] = useState([]);
   const [cities, setCities] = useState([]);
@@ -36,10 +38,13 @@ function AddSubTaskForm({ open, close }) {
     city: "",
     Area: ""
   });
+  
 
+  // console.log("thisis sub task :" , taskid)
   useEffect(() => {
     const fetchCountries = Country.getAllCountries();
     setCountries(fetchCountries);
+    
 
     // Set India as the default country and fetch its states
     const indiaStates = State.getStatesOfCountry("IN");
@@ -155,29 +160,33 @@ function AddSubTaskForm({ open, close }) {
   };
 
   // Handle form submission
-  const handlaAddTaskSubmit = (e) => {
-    e.preventDefault(); // Prevents the form from reloading the page
-    console.log("Form submitted!");
-
-    if (!formData.name || !formData.start_date) {
-      alert("Project Name and Start Date are required.");
-      return;
-    }
+  const handlaAddTaskSubmit = async(e) => {
+    e.preventDefault();
+  
+  
+  
     const submissionData = {
-      ...formData,
-      state: formData.state || "", // Pass empty string if state is not available
-      city: formData.city || "", // Pass empty string if city is not available+++++++++++++++++++++++++++++++++++++
+      name: formData.name,
+      assigned_userid: formData.team_members, // Assuming team_members holds one user ID
+      priority: formData.priority || "Low", // Add a field for priority in your form
+      start_date: formData.start_date,
+      end_date: formData.end_date,
+      cost: formData.budget,
+      status: formData.status,
+      task_id: taskid,
     };
 
-    dispatch(AddProject(submissionData));
-
-    setSuccessMessage("Project Submitted Successfully")
-    setTimeout(() => {
-      setSuccessMessage("");
-      toggleModal("");
-
-    }, 1000)
+    console.log("Ram ram " , submissionData)
+  
+    await dispatch(subcreatetasks({submissionData}));
+  
+    // setSuccessMessage("Subtask Submitted Successfully");
+    // setTimeout(() => {
+    //   setSuccessMessage("");
+    //   toggleModal();
+    // }, 1000);
   };
+  
 
   // Toggle modal visibility
   const toggleModal = () => {
@@ -260,7 +269,7 @@ function AddSubTaskForm({ open, close }) {
                 <label className="font-semibold text-gray-700">User Assign</label>
                 <select name="team_members" value={formData.team_members} onChange={handleChange} className="w-full border border-blue-300 px-1 py-[0.5px] rounded-sm">
                   <option value="" disabled>Select a team member</option>
-                  {userlist && userlist.map((user) => <option key={user.id} value={user.id}>{user.name}</option>)}
+                  {userlist && userlist.map((user) => <option key={user._id} value={user._id}>{user.name}</option>)}
                 </select>
               </div>
 

@@ -66,6 +66,12 @@ const ProjectViewSubTask = ({ isStandalone }) => {
     startWidth: 0
   });
 
+  if (!taskId) {
+    console.log(" No Task ID found in URL params!");
+  } else {
+    console.log("Task ID received:", taskId);
+  }
+
   // Get date range for all tasks
   const getDateRange = () => {
     if (subTasks.length === 0) return [];
@@ -123,6 +129,8 @@ const ProjectViewSubTask = ({ isStandalone }) => {
     return currentDate >= taskStart && currentDate <= taskEnd;
   };
 
+ 
+  
   const handleAddSubTask = () => {
     if (!newSubTask.subTaskName.trim()) return;
 
@@ -339,7 +347,7 @@ const ProjectViewSubTask = ({ isStandalone }) => {
         {isStandalone && (
           <div className="flex flex-row justify-between items-center mb-2">
             <h2 className="text-lg font-semibold">SubTasks</h2>
-            <button className="p-1 px-2"><AddSubTaskForm /></button>
+            <button className="p-1 px-2"><AddSubTaskForm  taskid={taskId} /></button>
             <button
               className="hover:rotate-180 transition duration-700"
               onClick={() => navigate(-1)}
