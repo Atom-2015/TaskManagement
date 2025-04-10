@@ -48,6 +48,13 @@ const addsubtask =createSlice({
                 state.data =[];
             })
 
-            .addCase(addsubtask.fulfu)
+            .addCase(addsubtask.fulfilled, (state,action) => {
+                state.isLoading=false;
+                state.isError=false;
+                state.data=action.payload;
+                state.errorMessage="";
+            })
     }
 })
+
+export default addsubtask.reducer;
