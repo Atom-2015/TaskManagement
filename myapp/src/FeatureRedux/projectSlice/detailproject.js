@@ -6,6 +6,7 @@ export const projectdetails = createAsyncThunk(
     "projectdetails",
     async (formData, { rejectWithValue }) => {
         try {
+            console.log("cehck mate")
             const response = await axiosInstance.get("/api/project/projectDetail", {
                 headers: {
                     'x-project-id': formData

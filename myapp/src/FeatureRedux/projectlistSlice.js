@@ -6,8 +6,11 @@ export const projectlist = createAsyncThunk(
   "projectlist",
   async (formData, { rejectWithValue }) => {
     try {
+      
       const response = await axiosInstance.get("/api/project/allprojects", formData);
+    
       return response.data.data;
+    
     } catch (error) {
       return rejectWithValue(
         error.response?.data?.message || "Failed to show projects"
