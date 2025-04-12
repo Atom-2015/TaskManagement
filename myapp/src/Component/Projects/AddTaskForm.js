@@ -32,6 +32,8 @@ import {
 import WaveSurfer from "wavesurfer.js";
 import { alltasks } from "../../FeatureRedux/subtaskSlice";
 import { assigned_by } from "../../FeatureRedux/task/taskassignedbymeSlice";
+import { alltaskuserspecific } from "../../FeatureRedux/alltaskuserspecific";
+import { projectdetails } from "../../FeatureRedux/projectSlice/detailproject";
 
 function AddTaskForm({ projectId, onSubmit, onCancel }) {
   const dispatch = useDispatch();
@@ -101,6 +103,7 @@ function AddTaskForm({ projectId, onSubmit, onCancel }) {
             }
           }
         }).then(() => {
+          dispatch(projectdetails(projectId))
           onCancel();
         });
       })

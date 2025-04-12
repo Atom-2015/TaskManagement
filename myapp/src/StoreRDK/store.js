@@ -11,8 +11,8 @@ import taskSlice from '../FeatureRedux/task/updatetaskSlice';
 import updateUser from '../FeatureRedux/user/updateUser_slice'; // Import the reducer for editing user
 import addtask  from '../FeatureRedux/task/addtaskSlice';
 import addsubtask from '../FeatureRedux/subTaskSlices/addsubTaskslice';
-
-import projectdetails from '../FeatureRedux/projectSlice/detailproject'
+import projectdetails from '../FeatureRedux/projectSlice/detailproject';
+import getsubtasklist from '../FeatureRedux/subTaskSlices/getsubtaskslice'
 export const store = configureStore({
     reducer: {
         DeleteImage: analyseDeleteImageSlice,
@@ -27,7 +27,9 @@ export const store = configureStore({
         addtask:addtask,
         user: updateUser, // Add the reducer here
         projectdetails:projectdetails,
-        addsubtask:addsubtask
+        addsubtask:addsubtask,
+        getsubtasklist:getsubtasklist
+        // getsubtask:getsubtask
 
 
     },

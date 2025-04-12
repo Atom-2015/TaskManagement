@@ -12,7 +12,7 @@ function ProjectList1() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { projects } = useSelector((state) => state.projectlist);
-  console.log(`Projects: ${JSON.stringify(projects)}`);
+
 
   const [filteredProjects, setFilteredProjects] = useState([]);
   const [selected, setSelected] = useState(null);

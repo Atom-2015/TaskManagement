@@ -9,11 +9,14 @@ import { Country, State, City } from "country-state-city";
 import { AddProject } from "../../FeatureRedux/projectCreation"; // Import AddProject action
 import ReactQuill from "react-quill";
 import { subcreatetasks } from "../../FeatureRedux/subTaskSlices/addsubTaskslice";
+import Swal from "sweetalert2";
+import { getsubtasklist } from "../../FeatureRedux/subTaskSlices/getsubtaskslice";
 
 
 
 
-function AddSubTaskForm({ open, close , taskid }) {
+
+function AddSubTaskForm({ open, close , taskId }) {
   const [countries, setCountries] = useState([]);
   const [states, setStates] = useState([]);
   const [cities, setCities] = useState([]);
@@ -64,10 +67,18 @@ function AddSubTaskForm({ open, close , taskid }) {
   const modalRef = useRef(null);
 
   useEffect(() => {
-    dispatch(allUser());
+    dispatch(allUser())
+    // .then(()=>{
+    //     dispatch(getsubtasklist({ taskId }));
+    //     Aos.refresh();
+    // })
+    // .catch((error) => {
+    //   console.error("Error loading users:", error);
+    // });
+    
     Aos.init({ duration: 800, easing: "ease-in-out", once: true });
 
-    return () => Aos.refresh();
+   
   }, [dispatch]);
 
   // Handle form field changes
@@ -160,31 +171,42 @@ function AddSubTaskForm({ open, close , taskid }) {
   };
 
   // Handle form submission
-  const handlaAddTaskSubmit = async(e) => {
+  const handlaAddTaskSubmit = async (e) => {
     e.preventDefault();
-  
-  
   
     const submissionData = {
       name: formData.name,
-      assigned_userid: formData.team_members, // Assuming team_members holds one user ID
-      priority: formData.priority || "Low", // Add a field for priority in your form
+      assigned_userid: formData.team_members,
+      priority: formData.priority,
       start_date: formData.start_date,
       end_date: formData.end_date,
       cost: formData.budget,
       status: formData.status,
-      task_id: taskid,
+      task_id: taskId,
     };
+  
+    const response = await dispatch(subcreatetasks({ submissionData }));
+  
+    if (response?.meta?.requestStatus === "fulfilled") {
+      Swal.fire({
+        icon: "success",
+        title: "Subtask Submitted Successfully",
+        showConfirmButton: false,
+        timer: 1500,
+        timerProgressBar: true,
+        toast: true,
+        position: "top-end",
+      });
 
-    console.log("Ram ram " , submissionData)
-  
-    await dispatch(subcreatetasks({submissionData}));
-  
-    // setSuccessMessage("Subtask Submitted Successfully");
-    // setTimeout(() => {
-    //   setSuccessMessage("");
-    //   toggleModal();
-    // }, 1000);
+      dispatch(getsubtasklist({ taskId }));
+
+      setTimeout(() => {
+        setSuccessMessage("");
+        toggleModal(); 
+      }, 1500);
+    } else {
+      console.error("Failed to submit subtask:", response?.error);
+    }
   };
   
 
@@ -237,11 +259,11 @@ function AddSubTaskForm({ open, close , taskid }) {
       </button>
 
       {/* Success Message */}
-      {successMessage && (
+      {/* {successMessage && (
         <div className="fixed top-10 right-10 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg animate-fadeIn">
           {successMessage}
         </div>
-      )}
+      )} */}
 
 
       {/* Modal */}
@@ -273,6 +295,18 @@ function AddSubTaskForm({ open, close , taskid }) {
                 </select>
               </div>
 
+
+              <div className="flex flex-col items-start">
+                <label className="font-semibold text-gray-700">Priority</label>
+                <select name="priority" value={formData.priority} onChange={handleChange} className="w-full border border-blue-300 px-1 py-[0.5px] rounded-sm">
+                  <option value="" disabled>Select Priority</option>
+                  <option value="Low">Low</option>
+                  <option value="Medium">Medium</option>
+                  <option value="High">High</option>
+                </select>
+              </div>
+
+
               {/* Dates */}
               <div className="flex flex-row gap-4">
                 <div className="flex flex-col flex-1">
@@ -292,7 +326,7 @@ function AddSubTaskForm({ open, close , taskid }) {
                   <option value="" disabled>Select Status</option>
                   <option value="Active">Active</option>
                   <option value="Completed">Completed</option>
-                  <option value="On Hold">On Hold</option>
+                  <option value="In Progress">In Progress</option>
                 </select>
               </div>
 

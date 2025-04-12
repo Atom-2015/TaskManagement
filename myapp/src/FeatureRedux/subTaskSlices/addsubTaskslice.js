@@ -3,10 +3,10 @@ import axiosInstance from "../../axiosInstance";
 export const subcreatetasks = createAsyncThunk(
     "createsubtask/subtaskform",
     async (formData , { rejectWithValue }) => {
-        console.log("axios me hoon mai abhi ")
+      
       try {
         console.log("axios in try ke aandar hoon" , formData)
-        const response = await axiosInstance.post("/api/subtask/createSubtask", formData.submissionData, {
+        const response = await axiosInstance.post("/api/subtask/createSub", formData.submissionData, {
           headers: {
             "Content-Type": "application/json",
             "x-task-id": formData.submissionData.task_id,
@@ -14,7 +14,7 @@ export const subcreatetasks = createAsyncThunk(
         });
         return response.data;
       } catch (error) {
-        console.log("in error " , error)
+       
         return rejectWithValue(
           error.response?.data?.message || "Failed to show sub task"
         );

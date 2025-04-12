@@ -6,33 +6,20 @@ import { useNavigate, useParams } from "react-router-dom";
 import { RxCross2 } from "react-icons/rx";
 import GanttChart from "./GanttChart";
 import AddSubTaskForm from "./AddSubTaskForm";
-
+import { getsubtasklist } from "../../FeatureRedux/subTaskSlices/getsubtaskslice";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useDispatch, useSelector } from "react-redux";
+
 
 
 
 const ProjectViewSubTask = ({ isStandalone }) => {
   const { project, id, taskId } = useParams();
+  const dispatch=useDispatch();
   const navigate = useNavigate();
-  const [subTasks, setSubTasks] = useState([
-    { id: "1", subTaskName: "Design UI Mockups", user: "John Doe", priority: "High", startDate: "2024-03-20", endDate: "2024-03-25", duration: "5 days", cost: "5000", status: "Active", checked: false },
-    { id: "2", subTaskName: "Develop API Endpoints", user: "Jane Smith", priority: "Medium", startDate: "2024-03-22", endDate: "2024-03-30", duration: "8 days", cost: "8000", status: "In Progress", checked: false },
-    { id: "3", subTaskName: "Write Documentation", user: "Alice Brown", priority: "Low", startDate: "2024-03-25", endDate: "2024-04-01", duration: "7 days", cost: "3000", status: "Completed", checked: false }
-  ]);
 
-  const [newSubTask, setNewSubTask] = useState({
-    subTaskName: "",
-    user: "",
-    priority: "Medium",
-    startDate: new Date().toISOString().split('T')[0],
-    endDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-    duration: "7 days",
-    cost: "",
-    status: "Active",
-    checked: false
-  });
-
+  
   const [editingTask, setEditingTask] = useState(null);
   const [editingField, setEditingField] = useState(null);
   const [showFullAddForm, setShowFullAddForm] = useState(false);
@@ -67,10 +54,80 @@ const ProjectViewSubTask = ({ isStandalone }) => {
   });
 
   if (!taskId) {
-    console.log(" No Task ID found in URL params!");
+    console.log(" No Task ID found!");
   } else {
     console.log("Task ID received:", taskId);
   }
+
+  
+ 
+
+
+  // redux ka data lene keliyer
+  const { data: apiSubtasks, isError, isLoading, errorMessage } = useSelector((state) => state.getsubtasklist);
+  
+    //user check kar if keliye  
+    const users = useSelector((state) => state.allUser.users);
+
+    const getusername=(id,users) => {
+        const found = users.find((user)=>user._id === id);
+        return found ? found.name :"unknown name"
+    }
+
+
+  // Transsiton api keliyer
+  const transformApiData = (apiData) => {
+    if (!apiData || !apiData.data) return [];
+    
+    return apiData.data.map((task) => ({
+      id: task._id,
+      subTaskName: task.name,
+      user: (task.assigned_userid || [])
+      .map((id) => getusername(id, users))
+      .join(", ") || "Unassigned",
+      priority: task.priority,
+      startDate: task.start_date?.split('T')[0] || new Date().toISOString().split('T')[0],
+      endDate: task.end_date?.split('T')[0] || new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+      duration: calculateDuration(task.start_date, task.end_date),
+      cost: task.cost?.toString() || "0",
+      status: task.status,
+      checked: false
+    }));
+  };
+
+  
+  const [subTasks, setSubTasks] = useState([]);
+
+  // Fetch data when copnentc need it
+  useEffect(() => {
+    if (taskId) {
+      console.log(`we are in subtask page with id ${taskId}`);
+      dispatch(getsubtasklist({ taskId }));
+    }
+  }, [taskId, dispatch]);
+
+  // Update local state when needed
+  useEffect(() => {
+    if (apiSubtasks) {
+      console.log(`api in useEffect`, apiSubtasks);
+      const transformedData = transformApiData(apiSubtasks);
+      setSubTasks(transformedData.reverse());
+    }
+  }, [apiSubtasks,users]);
+
+  // Rest of your existing code remains exactly the same...
+  const [newSubTask, setNewSubTask] = useState({
+    subTaskName: "",
+    user: "",
+    priority: "Medium",
+    startDate: new Date().toISOString().split('T')[0],
+    endDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+    duration: "7 days",
+    cost: "",
+    status: "Active",
+    checked: false
+  });
+
 
   // Get date range for all tasks
   const getDateRange = () => {
@@ -110,6 +167,23 @@ const ProjectViewSubTask = ({ isStandalone }) => {
     return `${diffDays} days`;
   };
 
+
+
+    
+  const [currentPage, setCurrentPage] = useState(1);
+  const [tasksPerPage] = useState(10); // You can adjust this number
+
+  // Calculate pagination
+  const indexOfLastTask = currentPage * tasksPerPage;
+  const indexOfFirstTask = indexOfLastTask - tasksPerPage;
+  const currentTasks = subTasks.slice(indexOfFirstTask, indexOfLastTask);
+  const totalPages = Math.ceil(subTasks.length / tasksPerPage);
+
+  // Change page
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
+
+
   const formatDateHeader = (date) => {
     const days = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
     const dayName = days[date.getDay()];
@@ -129,8 +203,6 @@ const ProjectViewSubTask = ({ isStandalone }) => {
     return currentDate >= taskStart && currentDate <= taskEnd;
   };
 
- 
-  
   const handleAddSubTask = () => {
     if (!newSubTask.subTaskName.trim()) return;
 
@@ -292,25 +364,11 @@ const ProjectViewSubTask = ({ isStandalone }) => {
     }
   };
 
-  // const stopResizing = () => {
-  //   setResizing({
-  //     isResizing: false,
-  //     column: null,
-  //     startX: 0,
-  //     startWidth: 0
-  //   });
-  // };
+
 
   const stopResizing = () => {
     if (resizing.isResizing) {
-      // toast.success(`Column Size updated`, {
-      //   position: "top-right",
-      //   autoClose: 1500,
-      //   hideProgressBar: true,
-      //   closeOnClick: true,
-      //   pauseOnHover: true,
-      //   draggable: true,
-      // });
+     
     }
     
     setResizing({
@@ -347,7 +405,7 @@ const ProjectViewSubTask = ({ isStandalone }) => {
         {isStandalone && (
           <div className="flex flex-row justify-between items-center mb-2">
             <h2 className="text-lg font-semibold">SubTasks</h2>
-            <button className="p-1 px-2"><AddSubTaskForm  taskid={taskId} /></button>
+            <button className="p-1 px-2"><AddSubTaskForm  taskId={taskId} /></button>
             <button
               className="hover:rotate-180 transition duration-700"
               onClick={() => navigate(-1)}
@@ -414,7 +472,8 @@ const ProjectViewSubTask = ({ isStandalone }) => {
                     </tr>
                   </thead>
                   <tbody>
-                    {subTasks.map((task, index) => (
+                    {/* {subTasks.map((task, index) => ( */}
+                    {currentTasks.map((task, index) => (
                       <Draggable key={task.id} draggableId={task.id} index={index}>
                         {(provided) => (
                           <React.Fragment>
@@ -880,8 +939,8 @@ const ProjectViewSubTask = ({ isStandalone }) => {
                             </tr>
 
                             {task.checked && (
-                              <tr className="bg-blue-50">
-                                <td colSpan={11 + dateColumns.length} className="border border-gray-300 p-2">
+                              <tr className=" bg-blue-50 w-[100vw] flex flex-1 ">
+                                <td colSpan={11 + dateColumns.length} className="  p-2">
                                   <div className="flex justify-center space-x-2">
                                     <button
                                       onClick={() => handleDeleteTask(task.id)}
@@ -930,7 +989,7 @@ const ProjectViewSubTask = ({ isStandalone }) => {
                                         setEditingTask(task.id);
                                         setEditingField('priority');
                                       }}
-                                      className="px-2 py-1 bg-indigo-500 w-[40px] text-white text-xs rounded hover:bg-indigo-600"
+                                      className="px-2 py-1 bg-indigo-500 w-[60px] text-white text-xs rounded hover:bg-indigo-600"
                                     >
                                       Priority
                                     </button>
@@ -1048,6 +1107,40 @@ const ProjectViewSubTask = ({ isStandalone }) => {
                     {provided.placeholder}
                   </tbody>
                 </table>
+
+                        {/*pagination*/}
+                         {subTasks.length > tasksPerPage && (
+                  <div className="flex  justify-center mt-4">
+                    <nav className="inline-flex  rounded-md shadow">
+                      <button
+                        onClick={() => paginate(Math.max(1, currentPage - 1))}
+                        disabled={currentPage === 1}
+                        className={`px-3 py-1 rounded-l-md border border-gray-300 ${currentPage === 1 ? 'bg-gray-100 text-gray-400' : 'bg-white text-gray-700 hover:bg-gray-50'}`}
+                      >
+                        Previous
+                      </button>
+                      
+                      {Array.from({ length: totalPages }, (_, i) => i + 1).map(number => (
+                        <button
+                          key={number}
+                          onClick={() => paginate(number)}
+                          className={`px-3 py-1 border-t border-b border-gray-300 ${currentPage === number ? 'bg-blue-500 text-white' : 'bg-white text-gray-700 hover:bg-gray-50'}`}
+                        >
+                          {number}
+                        </button>
+                      ))}
+                      
+                      <button
+                        onClick={() => paginate(Math.min(totalPages, currentPage + 1))}
+                        disabled={currentPage === totalPages}
+                        className={`px-3 py-1 rounded-r-md border border-gray-300 ${currentPage === totalPages ? 'bg-gray-100 text-gray-400' : 'bg-white text-gray-700 hover:bg-gray-50'}`}
+                      >
+                        Next
+                      </button>
+                    </nav>
+                  </div>
+                )}
+
               </div>
             )}
           </Droppable>
