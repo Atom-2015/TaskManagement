@@ -2,8 +2,10 @@ import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Country, State, City } from "country-state-city";
 import { X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useDispatch, useSelector } from "react-redux";
 import Confetti from "react-confetti";
 import Swal from "sweetalert2";
+import { addCompany } from "../../FeatureRedux/companySlice/addCompanyslice";
 
 const CompanyAddForm = ({
   onClose,
@@ -23,34 +25,36 @@ const CompanyAddForm = ({
 
   const [formData, setFormData] = useState({
     company_name: editingCompany?.company_name || "",
-    Owner: editingCompany?.Owner || "",
-    company_email: editingCompany?.company_email || "",
-    company_joinDate: editingCompany?.company_joinDate || "",
-    company_validity:editingCompany?.company_validity ||"",
-    cost:editingCompany?.cost||"",
-    permission_location: editingCompany?.permission_location || [
-      {
-        country: defaultCountry,
-        state: "",
-        cities: [],
-      },
-    ],
+    client_name: editingCompany?.client_name || "",
+    email: editingCompany?.email || "",
+    joinDate: editingCompany?.joinDate || "",
+    validity: editingCompany?.validity || "",
+    cost: editingCompany?.cost || "",
+    country: editingCompany?.country || defaultCountry,
+    state: editingCompany?.state || "",
+    city: editingCompany?.city || "",
   });
 
-  // Handle window resize
-// In CompanyAddForm component, update the click outside handler:
+  const dispatch = useDispatch();
 
-// Handle click outside - Precise version
-useEffect(() => {
+  const { data, isLoading, isError, errorMessage } = useSelector(
+    (state) => state.addcompanyform
+  );
+
+  // Handle window resize
+  // In CompanyAddForm component, update the click outside handler:
+
+  // Handle click outside - Precise version
+  useEffect(() => {
     const handleClickOutside = (event) => {
       if (!formRef.current) return;
-      
+
       // Get form container dimensions (the actual visible form)
-      const formContainer = formRef.current.querySelector('.bg-gray-700'); // The form's container div
+      const formContainer = formRef.current.querySelector(".bg-gray-700"); // The form's container div
       if (!formContainer) return;
-      
+
       const formRect = formContainer.getBoundingClientRect();
-      
+
       // Check if click is outside form boundaries
       if (
         event.clientX < formRect.left ||
@@ -61,7 +65,7 @@ useEffect(() => {
         onClose();
       }
     };
-  
+
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
@@ -84,10 +88,10 @@ useEffect(() => {
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (!formRef.current) return;
-      
+
       // Get form dimensions
       const formRect = formRef.current.getBoundingClientRect();
-      
+
       // Check if click is outside form boundaries
       if (
         event.clientX < formRect.left ||
@@ -105,10 +109,46 @@ useEffect(() => {
     };
   }, [onClose]);
 
+  const handleCountryChange = (e) => {
+    const country = e.target.value;
+    setFormData({
+      ...formData,
+      country,
+      state: "", // Reset state when country changes
+      city: "", // Reset city when country changes
+    });
+  };
+
+  const handleStateChange = (e) => {
+    const state = e.target.value;
+    setFormData({
+      ...formData,
+      state,
+      city: "", // Reset city when state changes
+    });
+  };
+
+  const handleCityChange = (e) => {
+    setFormData({
+      ...formData,
+      city: e.target.value,
+    });
+  };
+
+  // Get available states and cities based on selections
+  const availableStates = State.getStatesOfCountry(
+    Country.getAllCountries().find(c => c.name === formData.country)?.isoCode
+  ) || [];
+
+  const availableCities = City.getCitiesOfState(
+    Country.getAllCountries().find(c => c.name === formData.country)?.isoCode,
+    availableStates.find(s => s.name === formData.state)?.isoCode
+  ) || [];
+
   const handleLocationChange = (index, field, value) => {
-    const updatedLocations = [...formData.permission_location];
+    const updatedLocations = [...formData.location];
     updatedLocations[index][field] = value;
-    setFormData({ ...formData, permission_location: updatedLocations });
+    setFormData({ ...formData, location: updatedLocations });
   };
 
   const handleChange = (e) => {
@@ -116,30 +156,33 @@ useEffect(() => {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    onAddCompany(formData);
-
-    
-        Swal.fire({
-          title:"Task Created Successfully",
-          text:"Added",
-          icon:"success",
-           confirmButtonColor: '#3085d6',
-                confirmButtonText: 'OK'
-        }).then(()=>{
-          onClose();
-        })
+    try {
       
-     
-    
 
+      const resultAction = await dispatch(addCompany(formData));
 
-    // setTimeout(() => {
-    //   setShowConfetti(false);
-    //   setShowSuccessMessage(false);
-    //   onClose();
-    // }, 3000);
+      if (addCompany.fulfilled.match(resultAction)) {
+        Swal.fire({
+          title: "Company Created Successfully",
+          icon: "success",
+          confirmButtonColor: "#3085d6",
+          confirmButtonText: "OK",
+        }).then(() => {
+          onAddCompany(formData)
+          onClose();
+        });
+      } else {
+        throw new Error(resultAction.payload || "Something went wrong");
+      }
+    } catch (error) {
+      Swal.fire({
+        title: "Error",
+        text: error.message || "Failed to add company",
+        icon: "error",
+      });
+    }
   };
 
   // Calculate button position for animation origin
@@ -171,10 +214,7 @@ useEffect(() => {
       )}
 
       {/* Overlay */}
-      <div 
-        ref={overlayRef}
-        className="fixed inset-0 bg-black bg-opacity-50" 
-      />
+      <div ref={overlayRef} className="fixed inset-0 bg-black bg-opacity-50" />
 
       {/* Success Message */}
       <AnimatePresence>
@@ -252,8 +292,8 @@ useEffect(() => {
                 </label>
                 <input
                   type="text"
-                  name="Owner"
-                  value={formData.Owner}
+                  name="client_name"
+                  value={formData.client_name}
                   onChange={handleChange}
                   className="w-full bg-gray-100 border border-gray-500 rounded-md p-2 text-gray-700"
                   required
@@ -266,8 +306,8 @@ useEffect(() => {
                 </label>
                 <input
                   type="email"
-                  name="company_email"
-                  value={formData.company_email}
+                  name="email"
+                  value={formData.email}
                   onChange={handleChange}
                   className="w-full bg-gray-100 border border-gray-500 rounded-md p-2 text-gray-700"
                   required
@@ -294,9 +334,9 @@ useEffect(() => {
                 </label>
                 <input
                   type="date"
-                  name="company_joinDate"
-                  value={formData.company_joinDate}
-                  onClick={(e)=>e.target.showPicker()}
+                  name="joinDate"
+                  value={formData.joinDate}
+                  onClick={(e) => e.target.showPicker()}
                   onChange={handleChange}
                   className="w-full bg-gray-100 border border-gray-500 rounded-md p-2 text-gray-700"
                   required
@@ -308,9 +348,9 @@ useEffect(() => {
                 </label>
                 <input
                   type="date"
-                  name="company_validity"
-                  value={formData.company_validity}
-                  onClick={(e)=>e.target.showPicker()}
+                  name="validity"
+                  value={formData.validity}
+                  onClick={(e) => e.target.showPicker()}
                   onChange={handleChange}
                   className="w-full bg-gray-100 border border-gray-500 rounded-md p-2 text-gray-700"
                   required
@@ -325,7 +365,6 @@ useEffect(() => {
                   type="number"
                   name="cost"
                   value={formData.cost}
-                 
                   onChange={handleChange}
                   className="w-full bg-gray-100 border border-gray-500 rounded-md p-2 text-gray-700"
                   required
@@ -334,97 +373,64 @@ useEffect(() => {
             </div>
 
             <div className="space-y-2">
-              <label className="block text-sm font-medium text-gray-700">
-                Locations
-              </label>
-              {formData.permission_location.map((loc, index) => (
-                <div
-                  key={index}
-                  className="grid grid-cols-1 md:grid-cols-3 gap-2"
-                >
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Country
-                    </label>
-                    <select
-                      value={loc.country}
-                      onChange={(e) => {
-                        const countryName = e.target.value;
-                        handleLocationChange(index, "country", countryName);
-                        handleLocationChange(index, "state", "");
-                        handleLocationChange(index, "cities", []);
-                      }}
-                      className="w-full bg-gray-100 border border-gray-500 rounded-md p-2 text-gray-700"
-                    >
-                      {Country.getAllCountries().map((country) => (
-                        <option key={country.isoCode} value={country.name}>
-                          {country.name}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      State
-                    </label>
-                    <select
-                      value={loc.state}
-                      onChange={(e) => {
-                        const stateName = e.target.value;
-                        handleLocationChange(index, "state", stateName);
-                        handleLocationChange(index, "cities", []);
-                      }}
-                      disabled={!loc.country}
-                      className="w-full bg-gray-100 border border-gray-500 rounded-md p-2 text-gray-700 disabled:opacity-50"
-                    >
-                      <option value="">Select State</option>
-                      {loc.country &&
-                        State.getStatesOfCountry(
-                          Country.getAllCountries().find(
-                            (c) => c.name === loc.country
-                          )?.isoCode
-                        ).map((state) => (
-                          <option key={state.isoCode} value={state.name}>
-                            {state.name}
-                          </option>
-                        ))}
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      City
-                    </label>
-                    <select
-                      value={loc.cities[0] || ""}
-                      onChange={(e) => {
-                        const cityName = e.target.value;
-                        handleLocationChange(index, "cities", [cityName]);
-                      }}
-                      disabled={!loc.state}
-                      className="w-full bg-gray-100 border border-gray-500 rounded-md p-2 text-gray-700 disabled:opacity-50"
-                    >
-                      <option value="">Select City</option>
-                      {loc.state &&
-                        loc.country &&
-                        City.getCitiesOfState(
-                          Country.getAllCountries().find(
-                            (c) => c.name === loc.country
-                          )?.isoCode,
-                          State.getStatesOfCountry(
-                            Country.getAllCountries().find(
-                              (c) => c.name === loc.country
-                            )?.isoCode
-                          ).find((s) => s.name === loc.state)?.isoCode
-                        ).map((city) => (
-                          <option key={city.name} value={city.name}>
-                            {city.name}
-                          </option>
-                        ))}
-                    </select>
-                  </div>
-                </div>
-              ))}
-            </div>
+      <label className="block text-sm font-medium text-gray-700">
+        Location
+      </label>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Country
+          </label>
+          <select
+            value={formData.country}
+            onChange={handleCountryChange}
+            className="w-full bg-gray-100 border border-gray-500 rounded-md p-2 text-gray-700"
+          >
+            {Country.getAllCountries().map((country) => (
+              <option key={country.isoCode} value={country.name}>
+                {country.name}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            State
+          </label>
+          <select
+            value={formData.state}
+            onChange={handleStateChange}
+            disabled={!formData.country}
+            className="w-full bg-gray-100 border border-gray-500 rounded-md p-2 text-gray-700 disabled:opacity-50"
+          >
+            <option value="">Select State</option>
+            {availableStates.map((state) => (
+              <option key={state.isoCode} value={state.name}>
+                {state.name}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            City
+          </label>
+          <select
+            value={formData.city}
+            onChange={handleCityChange}
+            disabled={!formData.state}
+            className="w-full bg-gray-100 border border-gray-500 rounded-md p-2 text-gray-700 disabled:opacity-50"
+          >
+            <option value="">Select City</option>
+            {availableCities.map((city) => (
+              <option key={city.name} value={city.name}>
+                {city.name}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
+    </div>
 
             <div className="flex justify-end space-x-2 pt-4">
               <button

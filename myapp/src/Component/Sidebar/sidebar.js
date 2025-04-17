@@ -435,7 +435,7 @@ function Sidebar() {
 
             {/* Content Area */}
             <div className="p-[9px] mt-[70px] box-border" id='sidebar-right' style={{
-                width: '100%',
+                width: '88%',
                 marginLeft: '200px',
                 overflowY: 'scroll',
             

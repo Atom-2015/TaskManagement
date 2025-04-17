@@ -12,11 +12,14 @@ import { subcreatetasks } from "../../FeatureRedux/subTaskSlices/addsubTaskslice
 import Swal from "sweetalert2";
 import { getsubtasklist } from "../../FeatureRedux/subTaskSlices/getsubtaskslice";
 
+import { ToWords } from "to-words";
+
 
 
 
 
 function AddSubTaskForm({ open, close , taskId }) {
+
   const [countries, setCountries] = useState([]);
   const [states, setStates] = useState([]);
   const [cities, setCities] = useState([]);
@@ -59,6 +62,14 @@ function AddSubTaskForm({ open, close , taskId }) {
       country: "India",
     }));
   }, []);
+
+  const toWords = new ToWords({
+    localeCode: 'en-IN',
+    converterOptions: {
+      currency: false,
+      ignoreDecimal: true,
+    },
+  });
 
   const { isLoading, isError, errorMessage, isAdded } = useSelector((state) => state.AddProject);
   const userlist = useSelector((state) => state.allUser.users);
@@ -353,6 +364,7 @@ function AddSubTaskForm({ open, close , taskId }) {
               <div className="flex flex-col items-start">
                 <label className="font-semibold text-gray-700">Budget</label>
                 <input type="number" min='0' name="budget" value={formData.budget} onChange={handleChange} className="w-full border border-blue-300 px-1 py-[0.5px] rounded-sm" />
+                {formData.budget && ( <p className="text-gray-600 text-sm">{toWords.convert(parseInt(formData.budget))} Rupee Only</p>)}
               </div>
 
 

@@ -85,7 +85,7 @@ const ProjectViewList = () => {
   };
 
   const handleViewSubTask = (taskId) => {
-    navigate(`/project/${id}/subtask/${taskId}`);
+    navigate(`/project/${id}/task/${taskId}`);
   };
 
   const handleAddSubTask = (taskId) => {
@@ -248,7 +248,7 @@ const ProjectViewList = () => {
                                       className="text-black hover:text-gray-600 transition-transform duration-200"
                                     >
                                       {expandedSubTaskId === task.id ? (
-                                        <MdKeyboardArrowDown size={20} className="transform transition-transform duration-200" />
+                                      <MdKeyboardArrowDown size={20} className="transform transition-transform duration-200" />
                                       ) : (
                                         <MdKeyboardArrowRight size={20} className="transform transition-transform duration-200" />
                                       )}

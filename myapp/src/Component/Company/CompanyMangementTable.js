@@ -9,12 +9,12 @@ const CompanyTable = () => {
     {
       _id: "1",
       company_name: "Tech Solutions Inc",
-      Owner: "Ratan Sharma",
-      company_email: "contact@techsolutions.com",
-      company_joinDate: "2023-12-31",
-      company_validity:"2027-12-31",
-      cost:20000,
-      permission_location: [
+      client_name: "Ratan Sharma",
+      email: "contact@techsolutions.com",
+      joinDate: "2023-12-31",
+      validity: "2027-12-31",
+      cost: 20000,
+      location: [
         {
           country: "India",
           state: "Maharashtra",
@@ -22,79 +22,16 @@ const CompanyTable = () => {
         },
       ],
     },
-    {
-      _id: "2",
-      company_name: "Global Enterprises",
-      Owner: "Kushagra Ankit",
-      company_email: "info@globalent.com",
-      company_joinDate: "2024-06-30",
-      company_validity:"2026-12-31",
-      cost:20000,
-      permission_location: [
-        {
-          country: "India",
-          state: "Delhi",
-          cities: ["New Delhi"],
-        },
-      ],
-    },
-    {
-      _id: "7",
-      company_name: "Example LLC",
-      Owner: "Example Owner",
-      company_email: "info@example.com",
-      company_joinDate: "2023-09-30",
-      company_validity:"2029-12-31",
-      cost:20000,
-      permission_location: [
-        {
-          country: "Germany",
-          state: "Bavaria",
-          cities: ["Munich"],
-        },
-      ],
-    },
-    {
-      _id: "8",
-      company_name: "Test Solutions",
-      Owner: "Tester",
-      company_email: "test@testsolutions.com",
-      company_joinDate: "2024-05-20",
-      company_validity:"2028-1-31",
-      cost:20000,
-      permission_location: [
-        {
-          country: "France",
-          state: "Île-de-France",
-          cities: ["Paris"],
-        },
-      ],
-    },
-    {
-      _id: "9",
-      company_name: "Pagination Test",
-      Owner: "Page User",
-      company_email: "page@pagination.com",
-      company_joinDate: "2023-12-15",
-      company_validity:"2029-12-1",
-      cost:20000,
-      permission_location: [
-        {
-          country: "Japan",
-          state: "Tokyo",
-          cities: ["Tokyo"],
-        },
-      ],
-    },
+   
     {
       _id: "10",
       company_name: "Another Company",
-      Owner: "Another Owner",
-      company_email: "contact@another.com",
-      company_joinDate: "2024-02-28",
-      company_validity:"2026-12-12",
-      cost:2000000,
-      permission_location: [
+      client_name: "Another Owner",
+      email: "contact@another.com",
+      joinDate: "2024-02-28",
+      validity: "2026-12-12",
+      cost: 2000000,
+      location: [
         {
           country: "Brazil",
           state: "São Paulo",
@@ -107,13 +44,12 @@ const CompanyTable = () => {
   const [showForm, setShowForm] = useState(false);
   const [editingCompany, setEditingCompany] = useState(null);
   const [showSearch, setShowSearch] = useState(false);
-  const [showOwnerSearch,setShowOwnerSearch]=useState("");
+  const [showOwnerSearch, setShowOwnerSearch] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const addButtonRef = useRef(null);
   
-  // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage] = useState(9); // Number of items per page
+  const [itemsPerPage] = useState(9);
 
   const handleAddCompany = (newCompany) => {
     if (editingCompany) {
@@ -139,48 +75,38 @@ const CompanyTable = () => {
     }
   };
 
+  const calculateDuration = (start, end) => {
+    if (!start || !end) return "0 days";
 
-  const calculateDuration=(start,end)=>{
-    if(!start || !end){
-      return " 0 days"
-    };
+    const startDate = new Date(start);
+    const endDate = new Date(end);
 
-    const startDate=new Date(start);
-    const endDate=new Date(end);
+    if (isNaN(startDate.getTime())) return "invalid start date";
+    if (isNaN(endDate.getTime())) return "invalid end date";
+    if (endDate < startDate) return "invalid date range";
 
-    if(isNaN(startDate.getTime())){
-      return "invalid start date";
-    }
-    if(isNaN(endDate.getTime())){
-      return "invalid end date";
-    }
-    if(endDate < startDate){
-      return "inavlid date range"
-    }
-
-    const diffTime=Math.abs(endDate-startDate);
-    const diffDays=Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+    const diffTime = Math.abs(endDate - startDate);
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     return `${diffDays} days`;
-  }
-    
+  };
 
   const handleEdit = (company) => {
     setEditingCompany(company);
     setShowForm(true);
   };
 
-  const formatCost=(cost)=>{
-    return cost.toLocaleString('en-IN')
-  }
+  const formatCost = (cost) => {
+    return cost.toLocaleString('en-IN');
+  };
 
-  // Filter companies based on search term
   const filteredCompanies = companies.filter(company =>
     company.company_name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const filteredOwner=companies.filter(company=> company.Owner.toLowerCase().includes(showOwnerSearch.toLowerCase()));
+  const filteredOwner = companies.filter(company => 
+    company.client_name.toLowerCase().includes(showOwnerSearch.toLowerCase())
+  );
 
-  // Pagination logic
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = filteredCompanies.slice(indexOfFirstItem, indexOfLastItem);
@@ -193,12 +119,6 @@ const CompanyTable = () => {
       <div className="flex justify-between items-center mb-4">
         <div className="text-start text-blue-700 text-2xl">Company List</div>
         <div className="flex items-center space-x-2">
-          {/* <button
-            onClick={() => setShowSearch(!showSearch)}
-            className="text-gray-200 hover:text-white transition-colors"
-          >
-            <Search size={20} />
-          </button> */}
           <button
             ref={addButtonRef}
             onClick={() => {
@@ -233,7 +153,7 @@ const CompanyTable = () => {
         <thead className="bg-gray-200 border-1">
           <tr className="border-1 border-gray-400">
             <th className="p-3 text-center text-gray-800 border-1 border-gray-400 relative">
-            <div className="flex items-center justify-center gap-2">
+              <div className="flex items-center justify-center gap-2">
                 Company Name
                 <button 
                   onClick={() => setShowSearch(!showSearch)}
@@ -259,13 +179,8 @@ const CompanyTable = () => {
                 )}
               </div>
             </th>
-            <th className="p-3 text-center text-gray-800 border-1 border-gray-400 relative">
-              <div className='flex items-center justify-center gap-2'>
+            <th className="p-3 text-center text-gray-800 border-1 border-gray-400">
               Client Name
-                <button>
-                  
-                </button>
-              </div>
             </th>
             <th className="p-3 text-center text-gray-800 border-1 border-gray-400">
               Email
@@ -273,20 +188,15 @@ const CompanyTable = () => {
             <th className="p-3 text-center text-gray-800 border-1 border-gray-400">
               COI Date
             </th>
-
-            <th className='p-3 text-center text-gray-800 border-1 border-gray-400'>
-                Validity Date
+            <th className="p-3 text-center text-gray-800 border-1 border-gray-400">
+              Validity Date
             </th>
-
-            
-            <th className='p-3 text-center text-gray-800 border-1 border-gray-400'>
-                Duration
+            <th className="p-3 text-center text-gray-800 border-1 border-gray-400">
+              Duration
             </th>
-
-            <th className='p-3 text-center text-gray-800 border-1 border-gray-400'>
-                Renew Cost
+            <th className="p-3 text-center text-gray-800 border-1 border-gray-400">
+              Renew Cost
             </th>
-
             <th className="p-3 text-center text-gray-800 border-1 border-gray-400">
               Locations
             </th>
@@ -306,25 +216,25 @@ const CompanyTable = () => {
                   {company.company_name}
                 </td>
                 <td className="p-3 border-1 border-gray-400 text-gray-700">
-                  {company.Owner}
+                  {company.client_name}
                 </td>
                 <td className="p-3 border-1 border-gray-400 text-gray-700">
-                  {company.company_email}
+                  {company.email}
                 </td>
                 <td className="p-3 border-1 border-gray-400 text-gray-700">
-                  {company.company_joinDate}
+                  {company.joinDate}
                 </td>
                 <td className="p-3 border-1 border-gray-400 text-gray-700">
-                  {company.company_validity}
+                  {company.validity}
                 </td>
                 <td className="p-3 border-1 border-gray-400 text-gray-700">
-                  {calculateDuration(company.company_joinDate, company.company_validity)}
+                  {calculateDuration(company.joinDate, company.validity)}
                 </td>
                 <td className="p-3 border-1 border-gray-400 text-gray-700">
                   {formatCost(company.cost)}
                 </td>
                 <td className="p-3 border-1 border-gray-400 text-gray-700">
-                  {company.permission_location.map((location, idx) => (
+                  {company.location.map((location, idx) => (
                     <div key={idx} className="mb-1 last:mb-0">
                       <strong className="text-blue-300">{location.country}</strong> -{" "}
                       {location.state}:{" "}
@@ -352,10 +262,7 @@ const CompanyTable = () => {
             ))
           ) : (
             <tr>
-              <td
-                colSpan="6"
-                className="text-center p-3 text-gray-300"
-              >
+              <td colSpan="9" className="text-center p-3 text-gray-300">
                 {searchTerm ? "No matching companies found" : "No companies available"}
               </td>
             </tr>
@@ -363,7 +270,6 @@ const CompanyTable = () => {
         </tbody>
       </table>
 
-      {/* Pagination controls */}
       {filteredCompanies.length > itemsPerPage && (
         <div className="flex justify-center mt-4">
           <nav className="inline-flex rounded-md shadow">

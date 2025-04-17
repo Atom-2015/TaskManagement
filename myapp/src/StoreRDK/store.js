@@ -13,6 +13,9 @@ import addtask  from '../FeatureRedux/task/addtaskSlice';
 import addsubtask from '../FeatureRedux/subTaskSlices/addsubTaskslice';
 import projectdetails from '../FeatureRedux/projectSlice/detailproject';
 import getsubtasklist from '../FeatureRedux/subTaskSlices/getsubtaskslice'
+import { editsubtasklist } from '../FeatureRedux/subTaskSlices/editusbTaskslice';
+import deletesubTaskslice from '../FeatureRedux/subTaskSlices/deletesubTaskslice';
+import addCompanySlice  from '../FeatureRedux/companySlice/addCompanyslice';
 export const store = configureStore({
     reducer: {
         DeleteImage: analyseDeleteImageSlice,
@@ -28,8 +31,13 @@ export const store = configureStore({
         user: updateUser, // Add the reducer here
         projectdetails:projectdetails,
         addsubtask:addsubtask,
-        getsubtasklist:getsubtasklist
-        // getsubtask:getsubtask
+        getsubtasklist:getsubtasklist,
+        editsubtasklist:editsubtasklist,
+        deletesubTaskslice:deletesubTaskslice,
+        addcompanyform: addCompanySlice,
+
+
+        
 
 
     },

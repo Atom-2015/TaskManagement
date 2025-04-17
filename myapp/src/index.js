@@ -163,12 +163,12 @@ const router = createBrowserRouter([
      { path:'/project/:id', element:<ProjectViewList/>},
      { path: '/project/:id/add-task', element: <AddTaskForm1 /> },
       { path: '/userManagement', element: <UsermanagementIndex /> },
-      { path:"/project/:id/subtask/:taskId" ,element:<ProjectViewSubTask  isStandalone={true}/> },
+      { path:"/project/:id/task/:taskId" ,element:<ProjectViewSubTask  isStandalone={true}/> },
       // {path:"/project/:id/subtask/:taskId/subtaskwithin/View",  element:<ProjectViewSubTaskDetails/>},
       // { path:"/project/:id/subtask/:taskId/subtaskwithin/:subtaskName/View", element:<ProjectViewSubTaskDetails />} ,
       // {path:"/project/${id}/subtask/${task.id}/subtaskwithin/${subtask.id}/View",element:<ProjectViewSubTaskDetails/>},
       {
-        path: "/project/:id/subtask/:taskId/subtaskwithin/View",
+        path: "/project/:id/task/:taskId/subtaskwithin/View",
         element: <ProjectViewSubTaskDetails />
       },
     
