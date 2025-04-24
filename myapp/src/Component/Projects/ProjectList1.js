@@ -7,6 +7,11 @@ import { FaEye } from "react-icons/fa";
 import ProjectViewList from "./ProjectViewList";
 import { useNavigate } from "react-router-dom";
 import { FaSearch } from "react-icons/fa";
+import { RiDeleteBin6Line } from "react-icons/ri";
+import { projectDelete } from "../../FeatureRedux/projectSlice/deleteProject";
+import Swal from "sweetalert2";
+
+
 
 function ProjectList1() {
   const dispatch = useDispatch();
@@ -80,6 +85,43 @@ function ProjectList1() {
       setFilteredProjects(updatedProjects);
     }
   }, [sortOrder]);
+  // const handleDelete=()=>{
+
+  // }
+
+
+
+  const handleDelete = async (projectId) => {
+    const result = await Swal.fire({
+      title: "Are you sure?",
+      text: "This action cannot be undone!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, delete it!",
+    });
+  
+    if (!result.isConfirmed) return;
+  
+    try {
+      await dispatch(projectDelete(projectId)).unwrap();
+      setFilteredProjects((prev) => prev.filter((proj) => proj._id !== projectId));
+  
+      Swal.fire({
+        title: "Deleted!",
+        text: "The project has been deleted.",
+        icon: "success",
+        timer: 1500,
+        timerProgressBar: true,
+        showConfirmButton: false,
+      });
+      
+    } catch (error) {
+      Swal.fire("Failed!", error?.message || "Failed to delete the project.", "error");
+    }
+  };
+  
 
   // Apply filtering when search term changes
   useEffect(() => {
@@ -141,14 +183,14 @@ function ProjectList1() {
                 <thead>
                   <tr className="bg-slate-50 text-gray-800">
                     <th
-                      className="border border-gray-400 px-4 py-1 cursor-pointer"
-                      onClick={() => toggleSort("createdAt")}
+                      className="border border-gray-400 px-4 py-1 "
+                      // onClick={() => toggleSort("createdAt")}
                     >
-                      <div className="flex items-center justify-between">
+                      <div className="flex items-center justify-center">
                         <span>ID</span>
-                        <span className="ml-1">
+                        {/* <span className="ml-1">
                           {sortOrder.field === "createdAt" && (sortOrder.order === "asc" ? "▲" : "▼")}
-                        </span>
+                        </span> */}
                       </div>
                     </th>
                     <th className="border border-gray-400 px-4 py-1 relative">
@@ -178,9 +220,9 @@ function ProjectList1() {
                     <th className="border border-gray-400 px-4 py-1">Tasks</th>
                     <th 
                       className="border border-gray-400 px-4 py-1 cursor-pointer"
-                      onClick={() => toggleSort("createdAt")}
+                      // onClick={() => toggleSort("createdAt")}
                     >
-                      <div className="flex items-center justify-between">
+                      <div className="flex items-center justify-center">
                         <span>Start Date</span>
                         {/* <span className="ml-1">
                           {sortOrder.field === "createdAt" && (sortOrder.order === "asc" ? "▲" : "▼")}
@@ -189,6 +231,7 @@ function ProjectList1() {
                     </th>
                     <th className="border border-gray-400 px-4 py-1">End Date</th>
                     <th className="border border-gray-400 px-4 py-1">Duration</th>
+                    <th className="border border-gray-400 px-1 py-1">Omit</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -236,6 +279,13 @@ function ProjectList1() {
                         </td>
                         <td className="px-4 py-2 border border-gray-400">
                           {moment(project.end_date).diff(moment(project.start_date), "days")} Days remaining
+                        </td>
+                        <td>
+                          <div className="flex justify-center">
+                            <button onClick={()=>handleDelete(project._id)}>
+                          {<RiDeleteBin6Line   className="text-red-500 hover:text-red-700 hover:scale-110 transition-all duration-200 cursor-pointer"/>}
+                          </button>
+                          </div>
                         </td>
                       </tr>
                     ))

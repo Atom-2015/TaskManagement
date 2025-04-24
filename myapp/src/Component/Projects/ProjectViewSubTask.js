@@ -23,6 +23,8 @@ const ProjectViewSubTask = ({ isStandalone }) => {
   const navigate = useNavigate();
 
   const [editingTask, setEditingTask] = useState(null);
+  const [openChecklistTaskId, setOpenChecklistTaskId] = useState(null);
+
   const [editingField, setEditingField] = useState(null);
   const [showFullAddForm, setShowFullAddForm] = useState(false);
   const [selectedTask, setSelectedTask] = useState(null);
@@ -31,6 +33,9 @@ const ProjectViewSubTask = ({ isStandalone }) => {
   const [openSubTask, setOpenSubTask] = useState(false);
   const [edittask, setEdittask] = useState(false);
   const [tempDate, setTempDate] = useState("");
+  const [rows, setRows] = useState([
+    { item: "Picture", toCheck: "No-Blur", confirmed: false },
+  ]);
 
   // State for column widths
   const [columnWidths, setColumnWidths] = useState({
@@ -81,6 +86,12 @@ const ProjectViewSubTask = ({ isStandalone }) => {
     return found ? found.name : "unknown name";
   };
 
+  const handletableChange = (index, field, value) => {
+    const updatedRows = [...rows];
+    updatedRows[index][field] = value;
+    setRows(updatedRows);
+  };
+
   // Transsiton api keliyer
   const transformApiData = (apiData) => {
     if (!apiData || !apiData.data) return [];
@@ -104,6 +115,14 @@ const ProjectViewSubTask = ({ isStandalone }) => {
       duration: calculateDuration(task.start_date, task.end_date),
       cost: task.cost?.toString() || "0",
       status: task.status,
+      checklist: Array.isArray(task.checklist)
+        ? task.checklist.map((item) => ({
+            item: item.item || "",
+            toCheck: item.toCheck || "", // Make sure to include toCheck
+            checked: item.checked || false,
+          }))
+        : [],
+      // Make sure this is included
       checked: false,
     }));
   };
@@ -258,8 +277,25 @@ const ProjectViewSubTask = ({ isStandalone }) => {
   const handleTable = () => {
     setOpen(!open);
   };
+  const handleAddRow = (taskId) => {
+    setSubTasks((prevSubTasks) =>
+      prevSubTasks.map((task) => {
+        if (task.id === taskId) {
+          const newChecklistItem = {
+            item: "", // Changed from itemName to item
+            toCheck: "",
+            checked: false,
+          };
 
-
+          return {
+            ...task,
+            checklist: [...task.checklist, newChecklistItem],
+          };
+        }
+        return task;
+      })
+    );
+  };
 
   //file add sub task keliye hai file
   const handleFieldChange = (field, value) => {
@@ -352,14 +388,13 @@ const ProjectViewSubTask = ({ isStandalone }) => {
   };
 
   const handleDeleteTask = async (taskId) => {
-    console.log(`check the subttask id ${taskId}`)
-     await dispatch(deleteSubtask({SubtaskId:taskId}));
-     console.log(`Thisisis task id in comopnent `,taskId)
-     dispatch(getsubtasklist({taskId}))
-     toast.success("Successfully deleted")
-   };
-  
-   
+    console.log(`check the subttask id ${taskId}`);
+    await dispatch(deleteSubtask({ SubtaskId: taskId }));
+    console.log(`Thisisis task id in comopnent `, taskId);
+    dispatch(getsubtasklist({ taskId }));
+    toast.success("Successfully deleted");
+  };
+
   const handleKeyDown = (e, taskId, field) => {
     if (e.key === "Enter") {
       if (taskId) {
@@ -398,6 +433,34 @@ const ProjectViewSubTask = ({ isStandalone }) => {
       startX: e.clientX,
       startWidth: columnWidths[column],
     });
+  };
+
+  const handleChecklistChange = async (taskId, index, field, value) => {
+    try {
+      setSubTasks((prevSubTasks) =>
+        prevSubTasks.map((task) => {
+          if (task.id === taskId) {
+            const updatedChecklist = [...task.checklist];
+            updatedChecklist[index] = {
+              ...updatedChecklist[index],
+              [field]: value,
+            };
+
+            return {
+              ...task,
+              checklist: updatedChecklist,
+            };
+          }
+          return task;
+        })
+      );
+    } catch (error) {
+      toast.error("Failed to update checklist", {
+        position: "top-right",
+        autoClose: 1500,
+        hideProgressBar: true,
+      });
+    }
   };
 
   const handleResize = (e) => {
@@ -689,201 +752,148 @@ const ProjectViewSubTask = ({ isStandalone }) => {
                                   <label>
                                     <input
                                       type="checkbox"
-                                      checked={open}
-                                      onChange={handleTable}
+                                      checked={openChecklistTaskId === task.id}
+                                      onChange={() =>
+                                        setOpenChecklistTaskId((prev) =>
+                                          prev === task.id ? null : task.id
+                                        )
+                                      }
                                     />
                                   </label>
 
-                                  {open && (
+                                  {openChecklistTaskId && (
                                     <div className="absolute top-10 left-0 z-50 bg-white shadow-lg p-4 border border-gray-300">
                                       <div className="flex flex-row justify-between">
                                         <div className="flex text-2xl font-bold">
-                                          Ckeck-List
+                                          Check-List
                                         </div>
-
-                                        <div className="flex ">
+                                        <div className="flex">
                                           <button
-                                            className=""
-                                            onClick={() => setOpen(false)}
+                                            onClick={() =>
+                                              setOpenChecklistTaskId(null)
+                                            }
                                           >
                                             <RxCross2 size={30} />
                                           </button>
                                         </div>
                                       </div>
 
-                                      <form>
-                                        <table className="mt-4 border-collapse border border-gray-400 w-full">
-                                          <thead>
-                                            <tr className="bg-gray-200">
-                                              <th className="border p-2">
-                                                Item
-                                              </th>
-                                              <th className="border p-2">
-                                                To-Check
-                                              </th>
-                                              <th className="border p-2">
-                                                Confirm
-                                              </th>
-                                            </tr>
-                                          </thead>
-                                          <tbody>
-                                            <tr>
-                                              <td className="border p-2">
-                                                <input
-                                                  type="text"
-                                                  defaultValue="Picture"
-                                                />
-                                              </td>
-                                              <td className="border p-2">
-                                                <input
-                                                  type="text"
-                                                  defaultValue="No-Blur"
-                                                />
-                                              </td>
-                                              <td className="border p-2">
-                                                <input
-                                                  type="checkbox"
-                                                  defaultValue=""
-                                                />
-                                              </td>
-                                            </tr>
-                                            <tr>
-                                              <td className="border p-2">
-                                                <input
-                                                  type="text"
-                                                  defaultValue="Picture"
-                                                />
-                                              </td>
-                                              <td className="border p-2">
-                                                <input
-                                                  type="text"
-                                                  defaultValue="No-Blur"
-                                                />
-                                              </td>
-                                              <td className="border p-2">
-                                                <input
-                                                  type="checkbox"
-                                                  defaultValue=""
-                                                />
-                                              </td>
-                                            </tr>
-                                            <tr>
-                                              <td className="border p-2">
-                                                <input
-                                                  type="text"
-                                                  defaultValue="Picture"
-                                                />
-                                              </td>
-                                              <td className="border p-2">
-                                                <input
-                                                  type="text"
-                                                  defaultValue="No-Blur"
-                                                />
-                                              </td>
-                                              <td className="border p-2">
-                                                <input
-                                                  type="checkbox"
-                                                  defaultValue=""
-                                                />
-                                              </td>
-                                            </tr>
-                                            <tr>
-                                              <td className="border p-2">
-                                                <input
-                                                  type="text"
-                                                  defaultValue="Picture"
-                                                />
-                                              </td>
-                                              <td className="border p-2">
-                                                <input
-                                                  type="text"
-                                                  defaultValue="No-Blur"
-                                                />
-                                              </td>
-                                              <td className="border p-2">
-                                                <input
-                                                  type="checkbox"
-                                                  defaultValue=""
-                                                />
-                                              </td>
-                                            </tr>
-                                            <tr>
-                                              <td className="border p-2">
-                                                <input
-                                                  type="text"
-                                                  defaultValue="Picture"
-                                                />
-                                              </td>
-                                              <td className="border p-2">
-                                                <input
-                                                  type="text"
-                                                  defaultValue="No-Blur"
-                                                />
-                                              </td>
-                                              <td className="border p-2">
-                                                <input
-                                                  type="checkbox"
-                                                  defaultValue=""
-                                                />
-                                              </td>
-                                            </tr>
-                                            <tr>
-                                              <td className="border p-2">
-                                                <input
-                                                  type="text"
-                                                  defaultValue="Picture"
-                                                />
-                                              </td>
-                                              <td className="border p-2">
-                                                <input
-                                                  type="text"
-                                                  defaultValue="No-Blur"
-                                                />
-                                              </td>
-                                              <td className="border p-2">
-                                                <input
-                                                  type="checkbox"
-                                                  defaultValue=""
-                                                />
-                                              </td>
-                                            </tr>
-                                            <tr>
-                                              <td className="border p-2">
-                                                <input
-                                                  type="text"
-                                                  defaultValue="Picture"
-                                                />
-                                              </td>
-                                              <td className="border p-2">
-                                                <input
-                                                  type="text"
-                                                  defaultValue="No-Blur"
-                                                />
-                                              </td>
-                                              <td className="border p-2">
-                                                <input
-                                                  type="checkbox"
-                                                  defaultValue=""
-                                                />
-                                              </td>
-                                            </tr>
-                                          </tbody>
-                                        </table>
-                                        <div className="flex gap-6">
-                                          <button
-                                            type="submit"
-                                            className="mt-2 p-2 bg-blue-500 rounded text-white"
-                                          >
-                                            Submit
-                                          </button>
-                                          <button
-                                            type=""
-                                            className="mt-2 p-2 bg-blue-500 rounded text-white"
-                                          >
-                                            Add More
-                                          </button>
-                                        </div>
-                                      </form>
+                                      {subTasks
+                                        .filter(
+                                          (task) =>
+                                            task.id === openChecklistTaskId
+                                        )
+                                        .map((task) => (
+                                          <form key={task.id}>
+                                            <table className="mt-4 border-collapse border border-gray-400 w-full">
+                                              <thead>
+                                                <tr className="bg-gray-200">
+                                                  <th className="border p-2">
+                                                    Item
+                                                  </th>
+                                                  <th className="border p-2">
+                                                    To-Check
+                                                  </th>
+                                                  <th className="border p-2">
+                                                    Confirm
+                                                  </th>
+                                                </tr>
+                                              </thead>
+                                              <tbody>
+                                                {task.checklist.map(
+                                                  (checklistItem, index) => (
+                                                    <tr key={index}>
+                                                      <td className="border p-2">
+                                                        <input
+                                                          type="text"
+                                                          value={
+                                                            checklistItem.item
+                                                          }
+                                                          onChange={(e) =>
+                                                            handleChecklistChange(
+                                                              task.id,
+                                                              index,
+                                                              "item",
+                                                              e.target.value
+                                                            )
+                                                          }
+                                                          className="w-full"
+                                                        />
+                                                      </td>
+                                                      <td className="border p-2">
+                                                        <input
+                                                          type="text"
+                                                          value={
+                                                            checklistItem.toCheck
+                                                          }
+                                                          onChange={(e) =>
+                                                            handleChecklistChange(
+                                                              task.id,
+                                                              index,
+                                                              "toCheck",
+                                                              e.target.value
+                                                            )
+                                                          }
+                                                          className="w-full"
+                                                        />
+                                                      </td>
+                                                      <td className="border p-2 text-center">
+                                                        <Checkbox
+                                                          checked={
+                                                            checklistItem.checked
+                                                          }
+                                                          onChange={(e) =>
+                                                            handleChecklistChange(
+                                                              task.id,
+                                                              index,
+                                                              "checked",
+                                                              e.target.checked
+                                                            )
+                                                          }
+                                                        />
+                                                      </td>
+                                                    </tr>
+                                                  )
+                                                )}
+                                              </tbody>
+                                            </table>
+
+                                            <div className="flex gap-6 mt-4">
+                                              <button
+                                                type="button"
+                                                onClick={() => {
+                                                  dispatch(
+                                                    editsubtasklist({
+                                                      subtaskId: task.id,
+                                                      updatedData: {
+                                                        checklist:
+                                                          task.checklist,
+                                                      },
+                                                    })
+                                                  );
+                                                  toast.success("Checklist saved successfully!", {
+                                                    position: "top-right",
+                                                    autoClose: 1000,
+                                                    hideProgressBar: true,
+                                                  });
+                                                  setOpenChecklistTaskId(null);
+                                                }}
+                                                className="p-2 bg-blue-500 rounded text-white"
+                                              >
+                                                Save
+                                              </button>
+                                              <button
+                                                type="button"
+                                                onClick={() =>
+                                                  handleAddRow(task.id)
+                                                }
+                                                className="p-2 bg-green-500 rounded text-white"
+                                              >
+                                                Add More
+                                              </button>
+                                            </div>
+                                          </form>
+                                        ))}
                                     </div>
                                   )}
                                 </div>
@@ -1058,7 +1068,6 @@ const ProjectViewSubTask = ({ isStandalone }) => {
                                         "status",
                                         e.target.value
                                       );
-                                      
                                     }}
                                     className="absolute left-0 top-0 w-full h-full text-center appearance-none bg-transparent focus:ring-0 focus:outline-none"
                                     autoFocus

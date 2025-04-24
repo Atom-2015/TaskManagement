@@ -19,14 +19,16 @@ const ProjectViewList = () => {
   const [tasks, setTasks] = useState([]);
   const [expandedRows, setExpandedRows] = useState({});
   const [expandedSubTaskId, setExpandedSubTaskId] = useState(null);
-  const [columnWidths, setColumnWidths] = useState([30, 50, 250, 150, 150, 120, 120, 120]);
+  const [columnWidths, setColumnWidths] = useState([
+    30, 50, 250, 150, 150, 120, 120, 120,
+  ]);
   const [newSubTask, setNewSubTask] = useState({
     title: "",
     loop_users: "",
     status: "Pending",
     priority: "Medium",
     category: "",
-    repeatType: ""
+    repeatType: "",
   });
   const [activeTaskId, setActiveTaskId] = useState(null);
   const isResizing = useRef(false);
@@ -44,7 +46,7 @@ const ProjectViewList = () => {
           ...task,
           id: task._id || `temp-${index}`,
           subTasks: task.subTasks || [],
-          showAddSubTask: false
+          showAddSubTask: false,
         }))
       );
     }
@@ -52,7 +54,6 @@ const ProjectViewList = () => {
 
   const handleAddTaskSubmit = (projectId, newTask) => {
     dispatch(addtask({ projectId, task: newTask }));
-    
   };
 
   const handleToggleExpand = (taskId) => {
@@ -91,20 +92,22 @@ const ProjectViewList = () => {
   const handleAddSubTask = (taskId) => {
     if (!newSubTask.title.trim()) return;
 
-    const updatedTasks = tasks.map(task => {
+    const updatedTasks = tasks.map((task) => {
       if (task.id === taskId) {
         const newSubTaskItem = {
           id: `sub-${Date.now()}`,
           ...newSubTask,
-          startDate: new Date().toISOString().split('T')[0],
-          endDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+          startDate: new Date().toISOString().split("T")[0],
+          endDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+            .toISOString()
+            .split("T")[0],
           duration: "7 days",
-          status: "Active"
+          status: "Active",
         };
         return {
           ...task,
           subTasks: [...(task.subTasks || []), newSubTaskItem],
-          showAddSubTask: false
+          showAddSubTask: false,
         };
       }
       return task;
@@ -117,21 +120,23 @@ const ProjectViewList = () => {
       status: "Pending",
       priority: "Medium",
       category: "",
-      repeatType: ""
+      repeatType: "",
     });
   };
 
   const toggleAddSubTask = (taskId) => {
-    setTasks(tasks.map(task => ({
-      ...task,
-      showAddSubTask: task.id === taskId ? !task.showAddSubTask : false
-    })));
+    setTasks(
+      tasks.map((task) => ({
+        ...task,
+        showAddSubTask: task.id === taskId ? !task.showAddSubTask : false,
+      }))
+    );
   };
 
   const handleSubTaskFieldChange = (field, value) => {
-    setNewSubTask(prev => ({
+    setNewSubTask((prev) => ({
       ...prev,
-      [field]: value
+      [field]: value,
     }));
   };
 
@@ -146,7 +151,10 @@ const ProjectViewList = () => {
     const diffX = event.clientX - startX.current;
     setColumnWidths((prevWidths) => {
       const newWidths = [...prevWidths];
-      newWidths[columnIndexRef.current] = Math.max(50, prevWidths[columnIndexRef.current] + diffX);
+      newWidths[columnIndexRef.current] = Math.max(
+        50,
+        prevWidths[columnIndexRef.current] + diffX
+      );
       return newWidths;
     });
     startX.current = event.clientX;
@@ -171,7 +179,10 @@ const ProjectViewList = () => {
         <div className="flex flex-row justify-between">
           <h1 className="text-2xl font-bold mb-4">Task Details</h1>
           <div className="flex justify-end mb-2">
-            <button className="font-extrabold mb-8 hover:rotate-180 transition duration-700" onClick={handleBack}>
+            <button
+              className="font-extrabold mb-8 hover:rotate-180 transition duration-700"
+              onClick={handleBack}
+            >
               <RxCross1 className="font-extrabold" size={20} />
             </button>
           </div>
@@ -206,8 +217,21 @@ const ProjectViewList = () => {
                   <table className="w-full border-collapse border border-gray-300">
                     <thead className="sticky top-0 z-10">
                       <tr className="border-gray-300">
-                        <th style={{ width: columnWidths[0] }} className="border border-gray-300 p-2">▼</th>
-                        {["ID", "Task Title", "loop_users", "Task Status", "Task Priority", "category", "Repeat"].map((col, index) => (
+                        <th
+                          style={{ width: columnWidths[0] }}
+                          className="border border-gray-300 p-2"
+                        >
+                          ▼
+                        </th>
+                        {[
+                          "ID",
+                          "Task Title",
+                          "loop_users",
+                          "Task Status",
+                          "Task Priority",
+                          "category",
+                          "Repeat",
+                        ].map((col, index) => (
                           <th
                             key={index}
                             style={{ width: columnWidths[index + 1] }}
@@ -227,13 +251,21 @@ const ProjectViewList = () => {
                       {tasks.map((task, index) => (
                         <React.Fragment key={task.id}>
                           {/* Parent Task Row */}
-                          <Draggable key={task.id} draggableId={task.id.toString()} index={index}>
+                          <Draggable
+                            key={task.id}
+                            draggableId={task.id.toString()}
+                            index={index}
+                          >
                             {(provided, snapshot) => (
                               <>
                                 <tr
                                   ref={provided.innerRef}
                                   {...provided.draggableProps}
-                                  className={`transition-all duration-200 draggable-row ${snapshot.isDragging ? "bg-blue-100 shadow-lg border-2 border-blue-400" : "hover:bg-gray-50 border border-gray-300"}`}
+                                  className={`transition-all duration-200 draggable-row ${
+                                    snapshot.isDragging
+                                      ? "bg-blue-100 shadow-lg border-2 border-blue-400"
+                                      : "hover:bg-gray-50 border border-gray-300"
+                                  }`}
                                   style={{
                                     ...provided.draggableProps.style,
                                     display: "table-row",
@@ -244,54 +276,97 @@ const ProjectViewList = () => {
                                 >
                                   <td className="border bg-white border-gray-50 p-1 text-center">
                                     <button
-                                      onClick={() => handleToggleSubTask(task.id)}
+                                      onClick={() =>
+                                        handleToggleSubTask(task.id)
+                                      }
                                       className="text-black hover:text-gray-600 transition-transform duration-200"
                                     >
                                       {expandedSubTaskId === task.id ? (
-                                      <MdKeyboardArrowDown size={20} className="transform transition-transform duration-200" />
+                                        <MdKeyboardArrowDown
+                                          size={20}
+                                          className="transform transition-transform duration-200"
+                                        />
                                       ) : (
-                                        <MdKeyboardArrowRight size={20} className="transform transition-transform duration-200" />
+                                        <MdKeyboardArrowRight
+                                          size={20}
+                                          className="transform transition-transform duration-200"
+                                        />
                                       )}
                                     </button>
                                   </td>
-                                  <td className="border bg-white border-gray-50 p-1 w-3 text-center hover:cursor-move" {...provided.dragHandleProps}>
+                                  <td
+                                    className="border bg-white border-gray-50 p-1 w-3 text-center hover:cursor-move"
+                                    {...provided.dragHandleProps}
+                                  >
                                     ER-{index + 1}
                                   </td>
                                   <td className="border bg-white border-gray-50 p-1 text-start relative font-semibold">
                                     <div
                                       className="flex justify-between items-center cursor-pointer whitespace-nowrap relative"
-                                      onMouseEnter={(e) => e.currentTarget.querySelector('button').classList.add('opacity-100')}
-                                      onMouseLeave={(e) => e.currentTarget.querySelector('button').classList.remove('opacity-100')}
+                                      onMouseEnter={(e) =>
+                                        e.currentTarget
+                                          .querySelector("button")
+                                          .classList.add("opacity-100")
+                                      }
+                                      onMouseLeave={(e) =>
+                                        e.currentTarget
+                                          .querySelector("button")
+                                          .classList.remove("opacity-100")
+                                      }
                                     >
-                                      <span className="flex-1 truncate">{task.name}</span>
-                                      <button onClick={() => handleViewSubTask(task.id)} className="absolute right-0 px-2 text-sm ml-2 text-blue-600 border-2 border-purple-600 rounded-lg opacity-0 transition-opacity duration-200">
+                                      <span className="flex-1 truncate">
+                                        {task.name}
+                                      </span>
+                                      <button
+                                        onClick={() =>
+                                          handleViewSubTask(task.id)
+                                        }
+                                        className="absolute right-0 px-2 text-sm ml-2 text-blue-600 border-2 border-purple-600 rounded-lg opacity-0 transition-opacity duration-200"
+                                      >
                                         <span>View Task</span>
                                       </button>
                                     </div>
                                   </td>
-                                  <td className="border bg-white border-gray-50 p-1 text-center">{task.loop_users}</td>
-                                  <td className="border bg-white border-gray-50 p-1 text-center">{task.status}</td>
-                                  <td className={`border border-gray-50 p-1 text-center ${task.priority === "High"
-                                      ? "bg-red-500 text-white"
-                                      : task.priority === "Medium"
+                                  <td className="border bg-white border-gray-50 p-1 text-center">
+                                    {task.loop_users}
+                                  </td>
+                                  <td className="border bg-white border-gray-50 p-1 text-center">
+                                    {task.status}
+                                  </td>
+                                  <td
+                                    className={`border border-gray-50 p-1 text-center ${
+                                      task.priority === "High"
+                                        ? "bg-red-500 text-white"
+                                        : task.priority === "Medium"
                                         ? "bg-green-500 text-white"
                                         : task.priority === "Low"
-                                          ? "bg-blue-500 text-white"
-                                          : "bg-gray-300 text-black"
-                                    }`}>
+                                        ? "bg-blue-500 text-white"
+                                        : "bg-gray-300 text-black"
+                                    }`}
+                                  >
                                     {task.priority || "Not Set"}
                                   </td>
-                                  <td className="border bg-white border-gray-50 p-1 text-center">{task.category}</td>
-                                  <td className="border bg-white border-gray-50 p-1 text-center">{task.repeatType}</td>
+                                  <td className="border bg-white border-gray-50 p-1 text-center">
+                                    {task.category}
+                                  </td>
+
+                                  <td className="border bg-white border-gray-50 p-1 text-center">
+                                    {task.repeatType}
+                                  </td>
                                 </tr>
 
                                 {/* Subtask Dropdown */}
                                 {expandedSubTaskId === task.id && (
                                   <tr className="bg-gray-50">
-                                    <td colSpan={8} className="p-0 border border-gray-300">
+                                    <td
+                                      colSpan={8}
+                                      className="p-0 border border-gray-300"
+                                    >
                                       <div className="transition-all duration-300 ease-in-out overflow-hidden">
                                         <div className=" border-t border-gray-200">
-                                          <ProjectViewSubTask isStandalone={false} />
+                                          <ProjectViewSubTask
+                                            isStandalone={false}
+                                          />
                                         </div>
                                       </div>
                                     </td>
@@ -299,131 +374,206 @@ const ProjectViewList = () => {
                                 )}
 
                                 {/* Subtask Rows */}
-                                {expandedRows[task.id] && task.subTasks?.map((subTask, subIndex) => (
-                                  <tr key={subTask.id} className="border border-gray-300 bg-gray-100">
-                                    <td></td>
-                                    <td className="p-1 text-center">{index + 1}.{subIndex + 1}</td>
-                                    <td className="p-1 text-left pl-8">{subTask.title}</td>
-                                    <td className="p-1 text-center">{subTask.loop_users}</td>
-                                    <td className="p-1 text-center">{subTask.status}</td>
-                                    <td className={`p-1 text-center rounded-lg ${subTask.priority === "High"
-                                        ? "bg-red-500 text-white"
-                                        : subTask.priority === "Medium"
-                                          ? "bg-green-500 text-white"
-                                          : "bg-blue-500 text-white"
-                                      }`}>
-                                      {subTask.priority}
-                                    </td>
-                                    <td className="p-1 text-center">{subTask.category}</td>
-                                    <td className="p-1 text-center">{subTask.repeatType}</td>
-                                  </tr>
-                                ))}
+                                {expandedRows[task.id] &&
+                                  task.subTasks?.map((subTask, subIndex) => (
+                                    <tr
+                                      key={subTask.id}
+                                      className="border border-gray-300 bg-gray-100"
+                                    >
+                                      <td></td>
+                                      <td className="p-1 text-center">
+                                        {index + 1}.{subIndex + 1}
+                                      </td>
+                                      <td className="p-1 text-left pl-8">
+                                        {subTask.title}
+                                      </td>
+                                      <td className="p-1 text-center">
+                                        {subTask.loop_users}
+                                      </td>
+                                      <td className="p-1 text-center">
+                                        {subTask.status}
+                                      </td>
+                                      <td
+                                        className={`p-1 text-center rounded-lg ${
+                                          subTask.priority === "High"
+                                            ? "bg-red-500 text-white"
+                                            : subTask.priority === "Medium"
+                                            ? "bg-green-500 text-white"
+                                            : "bg-blue-500 text-white"
+                                        }`}
+                                      >
+                                        {subTask.priority}
+                                      </td>
+                                      <td className="p-1 text-center">
+                                        {subTask.category}
+                                      </td>
+                                      <td className="p-1 text-center">
+                                        {subTask.repeatType}
+                                      </td>
+                                    </tr>
+                                  ))}
 
                                 {/* Add Sub Task Button */}
-                                {expandedRows[task.id] && !task.showAddSubTask && (
-                                  <tr className="border border-gray-300 bg-gray-50">
-                                    <td colSpan={8} className="p-2">
-                                      <button
-                                        onClick={() => toggleAddSubTask(task.id)}
-                                        className="w-full p-2 text-left text-blue-500 hover:bg-blue-50 rounded"
-                                      >
-                                        + Add Sub Task
-                                      </button>
-                                    </td>
-                                  </tr>
-                                )}
+                                {expandedRows[task.id] &&
+                                  !task.showAddSubTask && (
+                                    <tr className="border border-gray-300 bg-gray-50">
+                                      <td colSpan={8} className="p-2">
+                                        <button
+                                          onClick={() =>
+                                            toggleAddSubTask(task.id)
+                                          }
+                                          className="w-full p-2 text-left text-blue-500 hover:bg-blue-50 rounded"
+                                        >
+                                          + Add Sub Task
+                                        </button>
+                                      </td>
+                                    </tr>
+                                  )}
 
                                 {/* Add Sub Task Form */}
-                                {expandedRows[task.id] && task.showAddSubTask && (
-                                  <tr className="border border-gray-300 bg-blue-50">
-                                    <td colSpan={8} className="">
-                                      <div className="grid grid-cols-8  items-center">
-                                        <div className="col-span-2">
-                                          <input
-                                            type="text"
-                                            value={newSubTask.title}
-                                            onChange={(e) => handleSubTaskFieldChange('title', e.target.value)}
-                                            placeholder="Sub Task Name"
-                                            className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                          />
+                                {expandedRows[task.id] &&
+                                  task.showAddSubTask && (
+                                    <tr className="border border-gray-300 bg-blue-50">
+                                      <td colSpan={8} className="">
+                                        <div className="grid grid-cols-8  items-center">
+                                          <div className="col-span-2">
+                                            <input
+                                              type="text"
+                                              value={newSubTask.title}
+                                              onChange={(e) =>
+                                                handleSubTaskFieldChange(
+                                                  "title",
+                                                  e.target.value
+                                                )
+                                              }
+                                              placeholder="Sub Task Name"
+                                              className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                            />
+                                          </div>
+                                          <div>
+                                            <input
+                                              type="text"
+                                              value={newSubTask.loop_users}
+                                              onChange={(e) =>
+                                                handleSubTaskFieldChange(
+                                                  "loop_users",
+                                                  e.target.value
+                                                )
+                                              }
+                                              placeholder="Assigned To"
+                                              className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                            />
+                                          </div>
+                                          <div>
+                                            <select
+                                              value={newSubTask.status}
+                                              onChange={(e) =>
+                                                handleSubTaskFieldChange(
+                                                  "status",
+                                                  e.target.value
+                                                )
+                                              }
+                                              className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                            >
+                                              <option value="Pending">
+                                                Pending
+                                              </option>
+                                              <option value="In Progress">
+                                                In Progress
+                                              </option>
+                                              <option value="Completed">
+                                                Completed
+                                              </option>
+                                            </select>
+                                          </div>
+                                          <div>
+                                            <select
+                                              value={newSubTask.priority}
+                                              onChange={(e) =>
+                                                handleSubTaskFieldChange(
+                                                  "priority",
+                                                  e.target.value
+                                                )
+                                              }
+                                              className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                            >
+                                              <option value="High">High</option>
+                                              <option value="Medium">
+                                                Medium
+                                              </option>
+                                              <option value="Low">Low</option>
+                                            </select>
+                                          </div>
+                                          <div>
+                                            <input
+                                              type="text"
+                                              value={newSubTask.category}
+                                              onChange={(e) =>
+                                                handleSubTaskFieldChange(
+                                                  "category",
+                                                  e.target.value
+                                                )
+                                              }
+                                              placeholder="Category"
+                                              className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                            />
+                                          </div>
+                                          <div>
+                                            <select
+                                              value={newSubTask.repeatType}
+                                              onChange={(e) =>
+                                                handleSubTaskFieldChange(
+                                                  "repeatType",
+                                                  e.target.value
+                                                )
+                                              }
+                                              className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                            >
+                                              <option value="">None</option>
+                                              <option value="Daily">
+                                                Daily
+                                              </option>
+                                              <option value="Weekly">
+                                                Weekly
+                                              </option>
+                                              <option value="Monthly">
+                                                Monthly
+                                              </option>
+                                            </select>
+                                          </div>
+                                          <div className="flex gap-2">
+                                            <button
+                                              onClick={() =>
+                                                handleAddSubTask(task.id)
+                                              }
+                                              className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 transition-colors"
+                                            >
+                                              Add
+                                            </button>
+                                            <button
+                                              onClick={() =>
+                                                toggleAddSubTask(task.id)
+                                              }
+                                              className="bg-gray-300 text-gray-700 p-2 rounded hover:bg-gray-400 transition-colors"
+                                            >
+                                              Cancel
+                                            </button>
+                                          </div>
                                         </div>
-                                        <div>
-                                          <input
-                                            type="text"
-                                            value={newSubTask.loop_users}
-                                            onChange={(e) => handleSubTaskFieldChange('loop_users', e.target.value)}
-                                            placeholder="Assigned To"
-                                            className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                          />
-                                        </div>
-                                        <div>
-                                          <select
-                                            value={newSubTask.status}
-                                            onChange={(e) => handleSubTaskFieldChange('status', e.target.value)}
-                                            className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                          >
-                                            <option value="Pending">Pending</option>
-                                            <option value="In Progress">In Progress</option>
-                                            <option value="Completed">Completed</option>
-                                          </select>
-                                        </div>
-                                        <div>
-                                          <select
-                                            value={newSubTask.priority}
-                                            onChange={(e) => handleSubTaskFieldChange('priority', e.target.value)}
-                                            className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                          >
-                                            <option value="High">High</option>
-                                            <option value="Medium">Medium</option>
-                                            <option value="Low">Low</option>
-                                          </select>
-                                        </div>
-                                        <div>
-                                          <input
-                                            type="text"
-                                            value={newSubTask.category}
-                                            onChange={(e) => handleSubTaskFieldChange('category', e.target.value)}
-                                            placeholder="Category"
-                                            className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                          />
-                                        </div>
-                                        <div>
-                                          <select
-                                            value={newSubTask.repeatType}
-                                            onChange={(e) => handleSubTaskFieldChange('repeatType', e.target.value)}
-                                            className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                          >
-                                            <option value="">None</option>
-                                            <option value="Daily">Daily</option>
-                                            <option value="Weekly">Weekly</option>
-                                            <option value="Monthly">Monthly</option>
-                                          </select>
-                                        </div>
-                                        <div className="flex gap-2">
-                                          <button
-                                            onClick={() => handleAddSubTask(task.id)}
-                                            className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 transition-colors"
-                                          >
-                                            Add
-                                          </button>
-                                          <button
-                                            onClick={() => toggleAddSubTask(task.id)}
-                                            className="bg-gray-300 text-gray-700 p-2 rounded hover:bg-gray-400 transition-colors"
-                                          >
-                                            Cancel
-                                          </button>
-                                        </div>
-                                      </div>
-                                    </td>
-                                  </tr>
-                                  
-                                )}
+                                      </td>
+                                    </tr>
+                                  )}
                               </>
                             )}
                           </Draggable>
                         </React.Fragment>
                       ))}
-                      {provided.placeholder}
+                      <tr className="border border-gray-300 bg-gray-100">
+                        <td
+                          colSpan={8}
+                          className="p-3 text-center text-gray-400 italic"
+                        ></td>
+                      </tr>
                     </tbody>
                   </table>
                 </div>

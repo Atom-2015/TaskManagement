@@ -3,43 +3,39 @@ import { Edit, Trash, Search } from 'lucide-react';
 import CompanyAddForm from './CompanyAddForm';
 import { IoAddCircleOutline } from "react-icons/io5";
 import { AnimatePresence } from "framer-motion";
+import { useDispatch,useSelector } from 'react-redux';
+import { editCompany } from '../../FeatureRedux/companySlice/editCompanyslice';
+import { useEffect } from 'react';
+import { getCompany } from '../../FeatureRedux/companySlice/getCompanyslice';
+import { delCompany } from '../../FeatureRedux/companySlice/deleteCompanyslice';
+import Swal from 'sweetalert2';
+
+
 
 const CompanyTable = () => {
-  const [companies, setCompanies] = useState([
-    {
-      _id: "1",
-      company_name: "Tech Solutions Inc",
-      client_name: "Ratan Sharma",
-      email: "contact@techsolutions.com",
-      joinDate: "2023-12-31",
-      validity: "2027-12-31",
-      cost: 20000,
-      location: [
-        {
-          country: "India",
-          state: "Maharashtra",
-          cities: ["Mumbai"],
-        },
-      ],
-    },
-   
-    {
-      _id: "10",
-      company_name: "Another Company",
-      client_name: "Another Owner",
-      email: "contact@another.com",
-      joinDate: "2024-02-28",
-      validity: "2026-12-12",
-      cost: 2000000,
-      location: [
-        {
-          country: "Brazil",
-          state: "São Paulo",
-          cities: ["São Paulo"],
-        },
-      ],
-    },
-  ]);
+  const dispatch = useDispatch();
+   useEffect(() => {
+      dispatch(getCompany());
+     
+   }, [dispatch]);
+  
+ 
+   const { data1, isError, isLoading, errorMessage , isSuccess } = useSelector((state) => state.getCompany) || {};
+
+ const [companies, setCompanies] = useState([]);
+ useEffect(() => {
+   if (data1) {
+      
+     setCompanies([...data1].reverse());
+     
+   }
+ }, [isSuccess]);
+
+
+ 
+  const { data } = useSelector((state) => state.editCompanyForm) || {};
+
+
 
   const [showForm, setShowForm] = useState(false);
   const [editingCompany, setEditingCompany] = useState(null);
@@ -48,32 +44,85 @@ const CompanyTable = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const addButtonRef = useRef(null);
   
+  
+
+  
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(9);
 
+  dispatch(editCompany());
+
+
   const handleAddCompany = (newCompany) => {
     if (editingCompany) {
+      const updatedCompany = { ...newCompany, _id: editingCompany._id };
+      
+    
+      dispatch(editCompany(updatedCompany));
+  
+      
       setCompanies(
         companies.map((company) =>
-          company._id === editingCompany._id
-            ? { ...newCompany, _id: editingCompany._id }
-            : company
+          company._id === editingCompany._id ? updatedCompany : company
         )
       );
     } else {
-      setCompanies([{ ...newCompany, _id: Date.now().toString() }, ...companies]);
+      const newCompanyWithId = { ...newCompany, _id: Date.now().toString() };
+  
+      // Ideally you should create a separate thunk like createCompany, but for now just update UI
+      setCompanies([newCompanyWithId, ...companies]);
     }
+  
     setShowForm(false);
     setEditingCompany(null);
     setCurrentPage(1);
   };
+  
 
   const handleDelete = (id) => {
-    setCompanies(companies.filter((company) => company._id !== id));
-    if (companies.length % itemsPerPage === 1 && currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-    }
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "This action cannot be undone!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Yes, delete it!',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        dispatch(delCompany({ _id: id }))
+          .then(() => {
+            const updatedList = companies.filter((company) => company._id !== id);
+            setCompanies(updatedList);
+  
+            if (updatedList.length % itemsPerPage === 0 && currentPage > 1) {
+              setCurrentPage(currentPage - 1);
+            }
+  
+            Swal.fire({
+              title: 'Deleted!',
+              text: 'The company has been deleted.',
+              icon: 'success',
+              timer: 2000, // auto-close after 3 seconds
+              showConfirmButton: false,
+            });
+          })
+          .catch((err) => {
+            console.error("Deletion failed:", err);
+            Swal.fire({
+              title: 'Error!',
+              text: 'Something went wrong. Please try again.',
+              icon: 'error',
+              timer: 2000,
+              showConfirmButton: false,
+            });
+          });
+      }
+    });
   };
+  
+  
+  
 
   const calculateDuration = (start, end) => {
     if (!start || !end) return "0 days";
@@ -92,25 +141,33 @@ const CompanyTable = () => {
 
   const handleEdit = (company) => {
     setEditingCompany(company);
-    setShowForm(true);
+    setShowForm(true);  // Show the form
   };
+
+  const formatDate = (isoString) => {
+    if (!isoString) return 'N/A';
+    const date = new Date(isoString);
+    if (isNaN(date)) return 'Invalid date';
+    return date.toLocaleDateString('en-GB'); // Format: DD/MM/YYYY
+  };
+  
 
   const formatCost = (cost) => {
     return cost.toLocaleString('en-IN');
   };
 
-  const filteredCompanies = companies.filter(company =>
+  const filteredCompanies = companies?.filter(company =>
     company.company_name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const filteredOwner = companies.filter(company => 
+  const filteredOwner = companies?.filter(company => 
     company.client_name.toLowerCase().includes(showOwnerSearch.toLowerCase())
   );
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = filteredCompanies.slice(indexOfFirstItem, indexOfLastItem);
-  const totalPages = Math.ceil(filteredCompanies.length / itemsPerPage);
+  const currentItems = filteredCompanies?.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(filteredCompanies?.length / itemsPerPage);
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
@@ -206,7 +263,7 @@ const CompanyTable = () => {
           </tr>
         </thead>
         <tbody>
-          {currentItems.length > 0 ? (
+          {currentItems && currentItems?.length > 0 ? (
             currentItems.map((company) => (
               <tr
                 key={company._id}
@@ -222,28 +279,23 @@ const CompanyTable = () => {
                   {company.email}
                 </td>
                 <td className="p-3 border-1 border-gray-400 text-gray-700">
-                  {company.joinDate}
+                {formatDate(company.joinDate)}
                 </td>
                 <td className="p-3 border-1 border-gray-400 text-gray-700">
-                  {company.validity}
+                {formatDate(company.validity)}
                 </td>
                 <td className="p-3 border-1 border-gray-400 text-gray-700">
                   {calculateDuration(company.joinDate, company.validity)}
                 </td>
                 <td className="p-3 border-1 border-gray-400 text-gray-700">
-                  {formatCost(company.cost)}
+                ₹ {formatCost(company.cost)}
                 </td>
                 <td className="p-3 border-1 border-gray-400 text-gray-700">
-                  {company.location.map((location, idx) => (
-                    <div key={idx} className="mb-1 last:mb-0">
-                      <strong className="text-blue-300">{location.country}</strong> -{" "}
-                      {location.state}:{" "}
-                      <span className="text-red-800">
-                        {location.cities.join(", ")}
-                      </span>
-                    </div>
-                  ))}
-                </td>
+  <strong className="text-blue-300">{company.country}</strong> -{" "}
+  {company.state}:{" "}
+  <span className="text-red-800">{company.city}</span>
+</td>
+
                 <td className="p-3 flex justify-center space-x-2">
                   <button
                     onClick={() => handleEdit(company)}
@@ -270,7 +322,7 @@ const CompanyTable = () => {
         </tbody>
       </table>
 
-      {filteredCompanies.length > itemsPerPage && (
+      {filteredCompanies && filteredCompanies?.length > itemsPerPage && (
         <div className="flex justify-center mt-4">
           <nav className="inline-flex rounded-md shadow">
             <button

@@ -5,6 +5,8 @@ import yourImage from '../Media/user.jpg';
 import { Country, State, City } from "country-state-city";
 import Swal from 'sweetalert2';
 import { allUser } from "../../FeatureRedux/alluserSlice";
+import { useSelector } from "react-redux";
+import { getCompany } from "../../FeatureRedux/companySlice/getCompanyslice";
 
 function AdduserButton() {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -22,6 +24,7 @@ function AdduserButton() {
         city: "",
         designation: "",
         Department: "",
+        Company:"",
         dob: "",
         status: "Active"
     });
@@ -51,6 +54,16 @@ function AdduserButton() {
             [name]: value,
         }));
     };
+
+    useEffect(()=>{
+        dispatch(getCompany());
+    },[dispatch])
+
+    const data1 =useSelector((state)=>state.getCompany) || {};
+    // console.log(`COmpany wala data ${JSON.stringify(data1)}}`);
+
+
+ 
 
     // Handle Enter key press to move to next field
     const handleKeyDown = (e, nextField) => {
@@ -118,6 +131,7 @@ function AdduserButton() {
                 city: "",
                 designation: "",
                 Department: "",
+                Company:"",
                 dob: "",
                 status: "Active"
             });
@@ -333,6 +347,9 @@ function AdduserButton() {
                                             <option value="Admin">Admin</option>
                                         </select>
                                     </div>
+
+                                  
+
                                     <div className="mb-4 w-[220px]">
                                         <label className="block text-gray-300 font-medium mb-2">Department</label>
                                         <select
@@ -352,7 +369,24 @@ function AdduserButton() {
                                         </select>
                                     </div>
                                 </div>
+                                            
+                                <div className="mb-4 w-[220px]">
+                                            <label className="block text-gray-300 font-medium mb-2">Company</label>
+                                            <select
+                                                name='Company'
+                                                value={formData.Company}
+                                                onChange={handleInputChange}
+                                                className="w-full border border-gray-600 rounded px-3 py-2 focus:outline-none focus:ring focus:ring-blue-300 bg-gray-800 text-white"
+                                                required
+                                                >
+                                                    <option value="" disabled>Select Company</option>
+                                                    {data1.data1 && Array.isArray(data1.data1) && data1.data1.map((data) => (
+  <option key={data._id} value={data._id}>{data.company_name}</option>
+))}
 
+                                            </select>
+                                    </div>
+                                    
                                 {/* Date of Birth and Status */}
                                 <div className="flex justify-between items-center gap-2">
                                     <div className="mb-4 w-[220px]">

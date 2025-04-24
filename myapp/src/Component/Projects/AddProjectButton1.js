@@ -85,14 +85,6 @@ function AddProjectButton1() {
     return () => Aos.refresh();
   }, [dispatch]);
 
-  // Handle form field changes
-  // const handleChange = (e) => {
-  //   const { name, value } = e.target;
-  //   setFormData((prev) => ({
-  //     ...prev,
-  //     [name]: value,
-  //   }));
-  // };
 
   useEffect(() => {
     console.log("Current team_members value:", formData.team_members);
@@ -458,7 +450,7 @@ function AddProjectButton1() {
                     <button
                       type="button"
                       onClick={() => setShowInput(true)}
-                      className="text-black rounded-full px-2 py-0 hover:bg-blue-600 hover:text-white"
+                      className="text-black rounded-full px-2 py-0 hover:bg-blue-600 hover:!text-white"
                     >
                       Add New Sector +
                     </button>
@@ -492,7 +484,7 @@ function AddProjectButton1() {
                       value={formData.sector}
                       onChange={handleInputChange}
                       placeholder="Type new sector"
-                      className="w-full border border-blue-300 px-2 py-1 rounded-sm"
+                      className="w-full border border-blue-500  px-2 py-1 rounded-sm"
                     />
                   )}
                 </div>

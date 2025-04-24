@@ -6,6 +6,8 @@ import { useDispatch, useSelector } from "react-redux";
 import Confetti from "react-confetti";
 import Swal from "sweetalert2";
 import { addCompany } from "../../FeatureRedux/companySlice/addCompanyslice";
+import { use } from "react";
+import { editCompany } from "../../FeatureRedux/companySlice/editCompanyslice";
 
 const CompanyAddForm = ({
   onClose,
@@ -22,17 +24,23 @@ const CompanyAddForm = ({
     width: typeof window !== "undefined" ? window.innerWidth : 0,
     height: typeof window !== "undefined" ? window.innerHeight : 0,
   });
+  const formatDate = (date) => {
+    if (!date) return "";
+    const d = new Date(date);
+    return d.toISOString().split("T")[0]; 
+  };
 
   const [formData, setFormData] = useState({
     company_name: editingCompany?.company_name || "",
     client_name: editingCompany?.client_name || "",
     email: editingCompany?.email || "",
-    joinDate: editingCompany?.joinDate || "",
-    validity: editingCompany?.validity || "",
+    joinDate: editingCompany?formatDate(editingCompany.joinDate) : "",
+    validity: editingCompany?formatDate(editingCompany.validity) : "",
     cost: editingCompany?.cost || "",
     country: editingCompany?.country || defaultCountry,
     state: editingCompany?.state || "",
     city: editingCompany?.city || "",
+    ...(editingCompany ? {} : { company_password: "" }) 
   });
 
   const dispatch = useDispatch();
@@ -41,21 +49,24 @@ const CompanyAddForm = ({
     (state) => state.addcompanyform
   );
 
-  // Handle window resize
-  // In CompanyAddForm component, update the click outside handler:
+  useEffect(()=>{
+    dispatch(editCompany())
+  },[])
 
-  // Handle click outside - Precise version
+    const { edit } = useSelector((state) => state.editCompanyForm) || {};
+
+ 
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (!formRef.current) return;
 
-      // Get form container dimensions (the actual visible form)
+      
+ 
       const formContainer = formRef.current.querySelector(".bg-gray-700"); // The form's container div
       if (!formContainer) return;
 
       const formRect = formContainer.getBoundingClientRect();
 
-      // Check if click is outside form boundaries
       if (
         event.clientX < formRect.left ||
         event.clientX > formRect.right ||
@@ -72,7 +83,6 @@ const CompanyAddForm = ({
     };
   }, [onClose]);
 
-  // Prevent scrolling when modal is open
   useLayoutEffect(() => {
     const html = document.documentElement;
     const body = document.body;
@@ -84,13 +94,16 @@ const CompanyAddForm = ({
     };
   }, []);
 
-  // Handle click outside - Precise version
+ // Handle click outside - Precise version
   useEffect(() => {
     const handleClickOutside = (event) => {
+      
       if (!formRef.current) return;
 
       // Get form dimensions
       const formRect = formRef.current.getBoundingClientRect();
+
+      
 
       // Check if click is outside form boundaries
       if (
@@ -156,11 +169,32 @@ const CompanyAddForm = ({
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      
+ // CompanyAddForm.js
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  
+  try {
+    // Dispatch edit if we're editing a company
+    if (editingCompany) {
+      // Update the formData with the company ID
+      const updatedData = { ...formData, _id: editingCompany._id };
+      const resultAction = await dispatch(editCompany(updatedData));
 
+      if (editCompany.fulfilled.match(resultAction)) {
+        Swal.fire({
+          title: "Company Updated Successfully",
+          icon: "success",
+          confirmButtonColor: "#3085d6",
+          confirmButtonText: "OK",
+        }).then(() => {
+          onAddCompany(formData); // You may want to pass updated company to the parent component
+          onClose(); // Close the form
+        });
+      } else {
+        throw new Error(resultAction.payload || "Something went wrong");
+      }
+    } else {
+      // If we are not editing, call the addCompany action
       const resultAction = await dispatch(addCompany(formData));
 
       if (addCompany.fulfilled.match(resultAction)) {
@@ -169,23 +203,24 @@ const CompanyAddForm = ({
           icon: "success",
           confirmButtonColor: "#3085d6",
           confirmButtonText: "OK",
+          timer:2000
         }).then(() => {
-          onAddCompany(formData)
+          onAddCompany(formData);
           onClose();
         });
       } else {
         throw new Error(resultAction.payload || "Something went wrong");
       }
-    } catch (error) {
-      Swal.fire({
-        title: "Error",
-        text: error.message || "Failed to add company",
-        icon: "error",
-      });
     }
-  };
+  } catch (error) {
+    Swal.fire({
+      title: "Error",
+      text: error.message || "Failed to add/edit company",
+      icon: "error",
+    });
+  }
+};
 
-  // Calculate button position for animation origin
   const getButtonPosition = () => {
     if (buttonRef.current) {
       const rect = buttonRef.current.getBoundingClientRect();
@@ -314,19 +349,22 @@ const CompanyAddForm = ({
                 />
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Password
-                </label>
-                <input
-                  type="password"
-                  name="company_password"
-                  value={formData.company_password}
-                  onChange={handleChange}
-                  className="w-full bg-gray-100 border border-gray-500 rounded-md p-2 text-gray-700"
-                  required
-                />
-              </div>
+              {!editingCompany && (
+  <div>
+    <label className="block text-sm font-medium text-gray-700 mb-1">
+      Password
+    </label>
+    <input
+      type="password"
+      name="company_password"
+      value={formData.company_password || ""}
+      onChange={handleChange}
+      className="w-full bg-gray-100 border border-gray-500 rounded-md p-2 text-gray-700"
+      required
+    />
+  </div>
+)}
+
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -359,7 +397,7 @@ const CompanyAddForm = ({
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Cost
+                 Renew Cost
                 </label>
                 <input
                   type="number"
