@@ -218,36 +218,41 @@ function AddProjectButton1() {
   };
 
   // Handle form submission
-  const handleSubmit = (e) => {
-    e.preventDefault(); // Prevents the form from reloading the page
-    console.log("Form submitted!");
-
-    // if (!formData.name || !formData.start_date) {
-    //   alert("Project Name and Start Date are required.");
-    //   return;
-    // }
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+  
     const submissionData = {
       ...formData,
-      state: formData.state || "", // Pass empty string if state is not available
-      city: formData.city || "", // Pass empty string if city is not available+++++++++++++++++++++++++++++++++++++
+      state: formData.state || "",
+      city: formData.city || "",
     };
-
+  
     try {
-      dispatch(AddProject(submissionData)).then(() => {
+      const resultAction = await dispatch(AddProject(submissionData));
+  
+      if (AddProject.fulfilled.match(resultAction)) {
         dispatch(projectlist());
-      });
-
-      Swal.fire({
-        title: "Project Created Successfully",
-        text: "Added",
-        icon: "success",
-        confirmButtonColor: "#3085d6",
-        confirmButtonText: "OK",
-      }).then(() => {});
+  
+        Swal.fire({
+          title: "Project Created Successfully",
+          text: "Added",
+          icon: "success",
+          confirmButtonColor: "#3085d6",
+          confirmButtonText: "OK",
+        });
+      } else if (AddProject.rejected.match(resultAction)) {
+        Swal.fire({
+          title: "Error",
+          text: resultAction.payload || "Failed to create project",
+          icon: "error",
+          confirmButtonColor: "#d33",
+        });
+      }
     } catch (error) {
-      Swal.fire("Error in Adding Project");
+      Swal.fire("Unexpected Error", "Something went wrong!", "error");
     }
   };
+  
 
   const modules = {
     toolbar: [

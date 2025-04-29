@@ -28,9 +28,10 @@ function AddProjectButton() {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
+    
     setFormData((prevState) => ({
       ...prevState,
-      [name]: value,
+      [name]:name === "name" ? value.trimStart() : value,
     }));
   };
 
@@ -43,8 +44,15 @@ function AddProjectButton() {
   };
 
   const handleSubmit = (e) => {
+
     e.preventDefault();
-    dispatch(AddProject(formData));
+
+    const cleanData = {
+      ...formData,
+      name: formData.name.trimStart(),
+    };
+  
+    dispatch(AddProject(cleanData));
   };
 
   return (

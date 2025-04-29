@@ -6,7 +6,7 @@ import { faBell } from '@fortawesome/free-regular-svg-icons';
 function Header() {
   const [isUserDropdownOpen, setUserDropdownOpen] = useState(false);
   const [isNotifDropdownOpen, setNotifDropdownOpen] = useState(false);
-  const userName = "Ankit Hooda"; // Replace this dynamically if needed
+  const userName = "Atom Aviation"; // Replace this dynamically if needed
 
   // Refs for detecting clicks outside dropdowns
   const notifRef = useRef(null);

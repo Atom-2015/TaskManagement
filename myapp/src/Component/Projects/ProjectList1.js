@@ -217,6 +217,7 @@ function ProjectList1() {
                       )}
                     </th>
                     <th className="border border-gray-400 px-4 py-1">Sector</th>
+                    <th className="border border-gray-400 px-4 py-1">Company Name</th>
                     <th className="border border-gray-400 px-4 py-1">Tasks</th>
                     <th 
                       className="border border-gray-400 px-4 py-1 cursor-pointer"
@@ -253,7 +254,7 @@ function ProjectList1() {
                           >
                             <span className="flex-1 truncate ">{project.name}</span>
                             <button
-                              className="absolute right-0 px-2 text-sm ml-2 text-blue-600 border-2 border-purple-600 rounded-lg opacity-0 transition-opacity duration-200"
+                              className="absolute right-0 px-2 text-sm ml-2 bg-white text-blue-600 border-2 border-purple-600 rounded-lg opacity-0 transition-opacity duration-200"
                               onClick={() => navigate(`/project/${project._id}`)}
                             >
                               <span>View Project</span>
@@ -261,6 +262,7 @@ function ProjectList1() {
                           </div>
                         </td>
                         <td className="px-4 py-2 border border-gray-400">{project.sector}</td>
+                        <td className="px-4 py-2 border border-gray-400">company name</td>
                         <td className="px-4 py-2 border border-gray-400">
                           <div className="relative w-full h-[8px] bg-gray-300 rounded-full overflow-hidden">
                             <div

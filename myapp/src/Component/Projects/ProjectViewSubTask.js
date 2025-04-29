@@ -17,8 +17,8 @@ import { deleteSubtask } from "../../FeatureRedux/subTaskSlices/deletesubTasksli
 
 import Swal from "sweetalert2";
 
-const ProjectViewSubTask = ({ isStandalone }) => {
-  const { project, id, taskId } = useParams();
+const ProjectViewSubTask = ({ isStandalone , taskid2 }) => {
+  var { project, id, taskId } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -62,6 +62,7 @@ const ProjectViewSubTask = ({ isStandalone }) => {
   });
 
   if (!taskId) {
+    taskId = taskid2;
     console.log(" No Task ID found!");
   } else {
     console.log("Task ID received:", taskId);
@@ -132,7 +133,7 @@ const ProjectViewSubTask = ({ isStandalone }) => {
   // Fetch data when copnentc need it
   useEffect(() => {
     if (taskId) {
-      console.log(`we are in subtask page with id ${taskId}`);
+   
       dispatch(getsubtasklist({ taskId }));
     }
   }, [taskId, dispatch]);
@@ -140,7 +141,7 @@ const ProjectViewSubTask = ({ isStandalone }) => {
   // Update local state when needed
   useEffect(() => {
     if (apiSubtasks) {
-      console.log(`api in useEffect`, apiSubtasks);
+     
       const transformedData = transformApiData(apiSubtasks);
       setSubTasks(transformedData.reverse());
     }
@@ -265,10 +266,12 @@ const ProjectViewSubTask = ({ isStandalone }) => {
         endDate: "",
         cost: "",
         status: "",
-        task_id: "",
+        task_id: taskId,
       });
 
-      setTimeout(() => {}, 1500);
+      console.log("📦dfgsdfg Submitting:", newSubTask);
+
+      setTimeout(() => {}, 50);
     } else {
       console.error("Failed to submit subtask:", response?.error);
     }
@@ -321,7 +324,7 @@ const ProjectViewSubTask = ({ isStandalone }) => {
       };
 
       await dispatch(editsubtasklist({ subtaskId: taskId, updatedData }));
-
+      // await dispatch(allUser())
       setSubTasks(
         subTasks.map((task) => {
           if (task.id === taskId) {
@@ -334,7 +337,12 @@ const ProjectViewSubTask = ({ isStandalone }) => {
             }
 
             if (["user", "priority", "status", "cost"].includes(field)) {
-              updatedTask[field] = value;
+              if (field === "user") {
+                const userName = getusername(value, users);
+                updatedTask.user = userName; // Set display name, not ID
+              } else {
+                updatedTask[field] = value;
+              }
 
               toast.success(`${field} updated`, {
                 position: "top-right",
@@ -531,9 +539,9 @@ const ProjectViewSubTask = ({ isStandalone }) => {
               <div
                 {...provided.droppableProps}
                 ref={provided.innerRef}
-                className="w-full"
+                className="w-[100px]"
               >
-                <table className="w-full border-collapse border border-gray-300 table-fixed">
+                <table className="w-[100px] border-collapse border border-gray-300 table-fixed">
                   <colgroup>
                     <col style={{ width: `${columnWidths.checkbox}px` }} />
                     <col style={{ width: `${columnWidths.id}px` }} />
@@ -565,14 +573,16 @@ const ProjectViewSubTask = ({ isStandalone }) => {
                         { name: "Duration", key: "duration" },
                         { name: "Cost", key: "cost" },
                         { name: "Status", key: "status" },
+
                         ...dateColumns.map((date, index) => ({
                           name: formatDateHeader(date),
                           key: `date-${index}`,
                         })),
-                      ].map((col, index) => (
+                      ]
+                      .map((col, index) => (
                         <th
                           key={index}
-                          className="border border-gray-300 p-2 text-center text-sm font-medium text-gray-700 relative"
+                          className="border border-gray-300 p-2 max-w-[100px]  text-center text-sm font-medium text-gray-700 relative"
                         >
                           {col.name}
                           {col.key !== "id" && col.key !== "subTask" && (
@@ -742,6 +752,7 @@ const ProjectViewSubTask = ({ isStandalone }) => {
                                   </select>
                                 ) : (
                                   <span className="block truncate">
+                                    {/* {console.log(`thisis trask in react *************${JSON.stringify(task.user)}`)} */}
                                     {task.user}
                                   </span>
                                 )}
@@ -1115,150 +1126,165 @@ const ProjectViewSubTask = ({ isStandalone }) => {
                                   </td>
                                 );
                               })} */}
-                              {dateColumns.map((date, colIndex) => {
-                                const isActive = isTaskActiveOnDate(task, date);
-                                const isStart =
-                                  isActive &&
-                                  (colIndex === 0 ||
-                                    !isTaskActiveOnDate(
-                                      task,
-                                      dateColumns[colIndex - 1]
-                                    ));
-                                const isEnd =
-                                  isActive &&
-                                  (colIndex === dateColumns.length - 1 ||
-                                    !isTaskActiveOnDate(
-                                      task,
-                                      dateColumns[colIndex + 1]
-                                    ));
-                                const isToday =
-                                  date.toDateString() ===
-                                  new Date().toDateString();
 
-                                return (
-                                  <td
-                                    key={`${task.id}-${colIndex}`}
-                                    className={`
-        relative 
-        h-8 
-        p-0 
-        border border-gray-100
-        group
-        ${isToday ? "bg-yellow-50" : ""}
-      `}
-                                    style={{ minWidth: "28px" }}
-                                    title={`${date.toDateString()}${
-                                      isActive ? `\n${task.subTaskName}` : ""
-                                    }`}
-                                  >
-                                    {/* Background cell */}
-                                    <div
-                                      className={`
-        absolute 
-        inset-0 
-        flex 
-        items-center 
-        justify-center
-        ${isToday ? "border-t-2 border-t-yellow-400" : ""}
-      `}
-                                    >
-                                      {date.getDate() === 1 && (
-                                        <span className="text-xs text-gray-400 absolute top-0 left-0 px-0.5">
-                                          {date.toLocaleString("default", {
-                                            month: "short",
-                                          })}
-                                        </span>
-                                      )}
-                                    </div>
 
-                                    {/* Gantt bar */}
-                                    {isActive && (
-                                      <div
-                                        className={`
-          absolute
-          top-1/2
-          -translate-y-1/2
-          h-6
-          left-0
-          right-0
-          ${isStart ? "rounded-l-full" : ""}
-          ${isEnd ? "rounded-r-full" : ""}
-          ${
-            task.priority === "High"
-              ? "bg-gradient-to-r from-red-500 to-red-600"
-              : task.priority === "Medium"
-              ? "bg-gradient-to-r from-green-500 to-green-600"
-              : "bg-gradient-to-r from-blue-500 to-blue-600"
-          }
-          shadow-md
-          transition-all
-          duration-200
-          hover:h-7
-          hover:shadow-lg
-          flex
-          items-center
-          justify-center
-          overflow-hidden
-        `}
-                                      >
-                                        {/* Progress indicator */}
-                                        <div
-                                          className={`
-              absolute 
-              left-0 
-              top-0 
-              bottom-0 
-              ${task.status === "Completed" ? "bg-green-300" : "bg-white"}
-              bg-opacity-30
-            `}
-                                          style={{
-                                            width: `${task.progress || 0}%`,
-                                            transition: "width 0.3s ease",
-                                          }}
-                                        />
 
-                                        {/* Date label on hover */}
-                                        <span
-                                          className="
-            text-white 
-            text-xs 
-            font-medium 
-            opacity-0 
-            group-hover:opacity-100
-            transition-opacity
-            duration-200
-            whitespace-nowrap
-            z-10
-          "
-                                        >
-                                          {colIndex % 5 === 0 ||
-                                          isStart ||
-                                          isEnd
-                                            ? formatDateHeader(date)
-                                            : ""}
-                                        </span>
-                                      </div>
-                                    )}
 
-                                    {/* Current day marker */}
-                                    {isToday && !isActive && (
-                                      <div
-                                        className="
-          absolute 
-          top-1/2 
-          left-1/2 
-          -translate-x-1/2 
-          -translate-y-1/2
-          w-1 
-          h-1 
-          rounded-full 
-          bg-yellow-500
-        "
-                                      />
-                                    )}
-                                  </td>
-                                );
-                              })}
+
+{dateColumns.map((date, colIndex) => {
+  const isActive = isTaskActiveOnDate(task, date);
+  const isStart =
+    isActive &&
+    (colIndex === 0 ||
+      !isTaskActiveOnDate(
+        task,
+        dateColumns[colIndex - 1]
+      ));
+  const isEnd =
+    isActive &&
+    (colIndex === dateColumns.length - 1 ||
+      !isTaskActiveOnDate(
+        task,
+        dateColumns[colIndex + 1]
+      ));
+  const isToday =
+    date.toDateString() ===
+    new Date().toDateString();
+
+  return (
+    <td
+      key={`${task.id}-${colIndex}`}
+      className={`relative h-8 p-0 border   border-gray-100 group ${isToday ? "bg-yellow-50" : ""}
+`}
+      style={{ minWidth: "28px" }}
+      title={`${date.toDateString()}${
+        isActive ? `\n${task.subTaskName}` : ""
+      }`}
+    >
+      {/* Background cell */}
+      <div
+        className={`
+absolute 
+inset-0 
+flex 
+items-center 
+justify-center
+${isToday ? "border-t-2 border-t-yellow-400" : ""}
+`}
+      >
+        {date.getDate() === 1 && (
+          <span className="text-xs text-gray-400 absolute top-0 left-0 px-0.5">
+            {date.toLocaleString("default", {
+              month: "short",
+            })}
+          </span>
+        )}
+      </div>
+
+      {/* Gantt bar */}
+      {isActive && (
+        <div
+          className={`
+absolute
+top-1/2
+-translate-y-1/2
+h-6
+
+left-0
+right-0
+${isStart ? "rounded-l-full" : ""}
+${isEnd ? "rounded-r-full" : ""}
+${
+task.priority === "High"
+? "bg-gradient-to-r from-red-500 to-red-600"
+: task.priority === "Medium"
+? "bg-gradient-to-r from-green-500 to-green-600"
+: "bg-gradient-to-r from-blue-500 to-blue-600"
+}
+shadow-md
+transition-all
+duration-200
+hover:h-7
+hover:shadow-lg
+flex
+items-center
+justify-center
+overflow-hidden
+`}
+        >
+          {/* Progress indicator */}
+          <div
+            className={`
+absolute 
+left-0 
+top-0 
+bottom-0 
+${task.status === "Completed" ? "bg-green-300" : "bg-white"}
+bg-opacity-30
+`}
+            style={{
+              width: `${task.progress || 0}%`,
+              transition: "width 0.3s ease",
+            }}
+          />
+
+          {/* Date label on hover */}
+          <span
+            className="
+text-white 
+text-xs 
+font-medium 
+opacity-0 
+group-hover:opacity-100
+transition-opacity
+duration-200
+whitespace-nowrap
+z-10
+"
+          >
+            {colIndex % 5 === 0 ||
+            isStart ||
+            isEnd
+              ? formatDateHeader(date)
+              : ""}
+          </span>
+        </div>
+      )}
+
+      {/* Current day marker */}
+      {isToday && !isActive && (
+        <div
+          className="
+absolute 
+top-1/2 
+left-1/2 
+-translate-x-1/2 
+-translate-y-1/2
+w-1 
+h-1 
+rounded-full 
+bg-yellow-500
+"
+        />
+      )}
+    </td>
+  );
+})}
+
+
+                                 {/* 
+                                 ****************************************************************************
+                                 **********Add code of Gane Chart ********************
+                                 ****************************************************************************
+                                 
+                                 
+                                 */}
+ 
+ 
+
+
+
+
                             </tr>
 
                             {task.checked && (
@@ -1347,6 +1373,9 @@ const ProjectViewSubTask = ({ isStandalone }) => {
                       <td className="border border-gray-300 p-2">
                         <form onSubmit={handleAddSubTask}>
                           <input
+                          
+                         
+                        
                             ref={inputRef}
                             type="text"
                             name="subTaskName"
@@ -1463,7 +1492,7 @@ const ProjectViewSubTask = ({ isStandalone }) => {
                           {dateColumns.map((date, index) => (
                             <td
                               key={`new-${index}`}
-                              className="border border-gray-300 p-1"
+                              className="border border-gray-300 p-1  "
                             ></td>
                           ))}
                         </>
@@ -1539,3 +1568,7 @@ const ProjectViewSubTask = ({ isStandalone }) => {
 };
 
 export default ProjectViewSubTask;
+
+
+
+

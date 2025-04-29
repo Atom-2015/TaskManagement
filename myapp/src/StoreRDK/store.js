@@ -20,6 +20,8 @@ import editCompanySlice from '../FeatureRedux/companySlice/editCompanyslice';
 import  getCompany  from '../FeatureRedux/companySlice/getCompanyslice';
 import deleteCompanyslice from '../FeatureRedux/companySlice/deleteCompanyslice';
 import deleteProjectitem from '../FeatureRedux/projectSlice/deleteProject';
+import userDeleteSlice from '../FeatureRedux/user/delteuserslice';
+
 
 
 export const store = configureStore({
@@ -44,7 +46,11 @@ export const store = configureStore({
         editCompanySlice:editCompanySlice,
         getCompany:getCompany,     
         deleteCompanyslice:deleteCompanyslice,  
-        deleteProjectitem:deleteProjectitem
+        deleteProjectitem:deleteProjectitem,
+        userDeleteSlice:userDeleteSlice
+        
+    
+
 
 
     },

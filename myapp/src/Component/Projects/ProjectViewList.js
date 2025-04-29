@@ -17,6 +17,7 @@ const ProjectViewList = () => {
   const projects = useSelector((state) => state.projectdetails);
   const [showTask, setShowTask] = useState(false);
   const [tasks, setTasks] = useState([]);
+  const [showFullAddForm, setShowFullAddForm] = useState(false);
   const [expandedRows, setExpandedRows] = useState({});
   const [expandedSubTaskId, setExpandedSubTaskId] = useState(null);
   const [columnWidths, setColumnWidths] = useState([
@@ -25,7 +26,7 @@ const ProjectViewList = () => {
   const [newSubTask, setNewSubTask] = useState({
     title: "",
     loop_users: "",
-    status: "Pending",
+    status: "Active",
     priority: "Medium",
     category: "",
     repeatType: "",
@@ -63,7 +64,57 @@ const ProjectViewList = () => {
     }));
   };
 
+  const handleQuickAddSubmit = (e) => {
+    e.preventDefault();
+    
+    if (!newSubTask.title.trim() && !showFullAddForm) {
+      setShowFullAddForm(true);
+      return;
+    }
+  
+    // Ensure proper data structure matching your API expectations
+    const taskToAdd = {
+      name: newSubTask.title || "", 
+      taskAssign: "", // Explicit empty string
+      description: "", // Explicit empty string
+      loopUsers: newSubTask.loop_users ? [newSubTask.loop_users] : [], // Array format
+      status: newSubTask.status || "Active",
+      priority: newSubTask.priority || "Medium",
+      category: newSubTask.category || "",
+      repeatType: newSubTask.repeatType || "Daily",
+      start_date: "", // Explicit empty
+      end_date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+      state: "", // Explicit empty
+      city: "", // Explicit empty
+      budget: "", // Explicit empty
+      repeat: [], // Empty array
+      repeatDays: [], // Empty array
+      repeatWeeks: [], // Empty array
+      repeatMonths: [] // Empty array
+    };
+  
+    dispatch(addtask({ data: taskToAdd, id}))
+
+    .then(() => {
+      // Reset form
+      setNewSubTask({
+        title: "",
+        loop_users: "",
+        status: "Active",
+        priority: "Medium",
+        category: "",
+        repeatType: "",
+      });
+      setShowFullAddForm(false);
+      dispatch(projectdetails(id)); // Refresh data
+    })
+    .catch(error => {
+      console.error("Add task error:", error);
+    });
+  };
+
   const handleToggleSubTask = (taskId) => {
+    console.log(`this is task id ${taskId}`);
     setExpandedSubTaskId(expandedSubTaskId === taskId ? null : taskId);
   };
 
@@ -205,24 +256,25 @@ const ProjectViewList = () => {
           />
         )}
 
-        <div className="relative flex-1 overflow-hidden flex flex-col">
+        <div className="relative flex-1 overflow-y-auto flex flex-col">
           <DragDropContext onDragEnd={handleDragEnd}>
             <Droppable droppableId="tasks">
               {(provided) => (
                 <div
                   {...provided.droppableProps}
                   ref={provided.innerRef}
-                  className="flex-1 overflow-y-auto"
+                  className="flex-1 overflow-y-auto "
                 >
                   <table className="w-full border-collapse border border-gray-300">
-                    <thead className="sticky top-0 z-10">
+                    <thead className="unset top-0 z-10 ">
                       <tr className="border-gray-300">
                         <th
                           style={{ width: columnWidths[0] }}
-                          className="border border-gray-300 p-2"
+                          className="border  border-gray-300 p-2"
                         >
                           ▼
                         </th>
+
                         {[
                           "ID",
                           "Task Title",
@@ -235,7 +287,7 @@ const ProjectViewList = () => {
                           <th
                             key={index}
                             style={{ width: columnWidths[index + 1] }}
-                            className="border border-gray-300 p-2 relative group"
+                            className="border  border-gray-300 p-2 relative group"
                           >
                             {col}
                             <div
@@ -317,6 +369,7 @@ const ProjectViewList = () => {
                                       <span className="flex-1 truncate">
                                         {task.name}
                                       </span>
+
                                       <button
                                         onClick={() =>
                                           handleViewSubTask(task.id)
@@ -365,6 +418,7 @@ const ProjectViewList = () => {
                                       <div className="transition-all duration-300 ease-in-out overflow-hidden">
                                         <div className=" border-t border-gray-200">
                                           <ProjectViewSubTask
+                                            taskid2={expandedSubTaskId}
                                             isStandalone={false}
                                           />
                                         </div>
@@ -568,12 +622,96 @@ const ProjectViewList = () => {
                           </Draggable>
                         </React.Fragment>
                       ))}
-                      <tr className="border border-gray-300 bg-gray-100">
-                        <td
-                          colSpan={8}
-                          className="p-3 text-center text-gray-400 italic"
-                        ></td>
+                      <tr className="border border-gray-300 bg-gray-50">
+                        <td className="border border-gray-300 p-2"></td>
+                        <td className="border border-gray-300 p-2 text-sm text-gray-500 text-center">
+                          
+                        </td>
+                        <td className="border border-gray-300 p-2">
+                          <form onSubmit={handleQuickAddSubmit}>
+                            <input
+                              type="text"
+                              
+                              value={newSubTask.title}
+                              onChange={(e)=>handleSubTaskFieldChange("title",e.target.value)}
+                              placeholder="+ Add Task (Press Enter)"
+                              className="w-full text-center p-0 border-0 bg-transparent focus:ring-0 focus:outline-none"
+                            />
+                          </form>
+                        </td>
+                      { showFullAddForm ?(
+                        <>
+                        <td className="border border-gray-300 px-1">
+                          <input
+                            type="text"
+                            value={newSubTask.loop_users}
+                            onChange={(e)=>handleSubTaskFieldChange("loop_users",e.target.value)}
+                            placeholder="loop_user"
+                            className="w-full text-center p-0 border-0 bg-transparent focus:ring-0 focus:outline-none"
+                          />
+                        </td>
+                        <td className="border border-gray-300 p-2">
+        <select
+          value={newSubTask.status}
+          onChange={(e) => handleSubTaskFieldChange("status", e.target.value)}
+          className="w-full text-center p-0 border-0 bg-transparent focus:ring-0 focus:outline-none"
+        >
+          <option value="Pending">Pending</option>
+          <option value="In Progress">In Progress</option>
+          <option value="Completed">Completed</option>
+        </select>
+      </td>
+                        <td className="border border-gray-300 p-2">
+                          <select
+                            value={newSubTask.priority}
+                            onChange={(e)=>handleSubTaskFieldChange("priority",e.target.value)}
+                            placeholder="task priority"
+                            className="w-full text-center p-0 border-0 bg-transparent focus:ring-0 focus:outline-none"
+                          >
+                            <option className="w-full text-black" value="High">
+                              High
+                            </option>
+                            <option
+                              className="w-full text-black"
+                              value="Medium"
+                            >
+                              Medium
+                            </option>
+                            <option className="w-full text-black" value="Low">
+                              Low
+                            </option>
+                          </select>
+                        </td>
+
+                        <td className="border border-gray-300 p-2">
+                          <input
+                            type="text"
+                            placeholder="category"
+                            value={newSubTask.category}
+                            onChange={(e) => handleSubTaskFieldChange("category", e.target.value)}
+                            className="w-full text-center p-0 border-0 bg-transparent focus:ring-0 focus:outline-none"
+                          />
+                        </td>
+                        <td>
+                        <select
+          value={newSubTask.repeatType}
+          onChange={(e) => handleSubTaskFieldChange("repeatType", e.target.value)}
+          className="w-full text-center p-0 border-0 bg-transparent focus:ring-0 focus:outline-none"
+        >
+          <option value="">None</option>
+          <option value="Daily">Daily</option>
+          <option value="Weekly">Weekly</option>
+          <option value="Monthly">Monthly</option>
+        </select>
+                        </td>
+                        </>
+                        ):(
+                          <td colSpan={5}> </td>
+                        ) }
                       </tr>
+                    
+
+                      {provided.placeholder}
                     </tbody>
                   </table>
                 </div>

@@ -12,6 +12,8 @@ function AdduserButton() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [states, setStates] = useState([]);
     const [cities, setCities] = useState([]);
+    const [selectedImage,setSelectedImage]=useState(null)
+    const fileInputRef = useRef(null);
     const [selectedState, setSelectedState] = useState("");
     const [formData, setFormData] = useState({
         name: "",
@@ -55,6 +57,8 @@ function AdduserButton() {
         }));
     };
 
+   
+
     useEffect(()=>{
         dispatch(getCompany());
     },[dispatch])
@@ -83,6 +87,20 @@ function AdduserButton() {
         const indianStates = State.getStatesOfCountry(countryCode);
         setStates(indianStates);
     }, []);
+
+    const handleImageUpload=(e)=>{
+        const file=e.target.files[0]
+        if(file){
+            const imageUrl=URL.createObjectURL(file);
+            setSelectedImage(imageUrl)
+        }
+        
+
+    }
+
+    const handleImageClick =()=>{
+        fileInputRef.current.click()
+    }
 
     // Fetch cities whenever the state changes
     useEffect(() => {
@@ -117,7 +135,7 @@ function AdduserButton() {
         dispatch(addUser(userData))
         .unwrap()
         .then(() => {
-            dispatch(allUser()); // ✅ Call only after addUser is successful
+            dispatch(allUser()); // 
             setIsModalOpen(false);
 
             setFormData({
@@ -138,6 +156,7 @@ function AdduserButton() {
             setSelectedState("");
 
             Swal.fire({
+                
                 title: 'User Created!',
                 text: `${formData.name} ${formData.last_name} has been added successfully.`,
                 icon: 'success',
@@ -165,12 +184,24 @@ function AdduserButton() {
                 <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
                     <div className="bg-gray-900 text-white rounded-lg shadow-[0px_0px_10px_0px_gray] p-6 flex align-middle items-center">
                         {/* Left side: Static Image */}
-                        <div className="flex-shrink-0 mr-6">
-                            <img
-                                src={yourImage}
+                        <div className="flex-shrink-0 mr-6 cursor-pointer">
+                            <div>
+                           
+                               <img 
+                                src={selectedImage ||yourImage}
+                                onClick={(e)=>{handleImageClick()}}
                                 alt="User"
-                                className="w-72 h-auto object-cover rounded-lg"
+                                className="w-60 h-auto object-cover rounded-lg"
                             />
+                            <input type="file"
+                            onChange={handleImageUpload}
+                            className="hidden"
+                            accept="/image"
+                            ref={fileInputRef}
+
+                            />
+                            
+                            </div>
                         </div>
 
                         {/* Right side: Form */}

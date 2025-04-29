@@ -4,11 +4,17 @@ import { useDispatch, useSelector } from "react-redux";
 import { allUser } from "../../FeatureRedux/alluserSlice";
 import EditUserModal from "./editusermodal";
 import { getCompany } from "../../FeatureRedux/companySlice/getCompanyslice";
+import Avatar from "react-avatar";
+import UserdetailsForm from "./UserdetailsForm";
+import { deleteUser } from "../../FeatureRedux/user/delteuserslice";
+import Swal from 'sweetalert2';
 
 function Userlist() {
   const [viewMode, setViewMode] = useState("grid");
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState("");
+  const [showForm, setShowForm] = useState(false);
+  const [selectUserId, setSelectedUserId] = useState(null);
   const [showOptions, setShowOptions] = useState({}); // Track visibility for each user
 
   const dispatch = useDispatch();
@@ -21,6 +27,39 @@ function Userlist() {
     dispatch(allUser());
   }, [dispatch]);
 
+  const handleDeleteUser = async (userId) => {
+    // Show a SweetAlert confirmation dialog
+    const result = await Swal.fire({
+      title: 'Are you sure?',
+      text: 'Do you really want to delete this user?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Yes, delete it!',
+    });
+  
+    if (result.isConfirmed) {
+      try {
+        await dispatch(deleteUser({ userId })).unwrap();
+        // After deleting, fetch users again
+        dispatch(allUser());
+        // Show success alert with automatic close after 1.5s
+        Swal.fire({
+          title: 'Deleted!',
+          text: 'The user has been deleted.',
+          icon: 'success',
+          timer: 1000, // Auto-close after 1.5 seconds
+          showConfirmButton: false, // Hide confirm button
+        });
+      } catch (error) {
+        console.error("Failed to delete user:", error);
+        Swal.fire('Error!', error || 'Failed to delete user', 'error');
+      }
+    }
+  };
+  
+  
   const getStatusBadge = (status) => {
     switch (status) {
       case "Active":
@@ -58,8 +97,19 @@ function Userlist() {
   };
 
   return (
-    <div className="p-6 bg-[#2e3e4d]">
+    <div className="p-6 bg-[#2e3e4d] ">
       {/* Controls */}
+      <div className="flex flex-row justify-between">
+      <div className="flex items-center justify-between mb-6">
+  <h2 className="text-2xl font-bold text-white flex items-center gap-3">
+    Total Users
+    <span className="flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-r from-indigo-500 to-blue-500 text-white text-md font-bold shadow-lg">
+      {filteredUsers.length}
+    </span>
+  </h2>
+</div>
+
+
       <div className="flex items-center justify-end mb-6 gap-4">
         {/* Search Input */}
         <input
@@ -90,6 +140,7 @@ function Userlist() {
           {viewMode === "grid" ? "Switch to List View" : "Switch to Grid View"}
         </button>
       </div>
+      </div>
 
       {/* Loading or Error Messages */}
       {isLoading && <p>Loading...</p>}
@@ -112,7 +163,7 @@ function Userlist() {
                 </thead>
                 <tbody>
                   {filteredUsers.map((user) => (
-                    <tr key={user.id} className="hover:bg-[#3a4b5b] border-b">
+                    <tr key={user._id} className="hover:bg-[#3a4b5b] border-b">
                       <td className="px-4 py-2 text-center">{user.name}</td>
 
                       <td className="px-4 py-2 text-center">{user.email}</td>
@@ -128,16 +179,29 @@ function Userlist() {
                         </span>
                       </td>
                       <td className="px-4 py-2">
-                        <img
+                        {/* <img
                           src={user.image || noor}
                           alt={user.name}
                           className="w-12 h-12 rounded-full object-cover"
+                        /> */}
+                        <Avatar
+                          name={user.name}
+                          src={user.image}
+                          size="50"
+                          round={true}
+                          className="text-sm font-medium"
                         />
                       </td>
                       <td className="px-4 py-2">
                         <div
                           className="px-3 py-1  rounded-full text-xs font-semibold cursor-pointer"
-                          onClick={() => handleActionClick(user.id)} // Pass the user's ID
+                          onClick={() => {
+                            console.log(
+                              "hua ye user ki id yaha pemap ke ander" + user._id
+                            );
+                            handleActionClick(user._id);
+                          }}
+                          // Pass the user's ID
                         >
                           Action
                         </div>
@@ -147,7 +211,7 @@ function Userlist() {
                             <EditUserModal formData={user} />
                             <button
                               className="px-2 py-1 rounded-md text-sm text-white ml-2"
-                              onClick={() => console.log("Delete")}
+                              onClick={() => handleDeleteUser(user._id)}
                             >
                               Delete
                             </button>
@@ -173,37 +237,55 @@ function Userlist() {
 
                 return (
                   <div
-                    key={user.id}
+                    key={user._id}
                     className="relative bg-[#2e3e4e] rounded-lg shadow-lg border-l-4 border-blue-500 p-4 hover:shadow-xl transition-all flex justify-between items-center"
                   >
-                    <p className="absolute text-gray-400 left-1 top-1 text-sm">{companyName}</p>
-                    <img
+                    <p className="absolute text-gray-400 left-1 top-1 text-sm">
+                      {companyName}
+                    </p>
+
+                    {/* <img
                       src={user.image || noor}
                       alt={user.name}
                       className="w-16 h-16 rounded-full object-cover"
+                    /> */}
+                    <Avatar
+                      name={user.name}
+                      src={user.image}
+                      size="70"
+                      round={true}
+                      className="text-sm font-medium"
                     />
                     <div className="flex-1 ml-4">
                       <h2 className="text-lg font-semibold text-white">
-                        {user.name}{" "}{user.last_name}
+                        {user.name} {user.last_name}
                       </h2>
 
                       <p className="text-gray-300 text-sm">{user.email}</p>
-                      <p className="text-gray-400 text-sm">Contact-{user.phone}</p>
+                      <p className="text-gray-400 text-sm">
+                        Contact-{user.phone}
+                      </p>
                     </div>
                     <div>
                       <div
                         className="px-3 py-1 rounded-full text-xs font-semibold cursor-pointer text-red-500"
-                        onClick={() => handleActionClick(user.id)} // Pass the user's ID
+                        onClick={() => {
+                          console.log(
+                            "thisis user id ki pass ye user ki id filtered user" +
+                              user._id
+                          );
+                          handleActionClick(user._id);
+                        }} // Pass the user's ID
                       >
                         Action
                       </div>
 
-                      {showOptions[user.id] && ( // Check if options are visible for this user
+                      {showOptions[user._id] && ( // Check if options are visible for this user
                         <div className="mt-2">
                           <EditUserModal formData={user} />
                           <button
                             className="px-2 py-1 rounded-md text-sm text-white ml-2"
-                            onClick={() => console.log("Delete")}
+                            onClick={() => handleDeleteUser(user._id)}
                           >
                             Delete
                           </button>
@@ -217,6 +299,22 @@ function Userlist() {
                     >
                       {user.status}
                     </span>
+                    <div className="absolute bottom-4 right-4">
+                      <button
+                        onClick={(e) => setSelectedUserId(user._id)}
+                        className="px-3 py-1 text-white text-[10px] bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full shadow-md hover:scale-105 hover:shadow-lg transition-transform duration-200"
+                      >
+                        SHOW USER DETAIL
+                      </button>
+                      {selectUserId === user._id && (
+                        <UserdetailsForm
+                          userId={user._id}
+                          companyList={data1}
+                          userDetails={filteredUsers}
+                          onClose={() => setSelectedUserId(null)}
+                        />
+                      )}
+                    </div>
                   </div>
                 );
               })}
