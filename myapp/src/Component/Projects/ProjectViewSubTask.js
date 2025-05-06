@@ -76,6 +76,11 @@ const ProjectViewSubTask = ({ isStandalone , taskid2 }) => {
     errorMessage,
   } = useSelector((state) => state.getsubtasklist);
 
+  // console.log(`okay ye hai subtask"(${JSON.stringify(apiSubtasks , null ,
+
+  //   " "
+  // )}`)
+
   //user check kar if keliye
   const users = useSelector((state) => state.allUser.users);
   useEffect(() => {
@@ -87,6 +92,23 @@ const ProjectViewSubTask = ({ isStandalone , taskid2 }) => {
     return found ? found.name : "unknown name";
   };
 
+  const calculateDuration = (start, end) => {
+    if (!start || !end) return "0 days";
+
+    const startDate = new Date(start);
+    const endDate = new Date(end);
+
+    if (isNaN(startDate.getTime())) return "Invalid start date";
+    if (isNaN(endDate.getTime())) return "Invalid end date";
+    if (endDate < startDate) return "Invalid date range";
+
+    const diffTime = Math.abs(endDate - startDate);
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return `${diffDays} days`;
+  };
+
+  
+
   const handletableChange = (index, field, value) => {
     const updatedRows = [...rows];
     updatedRows[index][field] = value;
@@ -95,37 +117,51 @@ const ProjectViewSubTask = ({ isStandalone , taskid2 }) => {
 
   // Transsiton api keliyer
   const transformApiData = (apiData) => {
-    if (!apiData || !apiData.data) return [];
+    if (!apiData?.data) return [];
+  
+    return apiData.data.map((task) => {
+      const startDate = task.start_date || new Date().toISOString();
+      let endDate = "";
+  
+      if (Array.isArray(task.end_date)) {
+        const validEntry = task.end_date
+          .slice() // copy
+          .reverse()
+          .find((entry) => entry?.value && !isNaN(new Date(entry.value)));
+  
+        endDate = validEntry
+          ? new Date(validEntry.value).toISOString()
+          : new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
+      } else {
+        endDate = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
+      }
 
-    return apiData.data.map((task) => ({
-      id: task._id,
-      subTaskName: task.name,
-      user:
-        (task.assigned_userid || [])
+      const costArray = task.cost || [];
+      const latestCost = costArray.length > 0 ? costArray[costArray.length - 1].value : 0
+      const formattedCost = parseInt(latestCost).toFixed(2);
+
+      return {
+        id: task._id,
+        subTaskName: task.name || "Untitled",
+        user: (task.assigned_userid || [])
           .map((id) => getusername(id, users))
           .join(", ") || "Unassigned",
-      priority: task.priority,
-      startDate:
-        task.start_date?.split("T")[0] ||
-        new Date().toISOString().split("T")[0],
-      endDate:
-        task.end_date?.split("T")[0] ||
-        new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
-          .toISOString()
-          .split("T")[0],
-      duration: calculateDuration(task.start_date, task.end_date),
-      cost: task.cost?.toString() || "0",
-      status: task.status,
-      checklist: Array.isArray(task.checklist)
-        ? task.checklist.map((item) => ({
-            item: item.item || "",
-            toCheck: item.toCheck || "", // Make sure to include toCheck
-            checked: item.checked || false,
-          }))
-        : [],
-      // Make sure this is included
-      checked: false,
-    }));
+        priority: task.priority || "Medium",
+        startDate: startDate.split("T")[0],
+        endDate: endDate.split("T")[0],
+        duration: calculateDuration(startDate, endDate),
+        cost: formattedCost,
+        status: task.status || "Active",
+        checklist: Array.isArray(task.checklist)
+          ? task.checklist.map((item) => ({
+              item: item?.item || "",
+              toCheck: item?.toCheck || "",
+              checked: !!item?.checked,
+            }))
+          : [],
+        checked: false,
+      };
+    });
   };
 
   const [subTasks, setSubTasks] = useState([]);
@@ -185,21 +221,7 @@ const ProjectViewSubTask = ({ isStandalone , taskid2 }) => {
 
   const dateColumns = getDateRange();
 
-  const calculateDuration = (start, end) => {
-    if (!start || !end) return "0 days";
-
-    const startDate = new Date(start);
-    const endDate = new Date(end);
-
-    if (isNaN(startDate.getTime())) return "Invalid start date";
-    if (isNaN(endDate.getTime())) return "Invalid end date";
-    if (endDate < startDate) return "Invalid date range";
-
-    const diffTime = Math.abs(endDate - startDate);
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    return `${diffDays} days`;
-  };
-
+  
   const [currentPage, setCurrentPage] = useState(1);
   const [tasksPerPage] = useState(10); // You can adjust this number
 
@@ -237,8 +259,11 @@ const ProjectViewSubTask = ({ isStandalone , taskid2 }) => {
       assigned_userid: newSubTask.user || [],
       priority: newSubTask.priority || "Low",
       start_date: newSubTask.startDate || "",
-      end_date: newSubTask.endDate || "",
-      cost: newSubTask.cost || 0,
+      end_date: [{value:newSubTask.endDate || "",  updatedby: "User", // Replace with actual user identifier
+        timeUpdated: new Date().toISOString(),}] || "",
+      cost: [{ value: newSubTask.cost || 0,
+        updatedby: "User", // Replace with actual user identifier
+        timeUpdated: new Date().toISOString(),}] ,
       status: newSubTask.status || "Active",
       task_id: taskId,
     };
@@ -257,6 +282,8 @@ const ProjectViewSubTask = ({ isStandalone , taskid2 }) => {
       });
 
       dispatch(getsubtasklist({ taskId }));
+     
+   
 
       setNewSubTask({
         subTaskName: "",
@@ -269,7 +296,7 @@ const ProjectViewSubTask = ({ isStandalone , taskid2 }) => {
         task_id: taskId,
       });
 
-      console.log("📦dfgsdfg Submitting:", newSubTask);
+      
 
       setTimeout(() => {}, 50);
     } else {
@@ -348,6 +375,11 @@ const ProjectViewSubTask = ({ isStandalone , taskid2 }) => {
                 position: "top-right",
                 autoClose: 1500,
                 hideProgressBar: true,
+                style: {
+                  fontSize: "12px",
+                  padding: "6px 12px",
+                  minHeight: "auto",
+                },
               });
             }
 
@@ -357,6 +389,11 @@ const ProjectViewSubTask = ({ isStandalone , taskid2 }) => {
                 position: "top-right",
                 autoClose: 1500,
                 hideProgressBar: true,
+                style: {
+                  fontSize: "12px",
+                  padding: "6px 12px",
+                  minHeight: "auto",
+                },
               });
             }
 
@@ -374,6 +411,11 @@ const ProjectViewSubTask = ({ isStandalone , taskid2 }) => {
         position: "top-right",
         autoClose: 1500,
         hideProgressBar: true,
+        style: {
+          fontSize: "12px",
+          padding: "6px 12px",
+          minHeight: "auto",
+        },
       });
     }
   };
@@ -704,15 +746,20 @@ const ProjectViewSubTask = ({ isStandalone , taskid2 }) => {
                                         `/project/${id}/task/${task.id}/subtaskwithin/View`,
                                         {
                                           state: {
+                                            
                                             subtaskData: task,
+                                            apiSubtasks:apiSubtasks.data[index] ,
+                                            
                                             projectId: id,
                                             parentTaskId: taskId,
                                           },
+                                          
                                         }
                                       )
                                     }
                                   >
                                     View
+                                   
                                   </button>
                                 </div>
                               </td>

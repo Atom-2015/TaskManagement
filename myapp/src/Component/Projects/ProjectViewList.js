@@ -21,13 +21,15 @@ const ProjectViewList = () => {
   const [expandedRows, setExpandedRows] = useState({});
   const [expandedSubTaskId, setExpandedSubTaskId] = useState(null);
   const [columnWidths, setColumnWidths] = useState([
-    30, 50, 250, 150, 150, 120, 120, 120,
+    30, 50, 250, 150, 150, 120, 120, 120,120
   ]);
   const [newSubTask, setNewSubTask] = useState({
     title: "",
     loop_users: "",
     status: "Active",
     priority: "Medium",
+    end_date:"",
+
     category: "",
     repeatType: "",
   });
@@ -83,7 +85,7 @@ const ProjectViewList = () => {
       category: newSubTask.category || "",
       repeatType: newSubTask.repeatType || "Daily",
       start_date: "", // Explicit empty
-      end_date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+      end_date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[1],
       state: "", // Explicit empty
       city: "", // Explicit empty
       budget: "", // Explicit empty
@@ -103,6 +105,8 @@ const ProjectViewList = () => {
         status: "Active",
         priority: "Medium",
         category: "",
+        end_date:"",
+
         repeatType: "",
       });
       setShowFullAddForm(false);
@@ -172,6 +176,8 @@ const ProjectViewList = () => {
       priority: "Medium",
       category: "",
       repeatType: "",
+      end_date:"",
+
     });
   };
 
@@ -281,7 +287,8 @@ const ProjectViewList = () => {
                           "loop_users",
                           "Task Status",
                           "Task Priority",
-                          "category",
+                          // "category",
+                          "End date",
                           "Repeat",
                         ].map((col, index) => (
                           <th
@@ -303,6 +310,7 @@ const ProjectViewList = () => {
                       {tasks.map((task, index) => (
                         <React.Fragment key={task.id}>
                           {/* Parent Task Row */}
+                          {console.log(`okay brio ${JSON.stringify(task)}`)}
                           <Draggable
                             key={task.id}
                             draggableId={task.id.toString()}
@@ -399,8 +407,12 @@ const ProjectViewList = () => {
                                   >
                                     {task.priority || "Not Set"}
                                   </td>
-                                  <td className="border bg-white border-gray-50 p-1 text-center">
+                                  {/* <td className="border bg-white border-gray-50 p-1 text-center">
                                     {task.category}
+                                  </td> */}
+
+                                  <td className="border bg-white border-gray-50 p-1 text-center">
+                                    {task.end_date}
                                   </td>
 
                                   <td className="border bg-white border-gray-50 p-1 text-center">
@@ -458,12 +470,15 @@ const ProjectViewList = () => {
                                       >
                                         {subTask.priority}
                                       </td>
-                                      <td className="p-1 text-center">
+                                      {/* <td className="p-1 text-center">
                                         {subTask.category}
-                                      </td>
+                                      </td> */}
+                                      
                                       <td className="p-1 text-center">
                                         {subTask.repeatType}
                                       </td>
+                                      
+                                 
                                     </tr>
                                   ))}
 

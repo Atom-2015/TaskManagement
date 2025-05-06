@@ -359,7 +359,7 @@ function AddTaskForm({ projectId, onSubmit, onCancel }) {
               </MenuItem>
               {user ? (
                 user.map((u) => (
-                  <MenuItem key={u._id} value={u.name}>
+                  <MenuItem key={u._id} value={u._id}>
                     {u.name}
                   </MenuItem>
                 ))

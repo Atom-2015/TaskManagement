@@ -184,18 +184,23 @@ function AddSubTaskForm({ open, close , taskId }) {
   // Handle form submission
   const handlaAddTaskSubmit = async (e) => {
     e.preventDefault();
-  
     const submissionData = {
       name: formData.name,
       assigned_userid: formData.team_members,
       priority: formData.priority,
       start_date: formData.start_date,
-      end_date: formData.end_date,
-      cost: formData.budget,
+      end_date: [{
+        value: formData.end_date,
+        
+      }],
+      cost: [{
+        value: formData.budget, 
+     
+      }],
       status: formData.status,
       task_id: taskId,
     };
-  
+    
     const response = await dispatch(subcreatetasks({ submissionData }));
   
     if (response?.meta?.requestStatus === "fulfilled") {
