@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { RxCross1 } from "react-icons/rx";
 import ReactQuill from "react-quill";
@@ -6,7 +6,10 @@ import { IoIosArrowForward } from "react-icons/io";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { getsubtasklist } from "../../FeatureRedux/subTaskSlices/getsubtaskslice";
+import Cookies from "js-cookie";
+import { useDispatch, useSelector } from "react-redux";
 
+// getsubtasklist
 const ProjectViewSubTaskDetails = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -15,11 +18,28 @@ const ProjectViewSubTaskDetails = () => {
   const [isOpening, setIsOpening] = useState(true);
 
   // Get data from navigation state
-  const { subtaskData, apiSubtasks,taskId, projectId, parentTaskId } = location.state || {};
-  console.log(`bhag bhgah dk bose ${JSON.stringify(subtaskData)}`)
-  console.log("Location state:", location.state);
+  const { subtaskData, apiSubtasks, taskId, projectId, index, parentTaskId } = location.state || {};
+  // console.log(`object %%%%%%%%%%%% ${JSON.stringify(subtaskData)}`)
+  // console.log(`api subtask %%%%%%%%%%%% ${JSON.stringify(apiSubtasks)}`) 
+  const {
+    data,
+    isError,
+    isLoading,
+    errorMessage,
+  } = useSelector((state) => state.getsubtasklist);
+
+  const length = (data?.data?.length - (index + 1))
+
+  console.log("index", index, "dfkkfkdfk", data?.data?.[length])
 
 
+  const dispatch = useDispatch()
+  useEffect(() => {
+    const taskId = Cookies.get('taskidlogtrail')
+    // console.log(`This is task id ttttt ${JSON.stringify(taskId)}`)
+    dispatch(getsubtasklist({ taskId }))
+
+  }, [])
 
   if (!subtaskData) {
     return (
@@ -82,7 +102,7 @@ const ProjectViewSubTaskDetails = () => {
     setIsOpening(!isOpening);
   };
 
-  function handleDescriptionChange() {}
+  function handleDescriptionChange() { }
 
   return (
     <div className="p-2">
@@ -132,9 +152,8 @@ const ProjectViewSubTaskDetails = () => {
                   </label>
                   <button onClick={toggleOpen}>
                     <IoIosArrowForward
-                      className={`transition-transform duration-500 ${
-                        isopen ? "rotate-90" : "rotate-0"
-                      }`}
+                      className={`transition-transform duration-500 ${isopen ? "rotate-90" : "rotate-0"
+                        }`}
                     />
                   </button>
                 </div>
@@ -174,9 +193,8 @@ const ProjectViewSubTaskDetails = () => {
                   Sub-Task Details
                 </h2>
                 <IoIosArrowForward
-                  className={`transition-transform duration-500 ${
-                    isOpening ? "rotate-90" : "rotate-0"
-                  }`}
+                  className={`transition-transform duration-500 ${isOpening ? "rotate-90" : "rotate-0"
+                    }`}
                 />
               </button>
 
@@ -223,42 +241,42 @@ const ProjectViewSubTaskDetails = () => {
                         Cost:
                       </span> */}
                       <div className="flex border-b-[1px] border-gray-200 pb-2">
-  <span className="w-40 text-start text-gray-600">Cost:</span>
-  <div className="flex flex-col gap-3">
-    {apiSubtasks.cost.map((item, index) => {
-      if (typeof item === "object") {
-        return (
-          <div
-            key={index}
-            className="border border-blue-200 p-2 rounded-md shadow-sm bg-blue-50"
-          >
-            <div className="text-base font-semibold text-blue-900">
-              ₹{item.value?.toLocaleString("en-IN") || "N/A"}
-            </div>
-            <div className="text-xs text-gray-600">
-              Updated by: <span className="font-medium">{item.updatedby || "Unknown"}</span>
-            </div>
-            <div className="text-xs text-gray-600">
-              Time:{" "}
-              {item.timeUpdated
-                ? new Date(item.timeUpdated).toLocaleString()
-                : "N/A"}
-            </div>
-          </div>
-        );
-      } else {
-        return (
-          <div
-            key={index}
-            className="border border-gray-300 p-2 rounded-md bg-white shadow-sm"
-          >
-            ₹{item.toLocaleString("en-IN")}
-          </div>
-        );
-      }
-    })}
-  </div>
-</div>
+                        <span className="w-40 text-start text-gray-600">Cost:</span>
+                        <div className="flex flex-col gap-3">
+                          {data?.data?.[length]?.cost.map((item, index) => {
+                            if (typeof item === "object") {
+                              return (
+                                <div
+                                  key={index}
+                                  className="border border-blue-200 p-2 rounded-md shadow-sm bg-blue-50"
+                                >
+                                  <div className="text-base font-semibold text-blue-900">
+                                    ₹{item.value?.toLocaleString("en-IN") || "N/A"}
+                                  </div>
+                                  <div className="text-xs text-gray-600">
+                                    Updated by: <span className="font-medium">{item.updatedby || "Unknown"}</span>
+                                  </div>
+                                  <div className="text-xs text-gray-600">
+                                    Time:{" "}
+                                    {item.timeUpdated
+                                      ? new Date(item.timeUpdated).toLocaleString()
+                                      : "N/A"}
+                                  </div>
+                                </div>
+                              );
+                            } else {
+                              return (
+                                <div
+                                  key={index}
+                                  className="border border-gray-300 p-2 rounded-md bg-white shadow-sm"
+                                >
+                                  ₹{item.toLocaleString("en-IN")}
+                                </div>
+                              );
+                            }
+                          })}
+                        </div>
+                      </div>
 
 
                     </div>
@@ -283,30 +301,30 @@ const ProjectViewSubTaskDetails = () => {
                       </span>
                     </div>
                     <div className="flex border-b-[1px] border-gray-200 pb-2">
-                    <div className="flex border-b-[1px] border-gray-200 pb-2">
-  <span className="w-40 text-start text-gray-600">Due Date:</span>
-  <div className="flex flex-col gap-3">
-    {apiSubtasks.end_date.map((item, index) => (
-      <div
-        key={index}
-        className="border border-green-200 p-2 rounded-md shadow-sm bg-green-50"
-      >
-        <div className="text-sm text-green-900 font-semibold">
-          {item.value?.split("T")[0] || "N/A"}
-        </div>
-        <div className="text-xs text-gray-600">
-          Updated by: <span className="font-medium">{item.updatedby || "Unknown"}</span>
-        </div>
-        <div className="text-xs text-gray-600">
-          Time:{" "}
-          {item.timeUpdated
-            ? new Date(item.timeUpdated).toLocaleString()
-            : "N/A"}
-        </div>
-      </div>
-    ))}
-  </div>
-</div>
+                      <div className="flex border-b-[1px] border-gray-200 pb-2">
+                        <span className="w-40 text-start text-gray-600">Due Date:</span>
+                        <div className="flex flex-col gap-3">
+                          {data?.data?.[length]?.end_date.map((item, index) => (
+                            <div
+                              key={index}
+                              className="border border-green-200 p-2 rounded-md shadow-sm bg-green-50"
+                            >
+                              <div className="text-sm text-green-900 font-semibold">
+                                {item.value?.split("T")[0] || "N/A"}
+                              </div>
+                              <div className="text-xs text-gray-600">
+                                Updated by: <span className="font-medium">{item.updatedby || "Unknown"}</span>
+                              </div>
+                              <div className="text-xs text-gray-600">
+                                Time:{" "}
+                                {item.timeUpdated
+                                  ? new Date(item.timeUpdated).toLocaleString()
+                                  : "N/A"}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
 
 
                     </div>

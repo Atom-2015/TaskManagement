@@ -4,7 +4,7 @@ import axiosInstance from "../../axiosInstance";
 export const getsubtasklist =createAsyncThunk(
     "getsubtask/getsubtasklist",
     async(taskId,{rejectWithValue})=>{
-     
+    //  console.log(` ::::::::::: ${JSON.stringify(taskIds)}`);
         try{
             const response=await axiosInstance.get("/api/subtask/getSubtask",{
                 headers:{
