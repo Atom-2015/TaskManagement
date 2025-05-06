@@ -14,10 +14,12 @@ import { editsubtasklist } from "../../FeatureRedux/subTaskSlices/editusbTasksli
 import { allUser } from "../../FeatureRedux/alluserSlice";
 import { subcreatetasks } from "../../FeatureRedux/subTaskSlices/addsubTaskslice";
 import { deleteSubtask } from "../../FeatureRedux/subTaskSlices/deletesubTaskslice";
+import Cookies from "js-cookie";
 
 import Swal from "sweetalert2";
+import { data } from "autoprefixer";
 
-const ProjectViewSubTask = ({ isStandalone , taskid2 }) => {
+const ProjectViewSubTask = ({ isStandalone, taskid2 }) => {
   var { project, id, taskId } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -75,7 +77,7 @@ const ProjectViewSubTask = ({ isStandalone , taskid2 }) => {
     isLoading,
     errorMessage,
   } = useSelector((state) => state.getsubtasklist);
-
+  // console.log(`data  task } ,,,,,,, api subtask ${JSON.stringify(apiSubtasks)}`)
   // console.log(`okay ye hai subtask"(${JSON.stringify(apiSubtasks , null ,
 
   //   " "
@@ -107,7 +109,7 @@ const ProjectViewSubTask = ({ isStandalone , taskid2 }) => {
     return `${diffDays} days`;
   };
 
-  
+
 
   const handletableChange = (index, field, value) => {
     const updatedRows = [...rows];
@@ -118,17 +120,17 @@ const ProjectViewSubTask = ({ isStandalone , taskid2 }) => {
   // Transsiton api keliyer
   const transformApiData = (apiData) => {
     if (!apiData?.data) return [];
-  
+
     return apiData.data.map((task) => {
       const startDate = task.start_date || new Date().toISOString();
       let endDate = "";
-  
+
       if (Array.isArray(task.end_date)) {
         const validEntry = task.end_date
           .slice() // copy
           .reverse()
           .find((entry) => entry?.value && !isNaN(new Date(entry.value)));
-  
+
         endDate = validEntry
           ? new Date(validEntry.value).toISOString()
           : new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
@@ -154,10 +156,10 @@ const ProjectViewSubTask = ({ isStandalone , taskid2 }) => {
         status: task.status || "Active",
         checklist: Array.isArray(task.checklist)
           ? task.checklist.map((item) => ({
-              item: item?.item || "",
-              toCheck: item?.toCheck || "",
-              checked: !!item?.checked,
-            }))
+            item: item?.item || "",
+            toCheck: item?.toCheck || "",
+            checked: !!item?.checked,
+          }))
           : [],
         checked: false,
       };
@@ -169,7 +171,8 @@ const ProjectViewSubTask = ({ isStandalone , taskid2 }) => {
   // Fetch data when copnentc need it
   useEffect(() => {
     if (taskId) {
-   
+      Cookies.set("taskidlogtrail", taskId)
+      // console.log(`task id in componet ${taskId}`);
       dispatch(getsubtasklist({ taskId }));
     }
   }, [taskId, dispatch]);
@@ -177,7 +180,7 @@ const ProjectViewSubTask = ({ isStandalone , taskid2 }) => {
   // Update local state when needed
   useEffect(() => {
     if (apiSubtasks) {
-     
+
       const transformedData = transformApiData(apiSubtasks);
       setSubTasks(transformedData.reverse());
     }
@@ -220,7 +223,7 @@ const ProjectViewSubTask = ({ isStandalone , taskid2 }) => {
 
   const dateColumns = getDateRange();
 
-  
+
   const [currentPage, setCurrentPage] = useState(1);
   const [tasksPerPage] = useState(10); // You can adjust this number
 
@@ -258,11 +261,15 @@ const ProjectViewSubTask = ({ isStandalone , taskid2 }) => {
       assigned_userid: newSubTask.user || [],
       priority: newSubTask.priority || "Low",
       start_date: newSubTask.startDate || "",
-      end_date: [{value:newSubTask.endDate || "",  updatedby: "User", // Replace with actual user identifier
-        timeUpdated: new Date().toISOString(),}] || "",
-      cost: [{ value: newSubTask.cost || 0,
+      end_date: [{
+        value: newSubTask.endDate || "", updatedby: "User", // Replace with actual user identifier
+        timeUpdated: new Date().toISOString(),
+      }] || "",
+      cost: [{
+        value: newSubTask.cost || 0,
         updatedby: "User", // Replace with actual user identifier
-        timeUpdated: new Date().toISOString(),}] ,
+        timeUpdated: new Date().toISOString(),
+      }],
       status: newSubTask.status || "Active",
       task_id: taskId,
     };
@@ -281,8 +288,8 @@ const ProjectViewSubTask = ({ isStandalone , taskid2 }) => {
       });
 
       dispatch(getsubtasklist({ taskId }));
-     
-   
+
+
 
       setNewSubTask({
         subTaskName: "",
@@ -295,9 +302,9 @@ const ProjectViewSubTask = ({ isStandalone , taskid2 }) => {
         task_id: taskId,
       });
 
-      
 
-      setTimeout(() => {}, 50);
+
+      setTimeout(() => { }, 50);
     } else {
       console.error("Failed to submit subtask:", response?.error);
     }
@@ -574,7 +581,7 @@ const ProjectViewSubTask = ({ isStandalone , taskid2 }) => {
           </div>
         )}
 
-        <DragDropContext onDragEnd={() => {}}>
+        <DragDropContext onDragEnd={() => { }}>
           <Droppable droppableId="subTasks">
             {(provided) => (
               <div
@@ -620,20 +627,20 @@ const ProjectViewSubTask = ({ isStandalone , taskid2 }) => {
                           key: `date-${index}`,
                         })),
                       ]
-                      .map((col, index) => (
-                        <th
-                          key={index}
-                          className="border border-gray-300 p-2 max-w-[100px]  text-center text-sm font-medium text-gray-700 relative"
-                        >
-                          {col.name}
-                          {col.key !== "id" && col.key !== "subTask" && (
-                            <div
-                              className="absolute right-0 top-0 h-full w-1 cursor-col-resize bg-gray-300 hover:bg-blue-500"
-                              onMouseDown={(e) => startResizing(col.key, e)}
-                            />
-                          )}
-                        </th>
-                      ))}
+                        .map((col, index) => (
+                          <th
+                            key={index}
+                            className="border border-gray-300 p-2 max-w-[100px]  text-center text-sm font-medium text-gray-700 relative"
+                          >
+                            {col.name}
+                            {col.key !== "id" && col.key !== "subTask" && (
+                              <div
+                                className="absolute right-0 top-0 h-full w-1 cursor-col-resize bg-gray-300 hover:bg-blue-500"
+                                onMouseDown={(e) => startResizing(col.key, e)}
+                              />
+                            )}
+                          </th>
+                        ))}
                     </tr>
                   </thead>
                   <tbody>
@@ -649,17 +656,15 @@ const ProjectViewSubTask = ({ isStandalone , taskid2 }) => {
                             <tr
                               ref={provided.innerRef}
                               {...provided.draggableProps}
-                              className={`bg-white hover:bg-gray-50 border border-gray-300 ${
-                                task.checked ? "bg-blue-50" : ""
-                              }`}
+                              className={`bg-white hover:bg-gray-50 border border-gray-300 ${task.checked ? "bg-blue-50" : ""
+                                }`}
                             >
                               <td className="border border-gray-300 p-2 text-center">
                                 <div
-                                  className={`w-4 h-4 border border-gray-400 flex items-center justify-center cursor-pointer transition-colors mx-auto ${
-                                    task.checked
+                                  className={`w-4 h-4 border border-gray-400 flex items-center justify-center cursor-pointer transition-colors mx-auto ${task.checked
                                       ? "bg-blue-500 border-blue-500"
                                       : "bg-white"
-                                  }`}
+                                    }`}
                                   onClick={() => toggleCheckbox(task.id)}
                                 >
                                   {task.checked && (
@@ -708,7 +713,7 @@ const ProjectViewSubTask = ({ isStandalone , taskid2 }) => {
                                 >
                                   <div className="flex-1 truncate pr-2">
                                     {editingTask === task.id &&
-                                    editingField === "subTaskName" ? (
+                                      editingField === "subTaskName" ? (
                                       <input
                                         type="text"
                                         defaultValue={task.subTaskName}
@@ -738,27 +743,25 @@ const ProjectViewSubTask = ({ isStandalone , taskid2 }) => {
 
                                   <button
                                     className="px-2 opacity-0  right bg-purple-50  py-1 text-sm font-medium rounded-lg  duration-200
-             border-1 border-purple-600 text-purple-600 hover:bg-purple-50
-              group-hover:opacity-100 absolute right-0"
-                                    onClick={() =>
-                                      navigate(
-                                        `/project/${id}/task/${task.id}/subtaskwithin/View`,
-                                        {
-                                          state: {
-                                            
-                                            subtaskData: task,
-                                            apiSubtasks:apiSubtasks.data[index] ,
-                                            
-                                            projectId: id,
-                                            parentTaskId: taskId,
-                                          },
-                                          
-                                        }
-                                      )
-                                    }
+                                                border-1 border-purple-600 text-purple-600 hover:bg-purple-50
+                                                  group-hover:opacity-100 absolute right-0"
+
+                                    onClick={() => {
+                                      const validIndex = apiSubtasks.data.length - (index + 1);
+                                      navigate(`/project/${id}/task/${task.id}/subtaskwithin/View`, {
+                                        state: {
+                                          subtaskData: task,
+                                          apiSubtasks: apiSubtasks.data[validIndex],
+                                          index: index,
+                                          projectId: id,
+                                          parentTaskId: taskId,
+                                        },
+                                      });
+                                    }}
+
                                   >
                                     View
-                                   
+
                                   </button>
                                 </div>
                               </td>
@@ -770,7 +773,7 @@ const ProjectViewSubTask = ({ isStandalone , taskid2 }) => {
                                 }
                               >
                                 {editingTask === task.id &&
-                                editingField === "user" ? (
+                                  editingField === "user" ? (
                                   <select
                                     value={
                                       users.find((u) => u.name === task.user)
@@ -956,13 +959,12 @@ const ProjectViewSubTask = ({ isStandalone , taskid2 }) => {
                                 </div>
                               </td>
                               <td
-                                className={`border border-gray-300 p-2 text-sm text-center relative ${
-                                  task.priority === "High"
+                                className={`border border-gray-300 p-2 text-sm text-center relative ${task.priority === "High"
                                     ? "bg-red-500 text-white"
                                     : task.priority === "Medium"
-                                    ? "bg-green-500 text-white"
-                                    : "bg-blue-500 text-white"
-                                }`}
+                                      ? "bg-green-500 text-white"
+                                      : "bg-blue-500 text-white"
+                                  }`}
                                 onClick={() => {
                                   setEdittask(true);
                                 }}
@@ -1014,7 +1016,7 @@ const ProjectViewSubTask = ({ isStandalone , taskid2 }) => {
                                 }
                               >
                                 {editingTask === task.id &&
-                                editingField === "startDate" ? (
+                                  editingField === "startDate" ? (
                                   <input
                                     type="date"
                                     defaultValue={task.startDate}
@@ -1038,7 +1040,7 @@ const ProjectViewSubTask = ({ isStandalone , taskid2 }) => {
                                 }}
                               >
                                 {editingTask === task.id &&
-                                editingField === "endDate" ? (
+                                  editingField === "endDate" ? (
                                   <input
                                     type="date"
                                     defaultValue={task.endDate}
@@ -1069,7 +1071,7 @@ const ProjectViewSubTask = ({ isStandalone , taskid2 }) => {
                                 }
                               >
                                 {editingTask === task.id &&
-                                editingField === "cost" ? (
+                                  editingField === "cost" ? (
                                   <div className="flex justify-center items-center">
                                     <span className="mr-1">₹</span>
                                     <input
@@ -1094,13 +1096,12 @@ const ProjectViewSubTask = ({ isStandalone , taskid2 }) => {
                                 )}
                               </td>
                               <td
-                                className={`border border-gray-300 p-2 text-sm text-center relative ${
-                                  task.status === "Active"
+                                className={`border border-gray-300 p-2 text-sm text-center relative ${task.status === "Active"
                                     ? "bg-green-500 text-white"
                                     : task.status === "In Progress"
-                                    ? "bg-yellow-500 text-black"
-                                    : "bg-red-500 text-white"
-                                }`}
+                                      ? "bg-yellow-500 text-black"
+                                      : "bg-red-500 text-white"
+                                  }`}
                                 onClick={() => {
                                   if (
                                     editingTask !== task.id ||
@@ -1112,7 +1113,7 @@ const ProjectViewSubTask = ({ isStandalone , taskid2 }) => {
                                 }}
                               >
                                 {editingTask === task.id &&
-                                editingField === "status" ? (
+                                  editingField === "status" ? (
                                   <select
                                     defaultValue={task.status}
                                     // onChange={(e) => handleUpdateTask(task.id, 'status', e.target.value)
@@ -1177,39 +1178,38 @@ const ProjectViewSubTask = ({ isStandalone , taskid2 }) => {
 
 
 
-{dateColumns.map((date, colIndex) => {
-  const isActive = isTaskActiveOnDate(task, date);
-  const isStart =
-    isActive &&
-    (colIndex === 0 ||
-      !isTaskActiveOnDate(
-        task,
-        dateColumns[colIndex - 1]
-      ));
-  const isEnd =
-    isActive &&
-    (colIndex === dateColumns.length - 1 ||
-      !isTaskActiveOnDate(
-        task,
-        dateColumns[colIndex + 1]
-      ));
-  const isToday =
-    date.toDateString() ===
-    new Date().toDateString();
+                              {dateColumns.map((date, colIndex) => {
+                                const isActive = isTaskActiveOnDate(task, date);
+                                const isStart =
+                                  isActive &&
+                                  (colIndex === 0 ||
+                                    !isTaskActiveOnDate(
+                                      task,
+                                      dateColumns[colIndex - 1]
+                                    ));
+                                const isEnd =
+                                  isActive &&
+                                  (colIndex === dateColumns.length - 1 ||
+                                    !isTaskActiveOnDate(
+                                      task,
+                                      dateColumns[colIndex + 1]
+                                    ));
+                                const isToday =
+                                  date.toDateString() ===
+                                  new Date().toDateString();
 
-  return (
-    <td
-      key={`${task.id}-${colIndex}`}
-      className={`relative h-8 p-0 border   border-gray-100 group ${isToday ? "bg-yellow-50" : ""}
+                                return (
+                                  <td
+                                    key={`${task.id}-${colIndex}`}
+                                    className={`relative h-8 p-0 border   border-gray-100 group ${isToday ? "bg-yellow-50" : ""}
 `}
-      style={{ minWidth: "28px" }}
-      title={`${date.toDateString()}${
-        isActive ? `\n${task.subTaskName}` : ""
-      }`}
-    >
-      {/* Background cell */}
-      <div
-        className={`
+                                    style={{ minWidth: "28px" }}
+                                    title={`${date.toDateString()}${isActive ? `\n${task.subTaskName}` : ""
+                                      }`}
+                                  >
+                                    {/* Background cell */}
+                                    <div
+                                      className={`
 absolute 
 inset-0 
 flex 
@@ -1217,20 +1217,20 @@ items-center
 justify-center
 ${isToday ? "border-t-2 border-t-yellow-400" : ""}
 `}
-      >
-        {date.getDate() === 1 && (
-          <span className="text-xs text-gray-400 absolute top-0 left-0 px-0.5">
-            {date.toLocaleString("default", {
-              month: "short",
-            })}
-          </span>
-        )}
-      </div>
+                                    >
+                                      {date.getDate() === 1 && (
+                                        <span className="text-xs text-gray-400 absolute top-0 left-0 px-0.5">
+                                          {date.toLocaleString("default", {
+                                            month: "short",
+                                          })}
+                                        </span>
+                                      )}
+                                    </div>
 
-      {/* Gantt bar */}
-      {isActive && (
-        <div
-          className={`
+                                    {/* Gantt bar */}
+                                    {isActive && (
+                                      <div
+                                        className={`
 absolute
 top-1/2
 -translate-y-1/2
@@ -1240,13 +1240,12 @@ left-0
 right-0
 ${isStart ? "rounded-l-full" : ""}
 ${isEnd ? "rounded-r-full" : ""}
-${
-task.priority === "High"
-? "bg-gradient-to-r from-red-500 to-red-600"
-: task.priority === "Medium"
-? "bg-gradient-to-r from-green-500 to-green-600"
-: "bg-gradient-to-r from-blue-500 to-blue-600"
-}
+${task.priority === "High"
+                                            ? "bg-gradient-to-r from-red-500 to-red-600"
+                                            : task.priority === "Medium"
+                                              ? "bg-gradient-to-r from-green-500 to-green-600"
+                                              : "bg-gradient-to-r from-blue-500 to-blue-600"
+                                          }
 shadow-md
 transition-all
 duration-200
@@ -1257,10 +1256,10 @@ items-center
 justify-center
 overflow-hidden
 `}
-        >
-          {/* Progress indicator */}
-          <div
-            className={`
+                                      >
+                                        {/* Progress indicator */}
+                                        <div
+                                          className={`
 absolute 
 left-0 
 top-0 
@@ -1268,15 +1267,15 @@ bottom-0
 ${task.status === "Completed" ? "bg-green-300" : "bg-white"}
 bg-opacity-30
 `}
-            style={{
-              width: `${task.progress || 0}%`,
-              transition: "width 0.3s ease",
-            }}
-          />
+                                          style={{
+                                            width: `${task.progress || 0}%`,
+                                            transition: "width 0.3s ease",
+                                          }}
+                                        />
 
-          {/* Date label on hover */}
-          <span
-            className="
+                                        {/* Date label on hover */}
+                                        <span
+                                          className="
 text-white 
 text-xs 
 font-medium 
@@ -1287,20 +1286,20 @@ duration-200
 whitespace-nowrap
 z-10
 "
-          >
-            {colIndex % 5 === 0 ||
-            isStart ||
-            isEnd
-              ? formatDateHeader(date)
-              : ""}
-          </span>
-        </div>
-      )}
+                                        >
+                                          {colIndex % 5 === 0 ||
+                                            isStart ||
+                                            isEnd
+                                            ? formatDateHeader(date)
+                                            : ""}
+                                        </span>
+                                      </div>
+                                    )}
 
-      {/* Current day marker */}
-      {isToday && !isActive && (
-        <div
-          className="
+                                    {/* Current day marker */}
+                                    {isToday && !isActive && (
+                                      <div
+                                        className="
 absolute 
 top-1/2 
 left-1/2 
@@ -1311,22 +1310,22 @@ h-1
 rounded-full 
 bg-yellow-500
 "
-        />
-      )}
-    </td>
-  );
-})}
+                                      />
+                                    )}
+                                  </td>
+                                );
+                              })}
 
 
-                                 {/* 
+                              {/* 
                                  ****************************************************************************
                                  **********Add code of Gane Chart ********************
                                  ****************************************************************************
                                  
                                  
                                  */}
- 
- 
+
+
 
 
 
@@ -1419,9 +1418,9 @@ bg-yellow-500
                       <td className="border border-gray-300 p-2">
                         <form onSubmit={handleAddSubTask}>
                           <input
-                          
-                         
-                        
+
+
+
                             ref={inputRef}
                             type="text"
                             name="subTaskName"
@@ -1563,11 +1562,10 @@ bg-yellow-500
                       <button
                         onClick={() => paginate(Math.max(1, currentPage - 1))}
                         disabled={currentPage === 1}
-                        className={`px-3 py-1 rounded-l-md border border-gray-300 ${
-                          currentPage === 1
+                        className={`px-3 py-1 rounded-l-md border border-gray-300 ${currentPage === 1
                             ? "bg-gray-100 text-gray-400"
                             : "bg-white text-gray-700 hover:bg-gray-50"
-                        }`}
+                          }`}
                       >
                         Previous
                       </button>
@@ -1577,11 +1575,10 @@ bg-yellow-500
                           <button
                             key={number}
                             onClick={() => paginate(number)}
-                            className={`px-3 py-1 border-t border-b border-gray-300 ${
-                              currentPage === number
+                            className={`px-3 py-1 border-t border-b border-gray-300 ${currentPage === number
                                 ? "bg-blue-500 text-white"
                                 : "bg-white text-gray-700 hover:bg-gray-50"
-                            }`}
+                              }`}
                           >
                             {number}
                           </button>
@@ -1593,11 +1590,10 @@ bg-yellow-500
                           paginate(Math.min(totalPages, currentPage + 1))
                         }
                         disabled={currentPage === totalPages}
-                        className={`px-3 py-1 rounded-r-md border border-gray-300 ${
-                          currentPage === totalPages
+                        className={`px-3 py-1 rounded-r-md border border-gray-300 ${currentPage === totalPages
                             ? "bg-gray-100 text-gray-400"
                             : "bg-white text-gray-700 hover:bg-gray-50"
-                        }`}
+                          }`}
                       >
                         Next
                       </button>
