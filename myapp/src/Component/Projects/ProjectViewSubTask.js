@@ -189,9 +189,8 @@ const ProjectViewSubTask = ({ isStandalone , taskid2 }) => {
     user: "",
     priority: "Medium",
     startDate: new Date().toISOString().split("T")[0],
-    endDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
-      .toISOString()
-      .split("T")[0],
+    endDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
+
     duration: "7 days",
     cost: "",
     status: "Active",
