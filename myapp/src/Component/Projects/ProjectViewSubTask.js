@@ -15,9 +15,11 @@ import { allUser } from "../../FeatureRedux/alluserSlice";
 import { subcreatetasks } from "../../FeatureRedux/subTaskSlices/addsubTaskslice";
 import { deleteSubtask } from "../../FeatureRedux/subTaskSlices/deletesubTaskslice";
 import Cookies from "js-cookie";
+// import "./table.css";
 
 import Swal from "sweetalert2";
 import { data } from "autoprefixer";
+import { reorderSubtask } from "../../FeatureRedux/subTaskSlices/reorderSubtaskSlice";
 
 const ProjectViewSubTask = ({ isStandalone, taskid2 }) => {
   var { project, id, taskId } = useParams();
@@ -39,11 +41,13 @@ const ProjectViewSubTask = ({ isStandalone, taskid2 }) => {
     { item: "Picture", toCheck: "No-Blur", confirmed: false },
   ]);
 
+
+
   // State for column widths
   const [columnWidths, setColumnWidths] = useState({
     checkbox: 50,
     id: 80,
-    subTask: 200,
+    subTask: 300,
     assigned: 150,
     checklist: 100,
     priority: 100,
@@ -88,6 +92,64 @@ const ProjectViewSubTask = ({ isStandalone, taskid2 }) => {
   useEffect(() => {
     dispatch(allUser());
   }, [dispatch]);
+
+  useEffect(() => {
+    dispatch(reorderSubtask)
+  },[])
+
+  const rearrange = useSelector((state) => state.reorderSubtask)
+
+  const handleDragEnd = async (result) => {
+    if (!result.destination) return;
+  
+    // Create a new array with updated positions
+    const reorderedTasks = Array.from(subTasks);
+    const [movedItem] = reorderedTasks.splice(result.source.index, 1);
+    reorderedTasks.splice(result.destination.index, 0, movedItem);
+  
+    // Update local state immediately with new positions
+    const updatedTasks = reorderedTasks.map((task, index) => ({
+      ...task,
+      position: index, // Update position based on new order
+    }));
+  
+    setSubTasks(updatedTasks);
+  
+    try {
+      // Prepare payload for API
+      const orderedSubtasks = updatedTasks.map((task,index) => ({
+        id: task.id,
+        order: index, // Use 'position' for the order
+      }));
+  
+      // Dispatch the reorder action to update the backend
+      const response = await dispatch(reorderSubtask(orderedSubtasks));
+  
+      if (response.meta.requestStatus === 'fulfilled') {
+        toast.success("Subtasks reordered successfully",{
+          autoClose:1000,
+        });
+      
+        const result = await dispatch(getsubtasklist({ taskId }));
+        if (result?.payload?.data) {
+          const sorted = [...result.payload.data].sort((a, b) => (a.position ?? 0) - (b.position ?? 0));
+          const transformed = transformApiData({ data: sorted });
+          setSubTasks(transformed); // 👈 this ensures cost and other fields are reprocessed
+        }
+      } else {
+        setSubTasks(apiSubtasks ? transformApiData(apiSubtasks) : []);
+        toast.error("Failed to save new order");
+      }
+      
+    } catch (error) {
+      console.error("Reorder error:", error);
+      toast.error("Failed to save new order");
+      // Revert to original order if API fails
+      setSubTasks(apiSubtasks ? transformApiData(apiSubtasks) : []);
+    }
+  };
+  
+  
 
   const getusername = (id, users) => {
     const found = users.find((user) => user._id === id);
@@ -178,13 +240,22 @@ const ProjectViewSubTask = ({ isStandalone, taskid2 }) => {
   }, [taskId, dispatch]);
 
   // Update local state when needed
-  useEffect(() => {
-    if (apiSubtasks) {
+  // useEffect(() => {
+  //   if (apiSubtasks) {
 
-      const transformedData = transformApiData(apiSubtasks);
-      setSubTasks(transformedData.reverse());
+  //     const transformedData = transformApiData(apiSubtasks);
+  //     setSubTasks(transformedData.reverse());
+  //   }
+  // }, [apiSubtasks, users]);
+
+  useEffect(() => {
+    if (apiSubtasks?.data) {
+      const sorted = [...apiSubtasks.data].sort((a, b) => (a.position ?? 0) - (b.position ?? 0));
+      const transformed = transformApiData({ data: sorted });
+      setSubTasks(transformed);
     }
   }, [apiSubtasks, users]);
+  
 
   // Rest of your existing code remains exactly the same...
   const [newSubTask, setNewSubTask] = useState({
@@ -543,6 +614,8 @@ const ProjectViewSubTask = ({ isStandalone, taskid2 }) => {
     });
   };
 
+
+
   useEffect(() => {
     if (resizing.isResizing) {
       window.addEventListener("mousemove", handleResize);
@@ -580,16 +653,16 @@ const ProjectViewSubTask = ({ isStandalone, taskid2 }) => {
             </button>
           </div>
         )}
-
-        <DragDropContext onDragEnd={() => { }}>
+      
+        <DragDropContext onDragEnd={handleDragEnd}>
           <Droppable droppableId="subTasks">
-            {(provided) => (
+            {(provided,snapshot) => (
               <div
                 {...provided.droppableProps}
                 ref={provided.innerRef}
-                className="w-[100px]"
+                 className={`w-full ${snapshot.isDraggingOver ? 'bg-blue-50' : ''}`} 
               >
-                <table className="w-[100px] border-collapse border border-gray-300 table-fixed">
+                <table className="w-full  border-collapse border border-gray-300 table-fixed">
                   <colgroup>
                     <col style={{ width: `${columnWidths.checkbox}px` }} />
                     <col style={{ width: `${columnWidths.id}px` }} />
@@ -651,14 +724,24 @@ const ProjectViewSubTask = ({ isStandalone, taskid2 }) => {
                         draggableId={task.id}
                         index={index}
                       >
-                        {(provided) => (
+                        {(provided,snapshot) => (
                           <React.Fragment>
-                            <tr
-                              ref={provided.innerRef}
-                              {...provided.draggableProps}
-                              className={`bg-white hover:bg-gray-50 border border-gray-300 ${task.checked ? "bg-blue-50" : ""
-                                }`}
-                            >
+                          <tr
+        ref={provided.innerRef}
+        {...provided.draggableProps}
+        {...provided.dragHandleProps}
+        style={{
+          ...provided.draggableProps?.style,
+          margin: 0,
+          padding: 0,
+          boxSizing: "border-box",
+          position:'static',
+          border:'black'
+        }}
+        className={`bg-white hover:bg-gray-50 border border-gray-300 ${
+          task.checked ? "bg-blue-50" : ""
+        }`}
+      >
                               <td className="border border-gray-300 p-2 text-center">
                                 <div
                                   className={`w-4 h-4 border border-gray-400 flex items-center justify-center cursor-pointer transition-colors mx-auto ${task.checked
@@ -746,18 +829,33 @@ const ProjectViewSubTask = ({ isStandalone, taskid2 }) => {
                                                 border-1 border-purple-600 text-purple-600 hover:bg-purple-50
                                                   group-hover:opacity-100 absolute right-0"
 
+                                    // onClick={() => {
+                                    //   const validIndex = apiSubtasks.data.length - (index + 1);
+                                    //   navigate(`/project/${id}/task/${task.id}/subtaskwithin/View`, {
+                                    //     state: {
+                                    //       subtaskData: task,
+                                    //       apiSubtasks: apiSubtasks.data[index],
+                                    //       index: index,
+                                    //       projectId: id,
+                                    //       parentTaskId: taskId,
+                                    //     },
+                                    //   });
+                                    // }}
+
                                     onClick={() => {
-                                      const validIndex = apiSubtasks.data.length - (index + 1);
+                                      const matchedApiSubtask = apiSubtasks.data.find((item) => item._id === task.id);
+                                    
                                       navigate(`/project/${id}/task/${task.id}/subtaskwithin/View`, {
                                         state: {
                                           subtaskData: task,
-                                          apiSubtasks: apiSubtasks.data[validIndex],
-                                          index: index,
+                                          apiSubtasks: matchedApiSubtask,  // correctly matched original data
+                                          index: index, // UI index, not needed for logic anymore
                                           projectId: id,
                                           parentTaskId: taskId,
                                         },
                                       });
                                     }}
+                                    
 
                                   >
                                     View
@@ -1604,10 +1702,13 @@ bg-yellow-500
             )}
           </Droppable>
         </DragDropContext>
+            
       </div>
     </div>
   );
 };
+
+
 
 export default ProjectViewSubTask;
 

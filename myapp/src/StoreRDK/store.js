@@ -21,6 +21,7 @@ import  getCompany  from '../FeatureRedux/companySlice/getCompanyslice';
 import deleteCompanyslice from '../FeatureRedux/companySlice/deleteCompanyslice';
 import deleteProjectitem from '../FeatureRedux/projectSlice/deleteProject';
 import userDeleteSlice from '../FeatureRedux/user/delteuserslice';
+import { reorderSubtask } from '../FeatureRedux/subTaskSlices/reorderSubtaskSlice';
 
 
 
@@ -47,7 +48,8 @@ export const store = configureStore({
         getCompany:getCompany,     
         deleteCompanyslice:deleteCompanyslice,  
         deleteProjectitem:deleteProjectitem,
-        userDeleteSlice:userDeleteSlice
+        userDeleteSlice:userDeleteSlice,
+        reorderSubtask:reorderSubtask,
         
     
 

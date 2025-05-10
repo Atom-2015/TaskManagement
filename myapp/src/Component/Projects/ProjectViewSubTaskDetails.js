@@ -18,28 +18,24 @@ const ProjectViewSubTaskDetails = () => {
   const [isOpening, setIsOpening] = useState(true);
 
   // Get data from navigation state
-  const { subtaskData, apiSubtasks, taskId, projectId, index, parentTaskId } = location.state || {};
+  const { subtaskData, apiSubtasks, taskId, projectId, index, parentTaskId } =
+    location.state || {};
   // console.log(`object %%%%%%%%%%%% ${JSON.stringify(subtaskData)}`)
-  // console.log(`api subtask %%%%%%%%%%%% ${JSON.stringify(apiSubtasks)}`) 
-  const {
-    data,
-    isError,
-    isLoading,
-    errorMessage,
-  } = useSelector((state) => state.getsubtasklist);
+  // console.log(`api subtask %%%%%%%%%%%% ${JSON.stringify(apiSubtasks)}`)
+  const { data, isError, isLoading, errorMessage } = useSelector(
+    (state) => state.getsubtasklist
+  );
 
-  const length = (data?.data?.length - (index + 1))
+  const length = data?.data?.length - (index + 1);
 
-  console.log("index", index, "dfkkfkdfk", data?.data?.[length])
+  console.log("index", index, "dfkkfkdfk", data?.data?.[length]);
 
-
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   useEffect(() => {
-    const taskId = Cookies.get('taskidlogtrail')
+    const taskId = Cookies.get("taskidlogtrail");
     // console.log(`This is task id ttttt ${JSON.stringify(taskId)}`)
-    dispatch(getsubtasklist({ taskId }))
-
-  }, [])
+    dispatch(getsubtasklist({ taskId }));
+  }, []);
 
   if (!subtaskData) {
     return (
@@ -102,7 +98,7 @@ const ProjectViewSubTaskDetails = () => {
     setIsOpening(!isOpening);
   };
 
-  function handleDescriptionChange() { }
+  function handleDescriptionChange() {}
 
   return (
     <div className="p-2">
@@ -152,8 +148,9 @@ const ProjectViewSubTaskDetails = () => {
                   </label>
                   <button onClick={toggleOpen}>
                     <IoIosArrowForward
-                      className={`transition-transform duration-500 ${isopen ? "rotate-90" : "rotate-0"
-                        }`}
+                      className={`transition-transform duration-500 ${
+                        isopen ? "rotate-90" : "rotate-0"
+                      }`}
                     />
                   </button>
                 </div>
@@ -193,8 +190,9 @@ const ProjectViewSubTaskDetails = () => {
                   Sub-Task Details
                 </h2>
                 <IoIosArrowForward
-                  className={`transition-transform duration-500 ${isOpening ? "rotate-90" : "rotate-0"
-                    }`}
+                  className={`transition-transform duration-500 ${
+                    isOpening ? "rotate-90" : "rotate-0"
+                  }`}
                 />
               </button>
 
@@ -240,54 +238,63 @@ const ProjectViewSubTaskDetails = () => {
                       {/* <span className="w-40 text-start text-gray-600">
                         Cost:
                       </span> */}
-                      <div className="flex border-b-[1px] border-gray-200 pb-2">
-                        <span className="w-40 text-start text-gray-600">Cost:</span>
-                        <div className="flex flex-col gap-3">
-                          {data?.data?.[length]?.cost.map((item, index) => {
-                            if (typeof item === "object") {
-                              return (
-                                <div
-                                  key={index}
-                                  className="border border-blue-200 p-2 rounded-md shadow-sm bg-blue-50"
-                                >
-                                  <div className="text-base font-semibold text-blue-900">
-                                    ₹{item.value?.toLocaleString("en-IN") || "N/A"}
-                                  </div>
-                                  <div className="text-xs text-gray-600">
-                                    Updated by: <span className="font-medium">{item.updatedby || "Unknown"}</span>
-                                  </div>
-                                  <div className="text-xs text-gray-600">
-                                    Time:{" "}
-                                    {item.timeUpdated
-                                      ? new Date(item.timeUpdated).toLocaleString()
-                                      : "N/A"}
-                                  </div>
-                                </div>
-                              );
-                            } else {
-                              return (
-                                <div
-                                  key={index}
-                                  className="border border-gray-300 p-2 rounded-md bg-white shadow-sm"
-                                >
-                                  ₹{item.toLocaleString("en-IN")}
-                                </div>
-                              );
-                            }
-                          })}
-                        </div>
+                      <div className=" flex flex-row border-b-[1px] border-gray-200 pb-2">
+                        <span className="block w-40 text-start text-gray-600 mb-2">
+                          Cost:
+                        </span>
+                        <table className="w-full text-sm">
+                          <thead>
+                            <tr>
+                              <th className="border p-2">Amount</th>
+                              <th className="border p-2">updatedby</th>
+                              <th className="border p-2">Time</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                          {apiSubtasks?.cost?.map((item, index) => {
+                              if (typeof item === "object") {
+                                return (
+                                  <tr
+                                    key={index}
+                                    className="bg-blue-50 text-blue-800"
+                                  >
+                                    <td className="border p-2 font-semibold">
+                                      ₹
+                                      {item.value?.toLocaleString("en-IN") ||
+                                        "N/A"}
+                                    </td>
+                                    <td className="border p-2">
+                                      {item.updatedby || "unknown"}
+                                    </td>
+                                    <td className="border p-2">
+                                      {item.timeUpdated
+                                        ? new Date(
+                                            item.timeUpdated
+                                          ).toLocaleString()
+                                        : "N/A"}
+                                    </td>
+                                  </tr>
+                                );
+                              } else {
+                                <tr key={index}>
+                                  <td className="border p-2" colSpan={3}>
+                                    ₹{item.toLocaleString("en-IN")}
+                                  </td>
+                                </tr>;
+                              }
+                            })}
+                          </tbody>
+                        </table>
                       </div>
-
-
                     </div>
-                    <div className="flex border-b-[1px] border-gray-200 pb-2">
+                    {/* <div className="flex border-b-[1px] border-gray-200 pb-2">
                       <span className="w-40 text-start text-gray-600">
                         Billing Type:
                       </span>
                       <span className="font-medium">
                         {subtaskData.billingType || "None"}
                       </span>
-                    </div>
+                    </div> */}
                   </div>
 
                   {/* Right Column */}
@@ -302,8 +309,10 @@ const ProjectViewSubTaskDetails = () => {
                     </div>
                     <div className="flex border-b-[1px] border-gray-200 pb-2">
                       <div className="flex border-b-[1px] border-gray-200 pb-2">
-                        <span className="w-40 text-start text-gray-600">Due Date:</span>
-                        <div className="flex flex-col gap-3">
+                        <span className="w-40 text-start text-gray-600">
+                          End Date:
+                        </span>
+                        {/* <div className="flex flex-col gap-3">
                           {data?.data?.[length]?.end_date.map((item, index) => (
                             <div
                               key={index}
@@ -313,7 +322,10 @@ const ProjectViewSubTaskDetails = () => {
                                 {item.value?.split("T")[0] || "N/A"}
                               </div>
                               <div className="text-xs text-gray-600">
-                                Updated by: <span className="font-medium">{item.updatedby || "Unknown"}</span>
+                                Updated by:{" "}
+                                <span className="font-medium">
+                                  {item.updatedby || "Unknown"}
+                                </span>
                               </div>
                               <div className="text-xs text-gray-600">
                                 Time:{" "}
@@ -323,10 +335,29 @@ const ProjectViewSubTaskDetails = () => {
                               </div>
                             </div>
                           ))}
-                        </div>
+                        </div> */}
+                        <table className="w-full text-sm"> 
+                            <thead>
+                              <tr>
+                                <th className="border p-2">Date</th>
+                                <th className="border p-2">updatedby</th>
+                                <th className="border p-2">time</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {/* {data ?. data ?. [length]?.  */}
+                              {apiSubtasks?.end_date?.map((item,index)=>(
+                                <tr key={index} className="bg-green-50 text-green-700">
+                                    <td className="border p-2 font font-semibold">{item.value
+              ? new Date(item.value).toLocaleDateString("en-GB") // dd/mm/yyyy
+              : "N/A"}</td>
+                                    <td className="border p-2 text-gray-700">{item.updatedby || "Unknown"}</td>
+                                    <td className="border p-2 text-gray-700">{item.timeUpdated ? new Date(item.timeUpdated).toLocaleString():"N/A"}</td>
+                                </tr>
+                              ))}
+                            </tbody>
+                        </table>
                       </div>
-
-
                     </div>
                     <div className="flex border-b-[1px] border-gray-200 pb-2">
                       <span className="w-40 text-start text-gray-600">
@@ -336,28 +367,28 @@ const ProjectViewSubTaskDetails = () => {
                         {subtaskData.duration}
                       </span>
                     </div>
-                    <div className="flex border-b-[1px] border-gray-200 pb-2">
+                    {/* <div className="flex border-b-[1px] border-gray-200 pb-2">
                       <span className="w-40 text-start text-gray-600">
                         Completion %:
                       </span>
                       <span className="font-medium">
                         {subtaskData.progress || 0}%
                       </span>
-                    </div>
-                    <div className="flex border-b-[1px] border-gray-200 pb-2">
+                    </div> */}
+                    {/* <div className="flex border-b-[1px] border-gray-200 pb-2">
                       <span className="w-40 text-start text-gray-600">
                         Work Hours:
                       </span>
                       <span className="font-medium">00:00</span>
-                    </div>
-                    <div className="flex border-b-[1px] border-gray-200 pb-2">
+                    </div> */}
+                    {/* <div className="flex border-b-[1px] border-gray-200 pb-2">
                       <span className="w-40 text-start text-gray-600">
                         Associated Team:
                       </span>
                       <span className="font-medium">
                         {subtaskData.team || "None"}
                       </span>
-                    </div>
+                    </div> */}
                   </div>
                 </div>
               )}
