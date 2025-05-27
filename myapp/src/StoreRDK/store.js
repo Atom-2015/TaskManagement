@@ -21,7 +21,13 @@ import  getCompany  from '../FeatureRedux/companySlice/getCompanyslice';
 import deleteCompanyslice from '../FeatureRedux/companySlice/deleteCompanyslice';
 import deleteProjectitem from '../FeatureRedux/projectSlice/deleteProject';
 import userDeleteSlice from '../FeatureRedux/user/delteuserslice';
-import { reorderSubtask } from '../FeatureRedux/subTaskSlices/reorderSubtaskSlice';
+import {reorderSubtask} from '../FeatureRedux/subTaskSlices/reorderSubtaskSlice';
+import  addRevenue  from '../FeatureRedux/RevenueSlice/addRevenueSlice';
+import  getRevenue  from '../FeatureRedux/RevenueSlice/getRevenueSlice';
+import  editRevenue  from '../FeatureRedux/RevenueSlice/editRevenueSlice';
+import addExpense  from '../FeatureRedux/expenseSlice/addExpenseSlice';
+import  editExpense  from '../FeatureRedux/expenseSlice/editExpenseSlice';
+import  getExpense  from '../FeatureRedux/expenseSlice/getExpenseSlice';
 
 
 
@@ -50,8 +56,12 @@ export const store = configureStore({
         deleteProjectitem:deleteProjectitem,
         userDeleteSlice:userDeleteSlice,
         reorderSubtask:reorderSubtask,
-        
-    
+        addRevenue:addRevenue,
+        getRevenue:getRevenue,
+        editRevenue:editRevenue,
+        addExpense:addExpense,
+        editExpense:editExpense,
+        getExpense:getExpense
 
 
 

@@ -122,6 +122,11 @@ import ProjectViewSubTask from './Component/Projects/ProjectViewSubTask';
 import ProjectViewSubTaskDetails from './Component/Projects/ProjectViewSubTaskDetails';
 import Company from './Component/Company/Company';
 import AddTaskForm1 from './Component/Projects/AddTaskForm1';
+import Budget from './Component/Projects/ProjectBudget/Budget';
+import LeaveDashboard from './Component/LeaveComponent/LeaveDashboard';
+import PayrollDashboard from './Component/PayRoll/PayrollDashboard';
+import LeaveMain from './Component/LeaveComponent/LeaveManagement/LeaveMain';
+import Leavemyteam from './Component/LeaveComponent/LeaveManagement/Leavemyteam';
 
 // ProtectedRoute Component
 const ProtectedRoute = ({ element }) => {
@@ -161,6 +166,7 @@ const router = createBrowserRouter([
       { path: '/dashboard', element: <Dashboardindex /> },
       { path: '/projectManagement', element: <ProjectIndex /> } ,
      { path:'/project/:id', element:<ProjectViewList/>},
+     { path:"/project/:id/Budget", element:<Budget/>},
      { path: '/project/:id/add-task', element: <AddTaskForm1 /> },
       { path: '/userManagement', element: <UsermanagementIndex /> },
       { path:"/project/:id/task/:taskId" ,element:<ProjectViewSubTask  isStandalone={true}/> },
@@ -195,6 +201,23 @@ const router = createBrowserRouter([
           { path: '/settings/prijectSetting', element: <ProjectSetting /> },
         ],
       },
+
+      
+      {
+        path:"/Payroll",
+        element: <PayrollDashboard/>
+      } ,
+
+
+      {
+        path:'/leaves',
+        element:<LeaveMain/>,
+        children:[
+          {path:"/leaves/myleave",element:<LeaveDashboard/>},
+          {path:"/leaves/Myteamleave",element:<Leavemyteam/>}
+        ]
+      },
+
       { path: '/attendance', element: <Attendanceindex /> },
       {path:'/test' ,element:<Test/> },
 

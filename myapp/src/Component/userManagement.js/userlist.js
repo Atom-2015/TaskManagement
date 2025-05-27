@@ -186,7 +186,7 @@ function Userlist() {
                         /> */}
                         <Avatar
                           name={user.name}
-                          src={user.image}
+                          src={user.profile_image}
                           size="50"
                           round={true}
                           className="text-sm font-medium"
@@ -251,7 +251,7 @@ function Userlist() {
                     /> */}
                     <Avatar
                       name={user.name}
-                      src={user.image}
+                      src={user.profile_image}
                       size="70"
                       round={true}
                       className="text-sm font-medium"

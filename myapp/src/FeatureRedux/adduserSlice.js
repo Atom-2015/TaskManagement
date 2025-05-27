@@ -6,7 +6,11 @@ export const addUser = createAsyncThunk(
   'addUser', // Action type
   async (formData, { rejectWithValue }) => {
     try {
-      const response = await axiosInstance.post('/api/user/adduser', formData);
+      const response = await axiosInstance.post('/api/user/adduser', formData,{
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
       return response.data; // Assuming the API returns the user data
     } catch (error) {
       return rejectWithValue(

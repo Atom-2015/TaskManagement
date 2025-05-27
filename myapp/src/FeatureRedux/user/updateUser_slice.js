@@ -8,7 +8,11 @@ export const updateUser = createAsyncThunk(
   async ({ userId, updatedData }, { rejectWithValue }) => {
     try {
         console.log('userid', userId , "updated Data", updatedData);
-      const response = await axiosInstance.put(`/api/user/updateuser/${userId}`, updatedData);
+      const response = await axiosInstance.put(`/api/user/updateuser/${userId}`, updatedData,{
+         headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
       return response.data.data;
     } catch (error) {
       return rejectWithValue(

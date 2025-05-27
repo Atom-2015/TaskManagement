@@ -726,22 +726,22 @@ const ProjectViewSubTask = ({ isStandalone, taskid2 }) => {
                       >
                         {(provided,snapshot) => (
                           <React.Fragment>
-                          <tr
-        ref={provided.innerRef}
-        {...provided.draggableProps}
-        {...provided.dragHandleProps}
-        style={{
-          ...provided.draggableProps?.style,
-          margin: 0,
-          padding: 0,
-          boxSizing: "border-box",
-          position:'static',
-          border:'black'
-        }}
-        className={`bg-white hover:bg-gray-50 border border-gray-300 ${
-          task.checked ? "bg-blue-50" : ""
-        }`}
-      >
+                           <tr
+                                  ref={provided.innerRef}
+                                  {...provided.draggableProps}
+                                  className={`transition-all duration-200 draggable-row ${
+                                    snapshot.isDragging
+                                      ? "bg-blue-100 shadow-lg border-2 border-blue-100"
+                                      : "hover:bg-gray-50 border border-gray-300"
+                                  }`}
+                                  style={{
+                                    ...provided.draggableProps.style,
+                                    display: "table-row",
+                                    width: "100%",
+                                    position: "static",
+                                    zIndex: snapshot.isDragging ? 1000 : 0,
+                                  }}
+                                >
                               <td className="border border-gray-300 p-2 text-center">
                                 <div
                                   className={`w-4 h-4 border border-gray-400 flex items-center justify-center cursor-pointer transition-colors mx-auto ${task.checked

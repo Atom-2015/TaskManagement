@@ -28,9 +28,17 @@ const UserdetailsForm = ({ userId, onClose, userDetails, companyList }) => {
 
         {/* Avatar */}
         <div className="absolute top-[-60px] left-1/2 transform -translate-x-1/2 z-10">
-          <div className="w-32 h-32 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 flex items-center justify-center text-5xl font-bold text-white shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-100">
-            {getInitials(selectedUser?.name, selectedUser?.last_name)}
-          </div>
+          {selectedUser?.profile_image ? (
+            <img
+              src={selectedUser?.profile_image}
+              className="w-32 h-32 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 flex items-center justify-center text-5xl font-bold text-white shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-100"
+            />
+          ) : (
+            <div className="w-32 h-32 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 flex items-center justify-center text-5xl font-bold text-white shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-100">
+              
+              {getInitials(selectedUser?.name, selectedUser?.last_name)}
+            </div>
+          )}
         </div>
 
         {/* Heading */}

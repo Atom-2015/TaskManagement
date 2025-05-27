@@ -144,6 +144,12 @@ const ProjectViewList = () => {
     navigate(`/project/${id}/task/${taskId}`);
   };
 
+    //project budget ki kamm ho rahai hai
+    const handleBudget = () =>{
+      navigate(`/project/${id}/Budget`);
+    
+  }
+
   const handleAddSubTask = (taskId) => {
     if (!newSubTask.title.trim()) return;
 
@@ -221,6 +227,8 @@ const ProjectViewList = () => {
     isResizing.current = false;
   };
 
+
+
   useEffect(() => {
     document.addEventListener("mousemove", handleMouseMove);
     document.addEventListener("mouseup", handleMouseUp);
@@ -245,13 +253,18 @@ const ProjectViewList = () => {
           </div>
         </div>
 
-        <div className="flex justify-end mb-2">
+        <div className="flex justify-end mb-2 gap-2">
+          <button onClick={(e)=>handleBudget()} className="p-1 border border-gray-500 bg-red-600 rounded-lg px-2 hover:bg-slate-700 transform duration-400 hover:shadow-[0_4px_4px_#1976D2] text-white">
+            BUDGET
+          </button>
+
           <button
             onClick={() => setShowTask(true)}
             className="p-1 border border-blue-500 bg-blue-700 rounded-lg px-2 hover:bg-slate-500 transform duration-300 hover:shadow-[0_4px_4px_#1976D2] text-white"
           >
             ADD TASK
           </button>
+
         </div>
 
         {showTask && (
