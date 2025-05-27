@@ -28,6 +28,8 @@ import  editRevenue  from '../FeatureRedux/RevenueSlice/editRevenueSlice';
 import addExpense  from '../FeatureRedux/expenseSlice/addExpenseSlice';
 import  editExpense  from '../FeatureRedux/expenseSlice/editExpenseSlice';
 import  getExpense  from '../FeatureRedux/expenseSlice/getExpenseSlice';
+import  getExpenseDiscussion  from '../FeatureRedux/expenceDiscussionSlice/getExpenceDiscussion';
+import  addExpenceDiscussion from '../FeatureRedux/expenceDiscussionSlice/createExpenceDiscussionSlice';
 
 
 
@@ -61,9 +63,8 @@ export const store = configureStore({
         editRevenue:editRevenue,
         addExpense:addExpense,
         editExpense:editExpense,
-        getExpense:getExpense
-
-
-
+        getExpense:getExpense,
+        getExpenseDiscussion:getExpenseDiscussion,
+        addExpenceDiscussion:addExpenceDiscussion,
     },
 });
