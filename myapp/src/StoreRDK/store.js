@@ -28,6 +28,8 @@ import  editRevenue  from '../FeatureRedux/RevenueSlice/editRevenueSlice';
 import addExpense  from '../FeatureRedux/expenseSlice/addExpenseSlice';
 import  editExpense  from '../FeatureRedux/expenseSlice/editExpenseSlice';
 import  getExpense  from '../FeatureRedux/expenseSlice/getExpenseSlice';
+import  getClientDis  from '../FeatureRedux/ClientDisSlice/getClientdisSlice';
+import  addClientDis  from '../FeatureRedux/ClientDisSlice/addClientdisSlice';
 
 
 
@@ -61,7 +63,9 @@ export const store = configureStore({
         editRevenue:editRevenue,
         addExpense:addExpense,
         editExpense:editExpense,
-        getExpense:getExpense
+        getExpense:getExpense,
+        getClientDis:getClientDis,
+        addClientDis:addClientDis
 
 
 
