@@ -7,6 +7,7 @@ import { projectlist } from "../../../FeatureRedux/projectlistSlice";
 import DiscussionRevenue from "./DiscussionRevenue";
 import DiscussionExpenses from "./DiscussionExpenses";
 import { useSelector } from "react-redux";
+import AddButtonDiscussionExpense from "./addButtonDiscussionExpense";
 
 const Budget = () => {
   const { id } = useParams();
@@ -119,12 +120,19 @@ const Budget = () => {
               setIsRevOpen={setIsRevOpen}
             />
           </div>
-          <div className="bg-white border border-red-100 rounded-2xl p-3 shadow-md hover:shadow-lg transition">
-            <h2 className="text-xl justify-center font-semibold text-red-600 mb-3 flex items-center gap-2 border-b pb-2">
+          <div className="bg-white border border-red-100 rounded-2xl   shadow-md hover:shadow-lg transition">
+           
+
+            {/* 👇 Add Button Positioned Here */}
+            <div className="flex justify-between ">
+               <h2 className="text-xl justify-center font-semibold text-red-600 pl-4 flex items-center border-b ">
               🧾 Expenses Discussion
             </h2>
+              <AddButtonDiscussionExpense />
+            </div>
 
-            <DiscussionExpenses />
+            {/* 👇 Table Data Below */}
+            <DiscussionExpenses projectId={id} />
           </div>
         </div>
       </div>
