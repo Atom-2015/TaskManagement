@@ -28,8 +28,13 @@ import  editRevenue  from '../FeatureRedux/RevenueSlice/editRevenueSlice';
 import addExpense  from '../FeatureRedux/expenseSlice/addExpenseSlice';
 import  editExpense  from '../FeatureRedux/expenseSlice/editExpenseSlice';
 import  getExpense  from '../FeatureRedux/expenseSlice/getExpenseSlice';
+<<<<<<< HEAD
+import  getClientDis  from '../FeatureRedux/ClientDisSlice/getClientdisSlice';
+import  addClientDis  from '../FeatureRedux/ClientDisSlice/addClientdisSlice';
+=======
 import  getExpenseDiscussion  from '../FeatureRedux/expenceDiscussionSlice/getExpenceDiscussion';
 import  addExpenceDiscussion from '../FeatureRedux/expenceDiscussionSlice/createExpenceDiscussionSlice';
+>>>>>>> 0ebb430b647305bca78717a37b092ce0472cca59
 
 
 
@@ -64,7 +69,15 @@ export const store = configureStore({
         addExpense:addExpense,
         editExpense:editExpense,
         getExpense:getExpense,
+<<<<<<< HEAD
+        getClientDis:getClientDis,
+        addClientDis:addClientDis
+
+
+
+=======
         getExpenseDiscussion:getExpenseDiscussion,
         addExpenceDiscussion:addExpenceDiscussion,
+>>>>>>> 0ebb430b647305bca78717a37b092ce0472cca59
     },
 });
