@@ -128,7 +128,7 @@ const Budget = () => {
                <h2 className="text-xl justify-center font-semibold text-red-600 pl-4 flex items-center border-b ">
               🧾 Expenses Discussion
             </h2>
-              <AddButtonDiscussionExpense />
+              <AddButtonDiscussionExpense projectId={id} />
             </div>
 
             {/* 👇 Table Data Below */}

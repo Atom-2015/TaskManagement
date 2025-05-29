@@ -3,9 +3,15 @@ import axiosInstance from "../../axiosInstance";
 
 export const addExpenceDiscussion = createAsyncThunk(
   "addExpenceDiscussion",
-  async (formData, { rejectWithValue }) => {
+  async ({formData , projectId}, { rejectWithValue }) => {
     try {
-      const response = await axiosInstance.post('/api/expense/AddexpenseDiscussion', formData);
+      // console.log("project id ",JSON.stringify(projectId))
+      const response = await axiosInstance.post('/api/expense/AddexpenseDiscussion', formData , {
+        headers: {
+          
+          'x-project-id':projectId
+        }
+      });
       return response.data;
     } catch (error) {
       return rejectWithValue(

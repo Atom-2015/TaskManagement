@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { addExpenceDiscussion } from '../../../FeatureRedux/expenceDiscussionSlice/createExpenceDiscussionSlice';
 
-const AddButtonDiscussionExpense = ({ onSubmit }) => {
+const AddButtonDiscussionExpense = ({ onSubmit , projectId }) => {
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({
     date: '',
@@ -18,15 +20,16 @@ const AddButtonDiscussionExpense = ({ onSubmit }) => {
       [name]: type === 'checkbox' ? checked : value
     });
   };
+  const dispatch = useDispatch();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (onSubmit) {
       onSubmit(formData);
     }
     console.log('Submitted:', formData);
-    setShowForm(false);
-    setFormData({
+    await dispatch(addExpenceDiscussion({formData , projectId}));
+     setFormData({
       date: '',
       clientName: '',
       discussedBy: '',
@@ -34,6 +37,7 @@ const AddButtonDiscussionExpense = ({ onSubmit }) => {
       comment: '',
       nextFollowUp: ''
     });
+    setShowForm(false);
   };
 
   return (

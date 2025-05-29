@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { useDispatch } from "react-redux";
 import { getClientDis } from "../../../FeatureRedux/ClientDisSlice/getClientdisSlice";
 import { useSelector } from "react-redux";
@@ -8,7 +8,6 @@ import Swal from "sweetalert2";
 const DiscussionRevenue = ({ projectId, isRevOpen, setIsRevOpen }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editDiscussionId, setEditDiscussionId] = useState(null);
-
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -16,18 +15,15 @@ const DiscussionRevenue = ({ projectId, isRevOpen, setIsRevOpen }) => {
   }, [dispatch]);
 
   const getData = useSelector((state) => state.getClientDis?.getData || []);
-  const [filterData , setFilterData] = useState()
-  var filterDataa = [];
-  useEffect(() => {
-   
-    if (getData) {
-      filterDataa = getData?.data?.filter(
-        (item) => item.projectId?.toString() === projectId?.toString()
-      );
-      setFilterData(filterDataa)
-   
-    }
-  }, [getData]);
+  
+  // Use useMemo to filter data only when getData or projectId changes
+  const filterData = useMemo(() => {
+    if (!getData?.data) return [];
+    return getData.data.filter(
+      (item) => item.projectId?.toString() === projectId?.toString()
+    );
+  }, [getData, projectId]);
+
   const [formData, setFormData] = useState({
     client_name: "",
     discussed_by: "",
@@ -91,10 +87,8 @@ const DiscussionRevenue = ({ projectId, isRevOpen, setIsRevOpen }) => {
           </thead>
           <tbody>
             {filterData?.map((item) => (
-                
               <tr key={item._id} className="hover:bg-gray-50 transition-all">
                 <td className="p-3 text-center">{item.client_name}</td>
-                {/* {console.log(`item ${item}`)} */}
                 <td className="p-3 text-center">{item.discussed_by}</td>
                 <td className="p-3 text-center">{item.phone_no}</td>
                 <td className="p-3 text-center">{item.comment}</td>
