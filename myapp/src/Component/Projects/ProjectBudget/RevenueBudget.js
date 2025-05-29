@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { addRevenue } from "../../../FeatureRedux/RevenueSlice/addRevenueSlice";
 import { useSelector } from "react-redux";
+import { addRevenue } from "../../../FeatureRedux/RevenueSlice/addRevenueSlice";
 import { getRevenue } from "../../../FeatureRedux/RevenueSlice/getRevenueSlice";
 import { editRevenue } from "../../../FeatureRedux/RevenueSlice/editRevenueSlice";
 import Swal from 'sweetalert2';
 
-
 const RevenueBudget = ({ projectId, isModalOpen, setIsModalOpen }) => {
-  const [isEditing, setIsEditing] = useState(false);
-  const [editRevenueId, setEditRevenueId] = useState(null);
+  const [editingField, setEditingField] = useState({
+    id: null,
+    field: null,
+    value: ""
+  });
 
   const dispatch = useDispatch();
 
@@ -18,14 +20,16 @@ const RevenueBudget = ({ projectId, isModalOpen, setIsModalOpen }) => {
   }, [dispatch]);
 
   const getData = useSelector((state) => state.getRevenue?.getData || []);
- 
+  const [filterData, setFilterData] = useState([]);
 
-  const filterData = getData?.filter(
-    (item) => item.projectId?.toString() === projectId?.toString()
-  );
-
-
-
+  useEffect(() => {
+    if (getData?.length) {
+      const filtered = getData.filter(
+        (item) => item.projectId?.toString() === projectId?.toString()
+      );
+      setFilterData(filtered || []);
+    }
+  }, [getData, projectId]);
 
   const [formData, setFormData] = useState({
     date: "",
@@ -41,10 +45,6 @@ const RevenueBudget = ({ projectId, isModalOpen, setIsModalOpen }) => {
     comment: "",
   });
 
-  const { realData, isLoading, isError, errorMessage } = useSelector(
-    (state) => state.addRevenue
-  );
-
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -53,144 +53,366 @@ const RevenueBudget = ({ projectId, isModalOpen, setIsModalOpen }) => {
     }));
   };
 
-  const handleSubmit = async (e) => {
-  e.preventDefault();
+  const handleFieldClick = (id, field, value) => {
+    setEditingField({
+      id,
+      field,
+      value: (field === 'date' || field === 'dueDate') && value 
+        ? new Date(value).toISOString().split('T')[0] 
+        : value || ""
+    });
+  };
 
-  try {
-    if (isEditing && editRevenueId) {
-      await dispatch(
-        editRevenue({
-          revenueId: editRevenueId,
-          updateData: { ...formData, projectId },
-        })
-      );
-     await dispatch(getRevenue());
-      Swal.fire({
-        icon: 'success',
-        title: 'Revenue updated successfully!',
-        showConfirmButton: false,
-        timer: 1500,
-      });
-    } else {
+  const handleEditChange = (e) => {
+    setEditingField(prev => ({
+      ...prev,
+      value: e.target.value
+    }));
+  };
+
+  const handleEditSubmit = async (e) => {
+    if (e.key === 'Enter') {
+      try {
+        const updatedData = {
+          [editingField.field]: editingField.value
+        };
+        
+        const resultAction = await dispatch(editRevenue({ 
+          revenueId: editingField.id, 
+          updateData: updatedData 
+        }));
+        
+        if (editRevenue.fulfilled.match(resultAction)) {
+          await dispatch(getRevenue());
+          
+          Swal.fire({
+            icon: 'success',
+            title: 'Updated successfully!',
+            showConfirmButton: false,
+            timer: 1500,
+          });
+          
+          setEditingField({
+            id: null,
+            field: null,
+            value: ""
+          });
+        } else {
+          throw new Error(resultAction.error.message);
+        }
+      } catch (error) {
+        console.error("Error updating field:", error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Update failed',
+          text: error.message || 'Please try again later.',
+        });
+      }
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
       await dispatch(addRevenue({ ...formData, projectId }));
-     await dispatch(getRevenue());
+      await dispatch(getRevenue());
+      
       Swal.fire({
         icon: 'success',
         title: 'Revenue added successfully!',
         showConfirmButton: false,
         timer: 1500,
       });
+
+      setIsModalOpen(false);
+      setFormData({
+        date: "",
+        milestone: "",
+        invoiceNo: "",
+        basicAmount: "",
+        gst: "",
+        tds: "",
+        received: "",
+        pending: "",
+        dueDate: "",
+        status: "Pending",
+        comment: "",
+      });
+    } catch (error) {
+      console.error("Error adding revenue:", error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Something went wrong!',
+        text: 'Please try again later.',
+      });
     }
+  };
 
-    // Close modal and reset form
-    setIsModalOpen(false);
-    setFormData({
-      date: "",
-      milestone: "",
-      invoiceNo: "",
-      basicAmount: "",
-      gst: "",
-      tds: "",
-      received: "",
-      pending: "",
-      dueDate: "",
-      status: "Pending",
-      comment: "",
-    });
-  } catch (error) {
-    console.error("Error adding revenue:", error);
-    Swal.fire({
-      icon: 'error',
-      title: 'Something went wrong!',
-      text: 'Please try again later.',
-    });
-  }
-};
-
+  const formatDate = (dateString) => {
+    if (!dateString) return "N/A";
+    const date = new Date(dateString);
+    return date.toLocaleDateString("en-IN");
+  };
 
   return (
-    <div className="flex items-center justify-center">
-      <div className="w-full bg-white rounded-xl shadow-md overflow-x-auto max-h-[200px] overflow-y-auto">
+    <div className="flex flex-col items-center justify-center gap-6">
+      {/* Revenue Table */}
+      <div className="w-full bg-white rounded-xl shadow-md overflow-x-auto">
+          <div className="max-h-[200px] overflow-y-auto">
         <table className="w-full text-sm text-gray-800">
           <thead className="bg-blue-700 text-white text-[15px]">
             <tr>
-              <th className="border border-gray-400 p-1 min-w-[105px] text-center">
-                Date
-              </th>
-              <th className="border border-gray-400 p-1 min-w-[80px] text-center">
-                Milestone
-              </th>
-              <th className="border border-gray-400 p-1 min-w-[100px] text-center">
-                Invoice No.
-              </th>
-              <th className="border border-gray-400 p-1 text-center">
-                Basic Amount
-              </th>
-              <th className="border border-gray-400 p-1 min-w-[50px] text-center">
-                GST
-              </th>
-              <th className="border border-gray-400 p-1 text-center">TDS</th>
-              <th className="border border-gray-400 p-1 text-center">
-                Received
-              </th>
-              <th className="border border-gray-400 p-1 text-center">
-                Pending
-              </th>
-              <th className="border border-gray-400 p-1 min-w-[110px] text-center">
-                Due Date
-              </th>
-              <th className="border border-gray-400 p-1 text-center">Status</th>
-              <th className="border border-gray-400 p-1 text-center">
-                Comment
-              </th>
+              <th className="p-2 text-center">Date</th>
+              <th className="p-2 text-center">Milestone</th>
+              <th className="p-2 text-center">Invoice No.</th>
+              <th className="p-2 text-center">Basic Amount</th>
+              <th className="p-2 text-center">GST</th>
+              <th className="p-2 text-center">TDS</th>
+              <th className="p-2 text-center">Received</th>
+              <th className="p-2 text-center">Pending</th>
+              <th className="p-2 text-center">Due Date</th>
+              <th className="p-2 text-center">Status</th>
+              <th className="p-2 text-center">Comment</th>
             </tr>
           </thead>
+          <tbody>
+            {filterData.map((item) => (
+              <tr key={item._id} className="hover:bg-gray-50 transition-all">
+                {/* Date */}
+                <td 
+                  className="p-3 text-center cursor-pointer hover:bg-blue-50"
+                  onClick={() => handleFieldClick(item._id, 'date', item.date)}
+                >
+                  {editingField.id === item._id && editingField.field === 'date' ? (
+                    <input
+                      type="date"
+                      value={editingField.value}
+                      onChange={handleEditChange}
+                      onKeyDown={handleEditSubmit}
+                      onBlur={() => setEditingField({ id: null, field: null, value: "" })}
+                      className="w-full px-2 py-1 border border-blue-300 rounded focus:outline-blue-500"
+                      autoFocus
+                    />
+                  ) : (
+                    formatDate(item.date)
+                  )}
+                </td>
 
-          {filterData.map((item) => (
-            <tbody>
-              <tr
-                key={item._id}
-                onClick={() => {
-                  setFormData({
-                    date: item.date.split("T")[0],
-                    milestone: item.milestone,
-                    invoiceNo: item.invoiceNo,
-                    basicAmount: item.basicAmount,
-                    gst: item.gst,
-                    tds: item.tds,
-                    received: item.received,
-                    pending: item.pending,
-                    dueDate: item.dueDate.split("T")[0],
-                    status: item.status,
-                    comment: item.comment,
-                  });
-                  setEditRevenueId(item._id);
-                  setIsEditing(true);
-                  setIsModalOpen(true);
-                }}
-                className="hover:bg-gray-50 transition-all cursor-pointer"
-              >
-                <td className="p-3 text-center">{new Date(item.date).toLocaleDateString("en-IN")}</td>
-                <td className="p-3 text-center">{item.milestone}</td>
-                <td className="p-3 text-center">{item.invoiceNo}</td>
-                <td className="p-3 text-center">{item.basicAmount}</td>
-                <td className="p-3 text-center">{item.gst}</td>
-                <td className="p-3 text-center">{item.tds}</td>
-                <td className="p-3 text-center">{item.received}</td>
-                <td className="p-3 text-center">{item.pending}</td>
-                <td className="p-3 text-center">
-                  {item.dueDate.split("T")[0]}
+                {/* Milestone */}
+                <td 
+                  className="p-3 text-center cursor-pointer hover:bg-blue-50"
+                  onClick={() => handleFieldClick(item._id, 'milestone', item.milestone)}
+                >
+                  {editingField.id === item._id && editingField.field === 'milestone' ? (
+                    <input
+                      type="text"
+                      value={editingField.value}
+                      onChange={handleEditChange}
+                      onKeyDown={handleEditSubmit}
+                      onBlur={() => setEditingField({ id: null, field: null, value: "" })}
+                      className="w-[100px] px-2 py-1 border border-blue-300 rounded focus:outline-blue-500"
+                      autoFocus
+                    />
+                  ) : (
+                    item.milestone || "-"
+                  )}
                 </td>
-                <td className="p-3 text-center">
-                  <span className="px-2 py-1 text-xs rounded-full bg-green-100 text-green-700 font-semibold">
-                    {item.status}
-                  </span>
+
+                {/* Invoice No */}
+                <td 
+                  className="p-3 text-center cursor-pointer hover:bg-blue-50"
+                  onClick={() => handleFieldClick(item._id, 'invoiceNo', item.invoiceNo)}
+                >
+                  {editingField.id === item._id && editingField.field === 'invoiceNo' ? (
+                    <input
+                      type="text"
+                      value={editingField.value}
+                      onChange={handleEditChange}
+                      onKeyDown={handleEditSubmit}
+                      onBlur={() => setEditingField({ id: null, field: null, value: "" })}
+                      className="w-[100px] px-2 py-1 border border-blue-300 rounded focus:outline-blue-500"
+                      autoFocus
+                    />
+                  ) : (
+                    item.invoiceNo || "-"
+                  )}
                 </td>
-                <td className="p-3 italic text-gray-500">{item.comment}</td>
+
+                {/* Basic Amount */}
+                <td 
+                  className="p-3 text-center cursor-pointer hover:bg-blue-50"
+                  onClick={() => handleFieldClick(item._id, 'basicAmount', item.basicAmount)}
+                >
+                  {editingField.id === item._id && editingField.field === 'basicAmount' ? (
+                    <input
+                      type="number"
+                      value={editingField.value}
+                      onChange={handleEditChange}
+                      onKeyDown={handleEditSubmit}
+                      onBlur={() => setEditingField({ id: null, field: null, value: "" })}
+                      className="w-[100px] px-2 py-1 border border-blue-300 rounded focus:outline-blue-500"
+                      autoFocus
+                    />
+                  ) : (
+                    item.basicAmount || "-"
+                  )}
+                </td>
+
+                {/* GST */}
+                <td 
+                  className="p-3 text-center cursor-pointer hover:bg-blue-50"
+                  onClick={() => handleFieldClick(item._id, 'gst', item.gst)}
+                >
+                  {editingField.id === item._id && editingField.field === 'gst' ? (
+                    <input
+                      type="number"
+                      value={editingField.value}
+                      onChange={handleEditChange}
+                      onKeyDown={handleEditSubmit}
+                      onBlur={() => setEditingField({ id: null, field: null, value: "" })}
+                      className="w-[100px] px-2 py-1 border border-blue-300 rounded focus:outline-blue-500"
+                      autoFocus
+                    />
+                  ) : (
+                    item.gst || "-"
+                  )}
+                </td>
+
+                {/* TDS */}
+                <td 
+                  className="p-3 text-center cursor-pointer hover:bg-blue-50"
+                  onClick={() => handleFieldClick(item._id, 'tds', item.tds)}
+                >
+                  {editingField.id === item._id && editingField.field === 'tds' ? (
+                    <input
+                      type="number"
+                      value={editingField.value}
+                      onChange={handleEditChange}
+                      onKeyDown={handleEditSubmit}
+                      onBlur={() => setEditingField({ id: null, field: null, value: "" })}
+                      className="w-[100px] px-2 py-1 border border-blue-300 rounded focus:outline-blue-500"
+                      autoFocus
+                    />
+                  ) : (
+                    item.tds || "-"
+                  )}
+                </td>
+
+                {/* Received */}
+                <td 
+                  className="p-3 text-center cursor-pointer hover:bg-blue-50"
+                  onClick={() => handleFieldClick(item._id, 'received', item.received)}
+                >
+                  {editingField.id === item._id && editingField.field === 'received' ? (
+                    <input
+                      type="number"
+                      value={editingField.value}
+                      onChange={handleEditChange}
+                      onKeyDown={handleEditSubmit}
+                      onBlur={() => setEditingField({ id: null, field: null, value: "" })}
+                      className="w-[100px] px-2 py-1 border border-blue-300 rounded focus:outline-blue-500"
+                      autoFocus
+                    />
+                  ) : (
+                    item.received || "-"
+                  )}
+                </td>
+
+                {/* Pending */}
+                <td 
+                  className="p-3 text-center cursor-pointer hover:bg-blue-50"
+                  onClick={() => handleFieldClick(item._id, 'pending', item.pending)}
+                >
+                  {editingField.id === item._id && editingField.field === 'pending' ? (
+                    <input
+                      type="number"
+                      value={editingField.value}
+                      onChange={handleEditChange}
+                      onKeyDown={handleEditSubmit}
+                      onBlur={() => setEditingField({ id: null, field: null, value: "" })}
+                      className="w-[100px] px-2 py-1 border border-blue-300 rounded focus:outline-blue-500"
+                      autoFocus
+                    />
+                  ) : (
+                    item.pending || "-"
+                  )}
+                </td>
+
+                {/* Due Date */}
+                <td 
+                  className="p-3 text-center cursor-pointer hover:bg-blue-50"
+                  onClick={() => handleFieldClick(item._id, 'dueDate', item.dueDate)}
+                >
+                  {editingField.id === item._id && editingField.field === 'dueDate' ? (
+                    <input
+                      type="date"
+                      value={editingField.value}
+                      onChange={handleEditChange}
+                      onKeyDown={handleEditSubmit}
+                      onBlur={() => setEditingField({ id: null, field: null, value: "" })}
+                      className="w-full px-2 py-1 border border-blue-300 rounded focus:outline-blue-500"
+                      autoFocus
+                    />
+                  ) : (
+                    formatDate(item.dueDate)
+                  )}
+                </td>
+
+                {/* Status */}
+                <td 
+                  className="p-3 text-center cursor-pointer hover:bg-blue-50"
+                  onClick={() => handleFieldClick(item._id, 'status', item.status)}
+                >
+                  {editingField.id === item._id && editingField.field === 'status' ? (
+                    <select
+                      value={editingField.value}
+                      onChange={handleEditChange}
+                      onKeyDown={handleEditSubmit}
+                      onBlur={() => setEditingField({ id: null, field: null, value: "" })}
+                      className="w-[100px] px-2 py-1 border border-blue-300 rounded focus:outline-blue-500"
+                      autoFocus
+                    >
+                      <option value="Pending">Pending</option>
+                      <option value="Paid">Paid</option>
+                      <option value="Overdue">Overdue</option>
+                    </select>
+                  ) : (
+                    <span className={`px-2 py-1 text-xs rounded-full ${
+                      item.status === 'Paid' 
+                        ? 'bg-green-100 text-green-700' 
+                        : item.status === 'Overdue' 
+                          ? 'bg-red-100 text-red-700' 
+                          : 'bg-yellow-100 text-yellow-700'
+                    } font-semibold`}>
+                      {item.status}
+                    </span>
+                  )}
+                </td>
+
+                {/* Comment */}
+                <td 
+                  className="p-3 text-center cursor-pointer hover:bg-blue-50"
+                  onClick={() => handleFieldClick(item._id, 'comment', item.comment)}
+                >
+                  {editingField.id === item._id && editingField.field === 'comment' ? (
+                    <input
+                      type="text"
+                      value={editingField.value}
+                      onChange={handleEditChange}
+                      onKeyDown={handleEditSubmit}
+                      onBlur={() => setEditingField({ id: null, field: null, value: "" })}
+                      className="w-[100px] px-2 py-1 border border-blue-300 rounded focus:outline-blue-500"
+                      autoFocus
+                    />
+                  ) : (
+                    item.comment || "-"
+                  )}
+                </td>
               </tr>
-            </tbody>
-          ))}
+            ))}
+          </tbody>
         </table>
+        </div>
       </div>
 
       {/* Add Revenue Modal */}
@@ -496,7 +718,7 @@ const RevenueBudget = ({ projectId, isModalOpen, setIsModalOpen }) => {
                         d="M12 4v16m8-8H4"
                       />
                     </svg>
-                    {isEditing ? "update Revenue" :"Add Revenue" }
+                    Add Revenue
                   </div>
                 </button>
               </div>

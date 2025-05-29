@@ -1,23 +1,23 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-
 import { useSelector } from "react-redux";
 import { getExpense } from "../../../FeatureRedux/expenseSlice/getExpenseSlice";
 import { addExpense } from "../../../FeatureRedux/expenseSlice/addExpenseSlice";
 import { editExpense } from "../../../FeatureRedux/expenseSlice/editExpenseSlice";
-
-
+import Swal from "sweetalert2";
 
 const ExpensesBudget = ({ projectId, isOpen, setIsOpen }) => {
-  const [isEditing, setIsEditing] = useState(false);
-  const [editExpenseId, setEditExpenseId] = useState(null);
+  const [editingField, setEditingField] = useState({
+    id: null,
+    field: null,
+    value: ""
+  });
 
   const dispatch = useDispatch();
 
   useEffect(() => {
     dispatch(getExpense());
   }, [dispatch]);
-
 
   const [formData, setFormData] = useState({
     date: "",
@@ -29,17 +29,9 @@ const ExpensesBudget = ({ projectId, isOpen, setIsOpen }) => {
     comment: "",
   });
 
-  
   const getData = useSelector((state) => state.getExpense?.getData || []);
-
-
   const filterData = getData?.filter(
     (item) => item.projectId?.toString() === projectId?.toString()
-  );
- 
-
-  const { realData, isLoading, isError, errorMessage } = useSelector(
-    (state) => state.addExpense
   );
 
   const handleInputChange = (e) => {
@@ -50,23 +42,81 @@ const ExpensesBudget = ({ projectId, isOpen, setIsOpen }) => {
     }));
   };
 
+  // Handle click on a table cell to start editing
+  const handleFieldClick = (id, field, value) => {
+    setEditingField({
+      id,
+      field,
+      value: field === 'date' && value 
+        ? new Date(value).toISOString().split('T')[0] 
+        : value || ""
+    });
+  };
+
+  // Handle change during inline editing
+  const handleEditChange = (e) => {
+    setEditingField(prev => ({
+      ...prev,
+      value: e.target.value
+    }));
+  };
+
+  // Save edited field when Enter is pressed
+  const handleEditSubmit = async (e) => {
+    if (e.key === 'Enter') {
+      try {
+        const updatedData = {
+          [editingField.field]: editingField.value
+        };
+        
+        const resultAction = await dispatch(editExpense({ 
+          expenseId: editingField.id, 
+          updateData: updatedData 
+        }));
+        
+        if (editExpense.fulfilled.match(resultAction)) {
+          // Refresh data after successful edit
+          await dispatch(getExpense());
+          
+          Swal.fire({
+            icon: "success",
+            title: "Updated successfully!",
+            showConfirmButton: false,
+            timer: 1500,
+          });
+          
+          setEditingField({
+            id: null,
+            field: null,
+            value: ""
+          });
+        } else {
+          throw new Error(resultAction.error.message);
+        }
+      } catch (error) {
+        console.error("Error updating field:", error);
+        Swal.fire({
+          icon: "error",
+          title: "Update failed",
+          text: error.message || "Please try again later.",
+        });
+      }
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     try {
-      if (isEditing && editExpenseId) {
-        await dispatch(
-          editExpense({
-            expenseId: editExpenseId,
-            updateData: { ...formData, projectId },
-          })
-        );
-        await dispatch(getExpense());
-      } else {
-        await dispatch(addExpense({ ...formData, projectId }));
-        await dispatch(getExpense());
-      }
-     
+      await dispatch(addExpense({ ...formData, projectId }));
+      await dispatch(getExpense());
+      
+      Swal.fire({
+        icon: "success",
+        title: "Expense added!",
+        showConfirmButton: false,
+        timer: 1500,
+      });
+
       setIsOpen(false);
       setFormData({
         date: "",
@@ -79,12 +129,25 @@ const ExpensesBudget = ({ projectId, isOpen, setIsOpen }) => {
       });
     } catch (error) {
       console.error("Error adding expense:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Failed to add expense",
+        text: "Please try again later.",
+      });
     }
+  };
+
+  // Format date for display
+  const formatDate = (dateString) => {
+    if (!dateString) return "N/A";
+    const date = new Date(dateString);
+    return date.toLocaleDateString("en-IN");
   };
 
   return (
     <div className="flex items-center justify-center">
       <div className="w-full bg-white rounded-xl shadow-md overflow-x-auto max-h-[200px] overflow-y-auto">
+        <div className="max-h-[200px] overflow-y-auto">
         <table className="w-full text-sm text-gray-800">
           <thead className="bg-red-600 text-white text-[15px]">
             <tr>
@@ -98,38 +161,156 @@ const ExpensesBudget = ({ projectId, isOpen, setIsOpen }) => {
               <th className="border border-gray-400 p-1 text-center">Comment</th>
             </tr>
           </thead>
-
-          {filterData.map((item, index) => (
-            <tbody key={item._id}>
-              <tr
-                onClick={() => {
-                  setFormData({
-                    date: item.date.split("T")[0],
-                    paidTo: item.paidTo,
-                    invoiceNo: item.invoiceNo,
-                    amount: item.amount,
-                    gst: item.gst,
-                    tds: item.tds,
-                    comment: item.comment,
-                  });
-                  setEditExpenseId(item._id);
-                  setIsEditing(true);
-                  setIsOpen(true);
-                }}
-                className="hover:bg-gray-50 transition-all cursor-pointer"
-              >
+          <tbody>
+            {filterData.map((item, index) => (
+              <tr key={item._id} className="hover:bg-gray-50 transition-all">
+                {/* Serial No */}
                 <td className="p-3 text-center">{index + 1}</td>
-                <td className="p-3 text-center">{new Date(item.date).toLocaleDateString("en-IN")}</td>
-                <td className="p-3 text-center">{item.paidTo}</td>
-                <td className="p-3 text-center">{item.invoiceNo}</td>
-                <td className="p-3 text-center">₹{item.amount}</td>
-                <td className="p-3 text-center">₹{item.gst}</td>
-                <td className="p-3 text-center">₹{item.tds}</td>
-                <td className="p-3 italic text-gray-500">{item.comment}</td>
+                
+                {/* Date */}
+                <td 
+                  className="p-3 text-center cursor-pointer hover:bg-red-50"
+                  onClick={() => handleFieldClick(item._id, 'date', item.date)}
+                >
+                  {editingField.id === item._id && editingField.field === 'date' ? (
+                    <input
+                      type="date"
+                      value={editingField.value}
+                      onChange={handleEditChange}
+                      onKeyDown={handleEditSubmit}
+                      onBlur={() => setEditingField({ id: null, field: null, value: "" })}
+                      className="w-full px-2 py-1 border border-red-300 rounded focus:outline-red-500"
+                      autoFocus
+                    />
+                  ) : (
+                    formatDate(item.date)
+                  )}
+                </td>
+                
+                {/* Paid To */}
+                <td 
+                  className="p-3 text-center cursor-pointer hover:bg-red-50"
+                  onClick={() => handleFieldClick(item._id, 'paidTo', item.paidTo)}
+                >
+                  {editingField.id === item._id && editingField.field === 'paidTo' ? (
+                    <input
+                      type="text"
+                      value={editingField.value}
+                      onChange={handleEditChange}
+                      onKeyDown={handleEditSubmit}
+                      onBlur={() => setEditingField({ id: null, field: null, value: "" })}
+                      className="w-[100px]   px-2 py-1 border border-red-300 rounded focus:outline-red-500"
+                      autoFocus
+                    />
+                  ) : (
+                    item.paidTo || "-"
+                  )}
+                </td>
+                
+                {/* Invoice No */}
+                <td 
+                  className="p-3 text-center cursor-pointer hover:bg-red-50"
+                  onClick={() => handleFieldClick(item._id, 'invoiceNo', item.invoiceNo)}
+                >
+                  {editingField.id === item._id && editingField.field === 'invoiceNo' ? (
+                    <input
+                      type="text"
+                      value={editingField.value}
+                      onChange={handleEditChange}
+                      onKeyDown={handleEditSubmit}
+                      onBlur={() => setEditingField({ id: null, field: null, value: "" })}
+                      className="w-full px-2 py-1 border border-red-300 rounded focus:outline-red-500"
+                      autoFocus
+                    />
+                  ) : (
+                    item.invoiceNo || "-"
+                  )}
+                </td>
+                
+                {/* Amount */}
+                <td 
+                  className="p-3 w-14 text-center cursor-pointer hover:bg-red-50"
+                  onClick={() => handleFieldClick(item._id, 'amount', item.amount)}
+                >
+                  {editingField.id === item._id && editingField.field === 'amount' ? (
+                    <input
+                      type="number"
+                      value={editingField.value}
+                      onChange={handleEditChange}
+                      onKeyDown={handleEditSubmit}
+                      onBlur={() => setEditingField({ id: null, field: null, value: "" })}
+                      className="w-[100px] px-2 py-1 border border-red-300 rounded focus:outline-red-500"
+                      autoFocus
+                    />
+                  ) : (
+                    `₹${item.amount}` || "-"
+                  )}
+                </td>
+                
+                {/* GST */}
+                <td 
+                  className="p-3 text-center cursor-pointer hover:bg-red-50"
+                  onClick={() => handleFieldClick(item._id, 'gst', item.gst)}
+                >
+                  {editingField.id === item._id && editingField.field === 'gst' ? (
+                    <input
+                      type="number"
+                      value={editingField.value}
+                      onChange={handleEditChange}
+                      onKeyDown={handleEditSubmit}
+                      onBlur={() => setEditingField({ id: null, field: null, value: "" })}
+                      className="w-[100px] px-2 py-1 border border-red-300 rounded focus:outline-red-500"
+                      autoFocus
+                    />
+                  ) : (
+                    `₹${item.gst}` || "-"
+                  )}
+                </td>
+                
+                {/* TDS */}
+                <td 
+                  className="p-3 text-center cursor-pointer hover:bg-red-50"
+                  onClick={() => handleFieldClick(item._id, 'tds', item.tds)}
+                >
+                  {editingField.id === item._id && editingField.field === 'tds' ? (
+                    <input
+                      type="number"
+                      value={editingField.value}
+                      onChange={handleEditChange}
+                      onKeyDown={handleEditSubmit}
+                      onBlur={() => setEditingField({ id: null, field: null, value: "" })}
+                      className="w-[100px] px-2 py-1 border border-red-300 rounded focus:outline-red-500"
+                      autoFocus
+                    />
+                  ) : (
+                    `₹${item.tds}` || "-"
+                  )}
+                </td>
+                
+                {/* Comment */}
+                <td 
+                  className="p-3 italic text-gray-500 cursor-pointer hover:bg-red-50"
+                  onClick={() => handleFieldClick(item._id, 'comment', item.comment)}
+                >
+                  {editingField.id === item._id && editingField.field === 'comment' ? (
+                    <input
+                      type="text"
+                      value={editingField.value}
+                      onChange={handleEditChange}
+                      onKeyDown={handleEditSubmit}
+                      onBlur={() => setEditingField({ id: null, field: null, value: "" })}
+                      className="w-[150px] px-2 py-1 border border-red-300 rounded focus:outline-red-500"
+                      autoFocus
+                    />
+                  ) : (
+                    item.comment || "-"
+                  )}
+                </td>
               </tr>
-            </tbody>
-          ))}
+            ))}
+          </tbody>
         </table>
+        </div>
       </div>
 
       {/* Add Expense Modal */}
@@ -138,7 +319,7 @@ const ExpensesBudget = ({ projectId, isOpen, setIsOpen }) => {
           <div className="bg-white rounded-xl shadow-2xl w-full max-w-2xl mx-4 overflow-hidden transform transition-all duration-300 ">
             <div className="flex justify-between items-center border-b border-gray-100 p-3 bg-gradient-to-r from-red-50 to-pink-50">
               <h3 className="text-2xl font-bold text-gray-800">
-                {isEditing ? "Edit Expense" : "Add New Expense"}
+                Add New Expense
               </h3>
               <button
                 onClick={() => setIsOpen(false)}
@@ -164,15 +345,11 @@ const ExpensesBudget = ({ projectId, isOpen, setIsOpen }) => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Date Field */}
                 <div className="space-y-2">
-                  <label
-                    className="block text-sm font-medium text-gray-700"
-                    htmlFor="date"
-                  >
+                  <label className="block text-sm font-medium text-gray-700">
                     Date <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="date"
-                    id="date"
                     name="date"
                     value={formData.date}
                     onChange={handleInputChange}
@@ -183,15 +360,11 @@ const ExpensesBudget = ({ projectId, isOpen, setIsOpen }) => {
 
                 {/* Paid To Field */}
                 <div className="space-y-2">
-                  <label
-                    className="block text-sm font-medium text-gray-700"
-                    htmlFor="paidTo"
-                  >
+                  <label className="block text-sm font-medium text-gray-700">
                     Paid To <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="text"
-                    id="paidTo"
                     name="paidTo"
                     value={formData.paidTo}
                     onChange={handleInputChange}
@@ -203,15 +376,11 @@ const ExpensesBudget = ({ projectId, isOpen, setIsOpen }) => {
 
                 {/* Invoice No Field */}
                 <div className="space-y-2">
-                  <label
-                    className="block text-sm font-medium text-gray-700"
-                    htmlFor="invoiceNo"
-                  >
+                  <label className="block text-sm font-medium text-gray-700">
                     Invoice No. <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="text"
-                    id="invoiceNo"
                     name="invoiceNo"
                     value={formData.invoiceNo}
                     onChange={handleInputChange}
@@ -223,10 +392,7 @@ const ExpensesBudget = ({ projectId, isOpen, setIsOpen }) => {
 
                 {/* Amount Field */}
                 <div className="space-y-2">
-                  <label
-                    className="block text-sm font-medium text-gray-700"
-                    htmlFor="amount"
-                  >
+                  <label className="block text-sm font-medium text-gray-700">
                     Amount (₹) <span className="text-red-500">*</span>
                   </label>
                   <div className="relative">
@@ -235,7 +401,6 @@ const ExpensesBudget = ({ projectId, isOpen, setIsOpen }) => {
                     </span>
                     <input
                       type="number"
-                      id="amount"
                       name="amount"
                       value={formData.amount}
                       onChange={handleInputChange}
@@ -248,10 +413,7 @@ const ExpensesBudget = ({ projectId, isOpen, setIsOpen }) => {
 
                 {/* GST Field */}
                 <div className="space-y-2">
-                  <label
-                    className="block text-sm font-medium text-gray-700"
-                    htmlFor="gst"
-                  >
+                  <label className="block text-sm font-medium text-gray-700">
                     GST (₹) <span className="text-red-500">*</span>
                   </label>
                   <div className="relative">
@@ -260,7 +422,6 @@ const ExpensesBudget = ({ projectId, isOpen, setIsOpen }) => {
                     </span>
                     <input
                       type="number"
-                      id="gst"
                       name="gst"
                       value={formData.gst}
                       onChange={handleInputChange}
@@ -273,10 +434,7 @@ const ExpensesBudget = ({ projectId, isOpen, setIsOpen }) => {
 
                 {/* TDS Field */}
                 <div className="space-y-2">
-                  <label
-                    className="block text-sm font-medium text-gray-700"
-                    htmlFor="tds"
-                  >
+                  <label className="block text-sm font-medium text-gray-700">
                     TDS (₹) <span className="text-red-500">*</span>
                   </label>
                   <div className="relative">
@@ -285,7 +443,6 @@ const ExpensesBudget = ({ projectId, isOpen, setIsOpen }) => {
                     </span>
                     <input
                       type="number"
-                      id="tds"
                       name="tds"
                       value={formData.tds}
                       onChange={handleInputChange}
@@ -299,14 +456,10 @@ const ExpensesBudget = ({ projectId, isOpen, setIsOpen }) => {
 
               {/* Comment Field */}
               <div className="space-y-2">
-                <label
-                  className="block text-sm font-medium text-gray-700"
-                  htmlFor="comment"
-                >
+                <label className="block text-sm font-medium text-gray-700">
                   Comment
                 </label>
                 <textarea
-                  id="comment"
                   name="comment"
                   value={formData.comment}
                   onChange={handleInputChange}
@@ -343,7 +496,7 @@ const ExpensesBudget = ({ projectId, isOpen, setIsOpen }) => {
                         d="M12 4v16m8-8H4"
                       />
                     </svg>
-                    {isEditing ? "Update Expense" : "Add Expense"}
+                    Add Expense
                   </div>
                 </button>
               </div>

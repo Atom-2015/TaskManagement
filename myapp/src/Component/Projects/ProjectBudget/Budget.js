@@ -29,7 +29,7 @@ const Budget = () => {
 
   return (
     <div className="bg-gradient-to-tr from-indigo-100 via-white to-blue-100 py-1 px-1">
-      <div className="mx-auto h-[820px] bg-white rounded-3xl shadow-2xl p-2 space-y-6">
+      <div className="mx-auto h-[920px] bg-white rounded-3xl shadow-2xl p-2 space-y-6">
         {/* Header */}
         <div className="relative text-center border-b border-gray-200 pb-4">
           <h1 className="text-4xl font-extrabold text-gray-800 tracking-tight flex justify-center items-center gap-3">

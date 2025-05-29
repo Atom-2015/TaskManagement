@@ -22,6 +22,7 @@ const DiscussionExpenses = ({ projectId }) => {
     <div className='flex items-center justify-center'>
        
       <div className='w-[97%] bg-white rounded-xl shadow-md overflow-x-auto'>
+         <div className="max-h-[200px] overflow-y-auto">
         <table className='w-full text-sm text-gray-800'>
           <thead className='bg-red-600 text-white text-[15px]'>
             <tr>
@@ -38,7 +39,7 @@ const DiscussionExpenses = ({ projectId }) => {
               getData.map((item) => (
                 <tr key={item._id} className="border-b">
                   <td className='p-3 text-center'>
-                    {new Date(item.createdAt || item._id.toString().substring(0, 8)).toLocaleDateString()}
+                    {}
                   </td>
                   <td className='p-3 text-center'>{item.clientName}</td>
                   <td className='p-3 text-center'>{item.discussedBy}</td>
@@ -58,6 +59,7 @@ const DiscussionExpenses = ({ projectId }) => {
             )}
           </tbody>
         </table>
+        </div>
       </div>
     </div>
   );
