@@ -1,4 +1,7 @@
-import React, { useState } from 'react';
+import { dispatch } from 'd3';
+import React, { useEffect, useState } from 'react';
+import { addExpenceDiscussion } from '../../../FeatureRedux/expenceDiscussionSlice/createExpenceDiscussionSlice';
+
 
 const AddButtonDiscussionExpense = ({ onSubmit }) => {
   const [showForm, setShowForm] = useState(false);
@@ -10,6 +13,11 @@ const AddButtonDiscussionExpense = ({ onSubmit }) => {
     comment: '',
     nextFollowUp: ''
   });
+
+  // useEffect(()=>{
+  //   dispatch(addExpenceDiscussion())
+  // }
+  // ,[dispatch])
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
