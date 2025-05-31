@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getExpenseDiscussion } from '../../../FeatureRedux/expenceDiscussionSlice/getExpenceDiscussion';
 import AddButtonDiscussionExpense from './addButtonDiscussionExpense';
 
-const DiscussionExpenses = ({ projectId }) => {
+const DiscussionExpenses = ({ projectId ,expenseDisSearch}) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -12,9 +12,30 @@ const DiscussionExpenses = ({ projectId }) => {
     }
   }, [dispatch, projectId]);
 
+  
+
+
+useEffect(() => {
+  const originalStyle = window.getComputedStyle(document.body).overflow;
+  document.body.style.overflow = "hidden"; // ✅ prevent scroll
+
+  return () => {
+    document.body.style.overflow = originalStyle; // 🧹 restore scroll
+  };
+}, []);
+
+
   const { getData, isError, isLoading, isSuccess } = useSelector(
     (state) => state.getExpenseDiscussion
   );
+
+  const filteredData = Array.isArray(getData)
+  ? getData.filter((item) =>
+      item.clientName?.toLowerCase().includes(expenseDisSearch?.toLowerCase()) ||
+      item.comment?.toLowerCase().includes(expenseDisSearch?.toLowerCase())
+    )
+  : [];
+
 
   console.log('This is data from expense discussion', getData);
 
@@ -34,30 +55,30 @@ const DiscussionExpenses = ({ projectId }) => {
               <th className='p-2 text-center'>Next FollowUp</th>
             </tr>
           </thead>
-          <tbody>
-            {Array.isArray(getData) && getData.length > 0 ? (
-              getData.map((item) => (
-                <tr key={item._id} className="border-b">
-                  <td className='p-3 text-center'>
-                    {}
-                  </td>
-                  <td className='p-3 text-center'>{item.clientName}</td>
-                  <td className='p-3 text-center'>{item.discussedBy}</td>
-                  <td className='p-3 text-center'>{item.pending ? 'Yes' : 'No'}</td>
-                  <td className='p-3 text-center'>{item.comment}</td>
-                  <td className='p-3 text-center'>
-                    {new Date(item.nextFollowUp).toLocaleDateString()}
-                  </td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan="6" className='p-3 text-center text-gray-500'>
-                  {isLoading ? 'Loading...' : isError ? 'Failed to load data' : 'No discussions found'}
-                </td>
-              </tr>
-            )}
-          </tbody>
+         <tbody>
+  {filteredData.length > 0 ? (
+    filteredData.map((item) => (
+      <tr key={item._id} className="border-b">
+        <td className='p-3 text-center'>
+          {new Date(item.createdAt).toLocaleDateString()}
+        </td>
+        <td className='p-3 text-center'>{item.clientName}</td>
+        <td className='p-3 text-center'>{item.discussedBy}</td>
+        <td className='p-3 text-center'>{item.pending ? 'Yes' : 'No'}</td>
+        <td className='p-3 text-center'>{item.comment}</td>
+        <td className='p-3 text-center'>
+          {new Date(item.nextFollowUp).toLocaleDateString()}
+        </td>
+      </tr>
+    ))
+  ) : (
+    <tr>
+      <td colSpan="6" className='p-3 text-center text-gray-500'>
+        {isLoading ? 'Loading...' : isError ? 'Failed to load data' : 'No matching discussions found'}
+      </td>
+    </tr>
+  )}
+</tbody>
         </table>
         </div>
       </div>

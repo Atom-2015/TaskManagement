@@ -6,7 +6,7 @@ import { addClientDis } from "../../../FeatureRedux/ClientDisSlice/addClientdisS
 import { editClientDis } from "../../../FeatureRedux/ClientDisSlice/editClientdisSlice";
 import Swal from "sweetalert2";
 
-const DiscussionRevenue = ({ projectId, isRevOpen, setIsRevOpen }) => {
+const DiscussionRevenue = ({ clientDisSearch,projectId, isRevOpen, setIsRevOpen }) => {
   const [editingField, setEditingField] = useState({
     id: null,
     field: null,
@@ -25,14 +25,22 @@ const DiscussionRevenue = ({ projectId, isRevOpen, setIsRevOpen }) => {
   const [filterData, setFilterData] = useState([]);
   
   // Filter data based on projectId
-  useEffect(() => {
-    if (getData?.data) {
-      const filtered = getData.data.filter(
-        (item) => item.projectId?.toString() === projectId?.toString()
-      );
-      setFilterData(filtered || []);
-    }
-  }, [getData, projectId]);
+useEffect(() => {
+  if (getData?.data) {
+    const filtered = getData.data
+      .filter((item) => item.projectId?.toString() === projectId?.toString())
+      .filter((item) => {
+        if (!clientDisSearch) return true;
+        const search = clientDisSearch.toLowerCase();
+        return (
+          item.client_name?.toLowerCase().includes(search) ||
+          item.discussed_by?.toLowerCase().includes(search)
+        );
+      });
+    setFilterData(filtered || []);
+  }
+}, [getData, projectId, clientDisSearch]);
+
 
   // Form state for adding new discussion
   const [formData, setFormData] = useState({

@@ -1,9 +1,15 @@
-import { dispatch } from 'd3';
+
 import React, { useEffect, useState } from 'react';
 import { addExpenceDiscussion } from '../../../FeatureRedux/expenceDiscussionSlice/createExpenceDiscussionSlice';
+ import Swal from 'sweetalert2';
+import { useDispatch } from 'react-redux';
+
+
+
 
 
 const AddButtonDiscussionExpense = ({ onSubmit }) => {
+  const dispatch = useDispatch();
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({
     date: '',
@@ -27,28 +33,45 @@ const AddButtonDiscussionExpense = ({ onSubmit }) => {
     });
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (onSubmit) {
-      onSubmit(formData);
-    }
-    console.log('Submitted:', formData);
-    setShowForm(false);
-    setFormData({
-      date: '',
-      clientName: '',
-      discussedBy: '',
-      pending: false,
-      comment: '',
-      nextFollowUp: ''
+ 
+
+const handleSubmit = (e) => {
+  e.preventDefault();
+  dispatch(addExpenceDiscussion(formData))
+    .unwrap()
+    .then(() => {
+      setShowForm(false);
+      setFormData({
+        date: '',
+        clientName: '',
+        discussedBy: '',
+        pending: false,
+        comment: '',
+        nextFollowUp: ''
+      });
+
+      Swal.fire({
+        icon: 'success',
+        title: 'Success',
+        text: 'Expense discussion added successfully!',
+      });
+    })
+    .catch((error) => {
+      console.log(error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'Something went wrong while adding the discussion.',
+      });
     });
-  };
+};
+
 
   return (
     <div className="p-3">
       <button
         onClick={() => setShowForm(true)}
-        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+        className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
       >
         Add Discussion
       </button>
