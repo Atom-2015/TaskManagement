@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { addExpenceDiscussion } from '../../../FeatureRedux/expenceDiscussionSlice/createExpenceDiscussionSlice';
+import { getExpenseDiscussion } from '../../../FeatureRedux/expenceDiscussionSlice/getExpenceDiscussion';
 
 const AddButtonDiscussionExpense = ({ onSubmit , projectId }) => {
   const [showForm, setShowForm] = useState(false);
@@ -38,6 +39,7 @@ const AddButtonDiscussionExpense = ({ onSubmit , projectId }) => {
       nextFollowUp: ''
     });
     setShowForm(false);
+    await dispatch(getExpenseDiscussion({projectId}));
   };
 
   return (
