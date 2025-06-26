@@ -93,6 +93,17 @@ const UserdetailsForm = ({ userId, onClose, userDetails, companyList }) => {
                     {selectedUser.designation}
                   </span>
                 </div>
+
+                <div className="flex">
+                  <span className="w-24 text-gray-400 font-semibold text-xs">
+                    Date of Joining:
+                  </span>
+                  <span className="text-gray-300 text-xs">
+                  {new Date(selectedUser.date_of_joining).toLocaleDateString("en-IN")}
+
+
+                  </span>
+                </div>
               </div>
             </div>
 

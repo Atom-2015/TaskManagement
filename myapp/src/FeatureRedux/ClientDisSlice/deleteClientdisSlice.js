@@ -5,6 +5,7 @@ export const delClientDis = createAsyncThunk(
         "delClientDis",
         async(clientId, {rejectWithValue}) => {
             try{
+              console.log("delete kamm  kar rwaha iuha",clientId)
                 const response = await axiosInstance.delete(`/api/client/${clientId}`)
                 return response.data;
             }

@@ -1,12 +1,23 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useDispatch,useSelector } from 'react-redux';
+import { applyLeaveUser } from '../../FeatureRedux/leaveSlice/applyLeaveSlice';
+import Swal from 'sweetalert2';
+import { getLeaveUser } from '../../FeatureRedux/leaveSlice/getLeaveUserSlice';
 
 const LeaveApply = ({ onClose }) => {
+  const dispatch= useDispatch();
+
+
+
   const [selectedLeaveType, setSelectedLeaveType] = useState('');
   const [fromDate, setFromDate] = useState('');
   const [toDate, setToDate] = useState('');
   const [reason, setReason] = useState('');
   const [charCount, setCharCount] = useState(0);
   const maxCharCount = 30;
+
+  const {postData:leaveData,isLoading,isError} = useSelector((state) => state.applyLeaveUser);
+
 
   const leaveTypes = [
     { title: "Casual Leave", dotColor: "bg-purple-500" },
@@ -23,11 +34,50 @@ const LeaveApply = ({ onClose }) => {
     }
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log({ selectedLeaveType, fromDate, toDate, reason });
-    onClose(); // Optionally close after submission
+
+
+const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  if (!selectedLeaveType || !fromDate || !toDate || !reason.trim()) {
+    Swal.fire({
+      icon: 'warning',
+      title: 'Incomplete Fields',
+      text: 'Please fill out all fields before submitting.',
+    });
+    return;
+  }
+
+  const leaveData = {
+    leaveType: selectedLeaveType.toUpperCase().split(" ")[0],
+    fromDate,
+    toDate,
+    reason,
   };
+
+try {
+  const res = await dispatch(applyLeaveUser(leaveData)).unwrap();
+
+  Swal.fire({
+    icon: 'success',
+    title: 'Leave Applied',
+    text: res.message || 'Leave applied successfully!',
+    timer: 2000,
+    showConfirmButton: false,
+  });
+  dispatch(getLeaveUser());
+
+  onClose();
+} catch (error) {
+  Swal.fire({
+    icon: 'error',
+    title: 'Failed to Apply',
+    text: error?.message || 'Something went wrong. Try again later.',
+  });
+}
+
+};
+
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm bg-opacity-40 p-4">
@@ -94,14 +144,14 @@ const LeaveApply = ({ onClose }) => {
           </div>
 
           {/* Apply To */}
-          <div>
+          {/* <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Apply To</label>
             <select className="w-full p-2.5 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
               <option>Team Lead</option>
               <option>Manager</option>
               <option>HR</option>
             </select>
-          </div>
+          </div> */}
 
           {/* Reason */}
           <div>

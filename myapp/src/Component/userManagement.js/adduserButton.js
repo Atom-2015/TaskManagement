@@ -32,6 +32,7 @@ function AdduserButton() {
     state: "",
     city: "",
     designation: "",
+    date_of_joining:"",
     Department: "",
     Company: "",
     dob: "",
@@ -232,6 +233,7 @@ function AdduserButton() {
           state: "",
           city: "",
           designation: "",
+          date_of_joining:"",
           Department: "",
           Company: "",
           dob: "",
@@ -537,6 +539,8 @@ function AdduserButton() {
                   </div>
                 </div>
 
+                <div className="flex flex-row gap-2">
+
                 <div className="mb-4 w-[220px]">
                   <label className="block text-gray-300 font-medium mb-2">
                     Company
@@ -560,6 +564,23 @@ function AdduserButton() {
                       ))}
                   </select>
                 </div>
+
+                <div className="mb-4 w-[220px]">
+  <label className="block text-gray-300 font-medium mb-2">
+    Date of Joining
+  </label>
+  <input
+    type="date"
+    name="date_of_joining"
+    value={formData.date_of_joining}
+    onChange={handleInputChange}
+    onClick={(e) => e.target.showPicker()}
+    className="w-full border border-gray-600 rounded px-3 py-2 focus:outline-none focus:ring focus:ring-blue-300 bg-gray-800 text-white"
+    required
+  />
+</div>
+
+</div>
 
                 {/* Date of Birth and Status */}
                 <div className="flex justify-between items-center gap-2">

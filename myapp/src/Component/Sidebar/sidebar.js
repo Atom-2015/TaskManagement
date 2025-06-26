@@ -12,6 +12,7 @@ import './sidebar.css';
 import { useSelector, useDispatch } from 'react-redux';
 import { Gauge, Briefcase, Users, Settings, CalendarDays,TowerControl,AudioWaveform  } from 'lucide-react';
 import { BiTask } from "react-icons/bi";
+import { MdHolidayVillage } from "react-icons/md";
 import Header from './header';
 
 function Sidebar() {
@@ -35,7 +36,7 @@ function Sidebar() {
         localStorage.clear('token');
         navigate('/signin');
     };
-    const [permission , setPermission] = useState(false)
+    const [permission , setPermission] = useState(true)
     useEffect(()=>{
         if(localStorage.getItem('kijiethPanday') === "jdkfj"){
             setPermission(true);
@@ -185,6 +186,20 @@ function Sidebar() {
                         >
                             <LiaCompressArrowsAltSolid  size={20} />
                             <span>Company</span>
+                        </NavLink>
+                    </div>
+                    ):""}
+                    
+                    {/*holiday section*/}
+                    {permission ? (
+                        <div className="mb-4 relative group">
+                        <NavLink
+                            to='/Holiday'
+                            className={({ isActive }) =>
+                                `py-2 px-4 rounded-lg flex align-middle items-center gap-[10px] no-underline ${isActive ? "bg-gray-600 text-white" : "text-white hover:bg-gray-600"}`}
+                        >
+                            <MdHolidayVillage size={20} />
+                            <span>Holiday</span>
                         </NavLink>
                     </div>
                     ):""}

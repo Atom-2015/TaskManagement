@@ -7,6 +7,10 @@ export const getClientDis = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.get("/api/client/allClient"); // Should likely be GET, not POST
+      
+
+       console.log("Fetched data inside thunk:", response.data);
+
       return response.data;
     } catch (error) {
       return rejectWithValue(
@@ -45,6 +49,9 @@ const getClientDisSlice = createSlice({
         state.getData = action.payload;
         state.isSuccess = true;
         state.errorMessage = "";
+
+          console.log("✅ Slice received payload:", action.payload);
+
       })
 
       // Rejected

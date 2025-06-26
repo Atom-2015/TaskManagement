@@ -6,13 +6,13 @@ export const getExpenseDiscussion = createAsyncThunk (
     "getExpenseDiscussion",
     async ( projectId, {rejectWithValue}) =>{
         try{
-            // console.log(`project id rahull :::: lolla ${JSON.stringify(projectId.projectId)}`);
-            const response = await axiosInstance.get('/api/expense/AllexpenseDiscussion' , {
+            // console.log(`project id rahull :::: lolla ${JSON.stringify(projectId//)}`);
+            const response = await axiosInstance.get('/api/expenseDis/AllexpenseDiscussion' , {
                 headers: {
                     'x-project-id':projectId.projectId
                 }
             } );
-            console.log(response.data.data)
+        
             return response.data;
         }
         catch(error){

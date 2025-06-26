@@ -1,15 +1,10 @@
-
-import React, { useEffect, useState } from 'react';
-import { addExpenceDiscussion } from '../../../FeatureRedux/expenceDiscussionSlice/createExpenceDiscussionSlice';
- import Swal from 'sweetalert2';
+import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
+import { addExpenceDiscussion } from '../../../FeatureRedux/expenceDiscussionSlice/createExpenceDiscussionSlice';
+import { getExpenseDiscussion } from '../../../FeatureRedux/expenceDiscussionSlice/getExpenceDiscussion';
+import Swal from 'sweetalert2';
 
-
-
-
-
-const AddButtonDiscussionExpense = ({ onSubmit }) => {
-  const dispatch = useDispatch();
+const AddButtonDiscussionExpense = ({ onSubmit , projectId }) => {
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({
     date: '',
@@ -20,11 +15,6 @@ const AddButtonDiscussionExpense = ({ onSubmit }) => {
     nextFollowUp: ''
   });
 
-  // useEffect(()=>{
-  //   dispatch(addExpenceDiscussion())
-  // }
-  // ,[dispatch])
-
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData({
@@ -32,15 +22,29 @@ const AddButtonDiscussionExpense = ({ onSubmit }) => {
       [name]: type === 'checkbox' ? checked : value
     });
   };
+  const dispatch = useDispatch();
 
- 
 
-const handleSubmit = (e) => {
-  e.preventDefault();
-  dispatch(addExpenceDiscussion(formData))
-    .unwrap()
-    .then(() => {
-      setShowForm(false);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    try {
+      if (onSubmit) {
+        onSubmit(formData);
+      }
+      
+      await dispatch(addExpenceDiscussion({ formData, projectId }));
+      
+      // Success notification
+      await Swal.fire({
+        icon: 'success',
+        title: 'Success!',
+        text: 'Discussion added successfully',
+        timer: 2000,
+        showConfirmButton: false
+      });
+      
+      // Reset form and refresh data
       setFormData({
         date: '',
         clientName: '',
@@ -49,24 +53,21 @@ const handleSubmit = (e) => {
         comment: '',
         nextFollowUp: ''
       });
-
-      Swal.fire({
-        icon: 'success',
-        title: 'Success',
-        text: 'Expense discussion added successfully!',
-      });
-    })
-    .catch((error) => {
-      console.log(error);
+      
+      setShowForm(false);
+      await dispatch(getExpenseDiscussion({ projectId }));
+    } catch (error) {
+      // Error notification
       Swal.fire({
         icon: 'error',
-        title: 'Oops...',
-        text: 'Something went wrong while adding the discussion.',
+        title: 'Error!',
+        text: 'Failed to add discussion',
+        timer: 2000,
+        showConfirmButton: false
       });
-    });
-};
-
-
+      console.error('Error adding discussion:', error);
+    }
+  };
   return (
     <div className="p-3">
       <button

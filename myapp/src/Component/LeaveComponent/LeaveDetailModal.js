@@ -55,15 +55,11 @@ const LeaveDetailsModal = ({ leave, onClose, onStatusChange }) => {
         <div className="p-6 space-y-6">
           
           {/* Employee Info */}
-          <div className="flex items-center space-x-4 p-4 bg-gray-50 rounded-xl border border-gray-100">
-            <div className="flex items-center justify-center w-12 h-12 rounded-full bg-blue-100 text-blue-600 font-bold text-xl">
-              {leave.name.charAt(0)}
-            </div>
-            <div>
-              <h4 className="font-medium text-gray-900">{leave.name}</h4>
-              <p className="text-sm text-gray-500">Employee ID: {leave.id}</p>
-            </div>
-          </div>
+          <p className="text-base font-medium text-gray-800 flex items-center gap-2">
+  <FiCalendar className="text-indigo-500" />
+  {formatDate(leave.fromDate)} → {formatDate(leave.toDate)}
+</p>
+
 
           {/* Details Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -85,7 +81,7 @@ const LeaveDetailsModal = ({ leave, onClose, onStatusChange }) => {
               <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">Duration</p>
               <p className="text-base font-medium text-gray-800 flex items-center gap-2">
                 <FiCalendar className="text-indigo-500" />
-                {formatDate(leave.from)} → {formatDate(leave.to)}
+                {formatDate(leave.fromDate)} → {formatDate(leave.toDate)}
               </p>
             </div>
             
