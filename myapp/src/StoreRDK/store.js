@@ -40,6 +40,17 @@ import  applyLeaveUser  from "../FeatureRedux/leaveSlice/applyLeaveSlice";
 import  getLeaveUser  from "../FeatureRedux/leaveSlice/getLeaveUserSlice";
 import  getLeavebyCompany  from "../FeatureRedux/leaveSlice/getALLleavebyCompany";
 import  updateLeaveStatus  from "../FeatureRedux/leaveSlice/editStatusLeaveByCompanySlice";
+import  AddHolidaycreate  from "../FeatureRedux/HolidaySlice/AddHolidaySlice";
+import addHolidayReducer from "../FeatureRedux/HolidaySlice/AddHolidaySlice";
+import  AddholidayList  from "../FeatureRedux/HolidaySlice/CreateAllHolidaySlice";
+import  getHolidayList  from "../FeatureRedux/HolidaySlice/GetHolidaySlice";
+import editHoliday  from "../FeatureRedux/HolidaySlice/editSingleHolidaySlice";
+// import  DelSingleHoliday  from "../FeatureRedux/HolidaySlice/DeleteSingleHolidaySlice";
+import  DelSingleHoliday  from "../FeatureRedux/HolidaySlice/DeleteSingleHolidaySlice";
+import  AddOverridesCreate  from "../FeatureRedux/HolidaySlice/AddOverridesSlice";
+import EditOverrIdesCreate  from "../FeatureRedux/HolidaySlice/EditOverridesSlice";
+import DelSingleOverrides  from "../FeatureRedux/HolidaySlice/DeleteSingleOverrides";
+
 
 export const store = configureStore({
   reducer: {
@@ -85,5 +96,16 @@ export const store = configureStore({
     getLeaveUser:getLeaveUser,
     getLeavebyCompany:getLeavebyCompany,
     updateLeaveStatus:updateLeaveStatus,
-  },
+   
+     addHoliday: addHolidayReducer,
+     AddholidayList:AddholidayList,
+     getHolidayList:getHolidayList,
+     editHoliday:editHoliday,
+    DelSingleHoliday:DelSingleHoliday,
+    AddOverridesCreate:AddOverridesCreate,
+    EditOverrIdesCreate:EditOverrIdesCreate,
+    DelSingleOverrides:DelSingleOverrides
+
+    
+  }
 });

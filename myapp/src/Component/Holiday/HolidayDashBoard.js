@@ -1,6 +1,7 @@
 import React from "react";
 import { MdHolidayVillage } from "react-icons/md";
 import ListHoliday from "./ListHoliday";
+import Overrides from "./Overrides";
 
 const HolidayDashBoard = () => {
   return (
@@ -14,10 +15,15 @@ const HolidayDashBoard = () => {
       </div>
       <hr className="border-t border-gray-500 mb-6 w-full" />
 
-        <div>
+        <div className="flex flex-row gap-2">
+        <div className="w-1/2">
             <ListHoliday/>
+            
         </div>
-
+        <div className="w-1/2">
+        <Overrides/>
+        </div>
+        </div>
 
       
     </div>
