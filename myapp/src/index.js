@@ -129,7 +129,9 @@ const ProtectedRoute = ({ element }) => {
         setIsAuthenticated(true);
       } else {
         setIsAuthenticated(false);
+        // navigate('/signin'); // Navigate to signin page if not authenticated
         navigate('/signin'); // Navigate to signin page if not authenticated
+
       }
       setLoading(false); // Set loading to false after the auth check
     };
