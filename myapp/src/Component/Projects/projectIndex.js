@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import Projectlist from "./projectlist";
 import AddProjectButton from "./addProjectButton";
+
+import AddProjectButton1 from "./AddProjectButton1";
+import ProjectList1 from "./ProjectList1";
  
 
 
@@ -12,14 +15,17 @@ function ProjectIndex() {
        
       {/* <h1 className="text-white text-xl font-bold mb-4">Project Management</h1> */}
       <div className="flex  items-center mb-4">
-        <div className="ml-auto">          
-          <AddProjectButton />
-        </div>
+        {localStorage.getItem("kijiethPanday")=== "jdkfj" ?(<div className="ml-auto">          
+          <AddProjectButton1 />
+        </div>):""}
       </div>
-      <Projectlist />  
+       {/* <Projectlist />    */}
+       <ProjectList1/> 
+     
       
     </div>
   );
 }
+
 
 export default ProjectIndex;

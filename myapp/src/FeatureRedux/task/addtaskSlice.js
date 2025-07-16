@@ -1,16 +1,25 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axiosInstance from "../axiosInstance";
+import axiosInstance from "../../axiosInstance";
+import axios from "axios";
 
 // Async Thunk to Add Task
+// data : submissionData , id:projectId
 export const addtask = createAsyncThunk(
     'additionoftask',
-    async (taskdata, { rejectWithValue }) => {
+    async ({data , id}, { rejectWithValue }) => {
         try {
-            const response = await axiosInstance.post('/api/task/createTask', taskdata, {
-                headers: {
-                    'x-project-id':localStorage.getItem('Projectid')
+            const response = await axiosInstance.post('/api/task/createTask', data, {
+                headers: { 
+                    'x-project-id':id
+                    // 'x-project-id':taskdata.ProjectName
                 }
             });
+            // console.log(`yo hai response to check status ${JSON.stringify(response.status)}`)
+            // console.log(`yo hai response to check status ${JSON.stringify(data)}`)
+            // if(response.status === 201){
+            //    const aditya = await axios.post('http://localhost:3001/api/mailTask' , data);
+            //    console.log(`this is aditya ${aditya}`)
+            // }
             return response.data;  // Ensure the data is returned here
         } catch (error) {
             return rejectWithValue(

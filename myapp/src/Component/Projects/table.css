@@ -1,0 +1,37 @@
+Add to your table.css or style tag
+.draggable-row {
+  transition: all 0.2s ease;
+}
+
+.dragging {
+  background: #f0f7ff !important;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1) !important;
+  border: 1px solid #b3d4ff !important;
+  opacity: 0.9;
+  z-index: 1000;
+}
+
+table {
+  table-layout: fixed;
+  width: 100%;
+}
+
+.drag-handle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: move;
+  user-select: none;
+}
+
+/* Ensure the table maintains its structure during drag */
+tbody {
+  position: relative;
+}
+
+/* Fix for the placeholder */
+[data-rbd-placeholder-context-id] {
+  background: #e9f5ff;
+  border: 1px dashed #b3d4ff;
+  border-radius: 4px;
+}

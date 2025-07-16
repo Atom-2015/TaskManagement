@@ -6,7 +6,7 @@ import { faBell } from '@fortawesome/free-regular-svg-icons';
 function Header() {
   const [isUserDropdownOpen, setUserDropdownOpen] = useState(false);
   const [isNotifDropdownOpen, setNotifDropdownOpen] = useState(false);
-  const userName = "Ankit Hooda"; // Replace this dynamically if needed
+  const userName = "Atom Aviation"; // Replace this dynamically if needed
 
   // Refs for detecting clicks outside dropdowns
   const notifRef = useRef(null);
@@ -33,7 +33,7 @@ function Header() {
   };
 
   return (
-    <div className="flex justify-between items-center bg-gray-800 text-white p-4 fixed top-0 left-0 right-0 z-10 h-[70px] shadow-[0px_0px_4px_2px_white,0px_10px_20px_rgba(0,0,0,0.4)]">
+    <div className="flex justify-between items-center bg-gray-800 text-white p-4 fixed top-0 left-0 right-0 z-10 h-[70px] border-b-2 border-gray-600">
       {/* Left Side: Logo */}
       <div className="flex items-center">
         <img 

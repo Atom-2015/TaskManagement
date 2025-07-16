@@ -21,9 +21,13 @@ function Sign_in() {
                 }
             });
             const data = await response.data;
+            // return;
             setLoader(false);
             if (data.user) {
-                localStorage.setItem('token', data.user);
+                if (data?.isCompany === "jdkfj") {
+                    localStorage.setItem('kijiethPanday', data.isCompany);
+                }                  
+                localStorage.setItem('token', data.user);                
                 localStorage.setItem('company_id', data.company_id);
                 window.location.href = '/dashboard';
             }

@@ -9,7 +9,7 @@ export const AddProject = createAsyncThunk(
       // Send a POST request to the backend API
       const response = await axiosInstance.post('/api/project/addproject', formData);
       return response.data; // Assuming response contains all projects
-    } catch (error) {
+    } catch (error) {   
       console.error('Error adding project:', error);
       return rejectWithValue(
         error.response?.data?.message || 'Failed to create project'

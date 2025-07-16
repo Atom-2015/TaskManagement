@@ -5,11 +5,14 @@ export const alltasks = createAsyncThunk(
   "subtask/alltasks",
   async (_, { rejectWithValue }) => {
     try {
+ 
       const response = await axiosInstance.get("/api/task/alltask",    {
         headers:{
           'x-project-id':localStorage.getItem('Projectid')
         }
       });
+    
+    
       return response.data.data;
     } catch (error) {
       return rejectWithValue(
@@ -20,6 +23,7 @@ export const alltasks = createAsyncThunk(
 );
 
 const subtasklist = createSlice({
+  
   name: "subtasklist",
   initialState: {
     isError: false,

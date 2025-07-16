@@ -7,6 +7,9 @@
 
 
 
+
+
+
 /* Define the typing animation */
 @keyframes typing {
     0% {
@@ -73,3 +76,20 @@
     border-style: solid;
   }
 
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+   ::-webkit-scrollbar-track {
+    background:white;
+    border-radius: 10px;
+  }
+  ::-webkit-scrollbar-thumb {
+    margin-top: 1px;
+    background: gray;
+    border-radius: 10px;
+    
+  } 
+  ::-webkit-scrollbar-thumb:hover {
+    background: #555;
+  }
