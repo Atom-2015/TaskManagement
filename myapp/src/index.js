@@ -40,6 +40,8 @@ import PayrollDashboard from "./Component/PayRoll/PayrollDashboard";
 import LeaveMain from "./Component/LeaveComponent/LeaveManagement/LeaveMain";
 import Leavemyteam from "./Component/LeaveComponent/LeaveManagement/Leavemyteam";
 import HolidayDashBoard from "./Component/Holiday/HolidayDashBoard";
+import UserAttendence from "./Component/Attendance/UserAttendence";
+import CompanyAttendence from "./Component/Attendance/CompanyAttendence";
 
 // ProtectedRoute Component
 const ProtectedRoute = ({ element }) => {
@@ -129,7 +131,12 @@ const router = createBrowserRouter([
         ],
       },
 
-      { path: "/attendance", element: <Attendanceindex /> },
+      { path: "/attendance", element: <Attendanceindex />,
+        children:[
+          {path:"User",element:<UserAttendence/>},
+          {path:"Company",element:<CompanyAttendence/>}
+        ]
+       },
       { path: "/test", element: <Test /> },
 
       {

@@ -10,6 +10,7 @@ import HashLoader from "react-spinners/HashLoader";
 import MoonLoader from "react-spinners/MoonLoader";
 
 import { getCompany } from "../../FeatureRedux/companySlice/getCompanyslice";
+import { getShift } from "../../FeatureRedux/ShiftingSlice/getShiftSlice";
 
 function AdduserButton() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -32,9 +33,10 @@ function AdduserButton() {
     state: "",
     city: "",
     designation: "",
-    date_of_joining:"",
+    date_of_joining: "",
     Department: "",
     Company: "",
+    shiftId: "",
     dob: "",
     status: "Active",
   });
@@ -66,8 +68,24 @@ function AdduserButton() {
   };
 
   useEffect(() => {
+    dispatch(getShift());
+  }, [dispatch]);
+
+  useEffect(() => {
     dispatch(getCompany());
   }, [dispatch]);
+
+  const { getData,isLoading,isError,errorMessage } = useSelector((state) => state.getShift || {});
+  const shiftOptions = getData?.shifts?.map((shift) => ({
+    id: shift._id,
+    in: shift.punchIn,
+    out: shift.punchOut,
+    name: shift.name,
+  }));
+
+  console.log("shhift:", shiftOptions);
+ 
+
 
   const data1 = useSelector((state) => state.getCompany) || {};
   // console.log(`COmpany wala data ${JSON.stringify(data1)}}`);
@@ -99,76 +117,81 @@ function AdduserButton() {
   //   }
   // };
 
-     const handleImageUpload = (e) => {
-      const file = e.target.files[0];
-      if (!file || !file.type.startsWith("image/")) return;
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (!file || !file.type.startsWith("image/")) return;
 
-      if (file.size <= 100 * 1024) {
-          const imageUrl = URL.createObjectURL(file);
-          setSelectedImage(imageUrl);
-          fileInputRef.current.files = e.target.files;
-          return;
-      }
+    if (file.size <= 100 * 1024) {
+      const imageUrl = URL.createObjectURL(file);
+      setSelectedImage(imageUrl);
+      fileInputRef.current.files = e.target.files;
+      return;
+    }
 
-      setIsCompressing(true);
-      setCompressionProgress(0);
+    setIsCompressing(true);
+    setCompressionProgress(0);
 
-      // Fake progress update every 100ms
-      let progress = 0;
-      const progressInterval = setInterval(() => {
-          progress += 5;
-          setCompressionProgress(Math.min(progress, 95));
-      }, 2000);
+    // Fake progress update every 100ms
+    let progress = 0;
+    const progressInterval = setInterval(() => {
+      progress += 5;
+      setCompressionProgress(Math.min(progress, 95));
+    }, 2000);
 
-      const reader = new FileReader();
-      reader.onload = (event) => {
-          const img = new Image();
-          img.onload = () => {
-              const canvas = document.createElement("canvas");
-              const maxWidth = 800;
-              const scaleSize = maxWidth / img.width;
-              canvas.width = maxWidth;
-              canvas.height = img.height * scaleSize;
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        const maxWidth = 800;
+        const scaleSize = maxWidth / img.width;
+        canvas.width = maxWidth;
+        canvas.height = img.height * scaleSize;
 
-              const ctx = canvas.getContext("2d");
-              ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
-              const compressImage = (quality) => {
-                  return new Promise((resolve) => {
-                      canvas.toBlob((blob) => {
-                          if (blob.size <= 100 * 1024 || quality < 0.1) {
-                              resolve(blob);
-                          } else {
-                              resolve(compressImage(quality - 0.1));
-                          }
-                      }, "image/jpeg", quality);
-                  });
-              };
+        const compressImage = (quality) => {
+          return new Promise((resolve) => {
+            canvas.toBlob(
+              (blob) => {
+                if (blob.size <= 100 * 1024 || quality < 0.1) {
+                  resolve(blob);
+                } else {
+                  resolve(compressImage(quality - 0.1));
+                }
+              },
+              "image/jpeg",
+              quality
+            );
+          });
+        };
 
-              compressImage(0.8).then((compressedBlob) => {
-                  clearInterval(progressInterval);
-                  setCompressionProgress(100);
-                  setTimeout(() =>   {setIsCompressing(false);               // ✅ Hide progress after 1 sec
-          setCompressionProgress(0);             // ✅ Optional reset
-      }, 2000);
+        compressImage(0.8).then((compressedBlob) => {
+          clearInterval(progressInterval);
+          setCompressionProgress(100);
+          setTimeout(() => {
+            setIsCompressing(false); // ✅ Hide progress after 1 sec
+            setCompressionProgress(0); // ✅ Optional reset
+          }, 2000);
 
-                  const resizedUrl = URL.createObjectURL(compressedBlob);
-                  setSelectedImage(resizedUrl);
+          const resizedUrl = URL.createObjectURL(compressedBlob);
+          setSelectedImage(resizedUrl);
 
-                  const resizedFile = new File([compressedBlob], file.name, {
-                      type: "image/jpeg",
-                      lastModified: Date.now(),
-                  });
+          const resizedFile = new File([compressedBlob], file.name, {
+            type: "image/jpeg",
+            lastModified: Date.now(),
+          });
 
-                  const dataTransfer = new DataTransfer();
-                  dataTransfer.items.add(resizedFile);
-                  fileInputRef.current.files = dataTransfer.files;
-              });
-          };
-          img.src = event.target.result;
+          const dataTransfer = new DataTransfer();
+          dataTransfer.items.add(resizedFile);
+          fileInputRef.current.files = dataTransfer.files;
+        });
       };
+      img.src = event.target.result;
+    };
 
-      reader.readAsDataURL(file);
+    reader.readAsDataURL(file);
   };
 
   const handleImageClick = () => {
@@ -233,7 +256,7 @@ function AdduserButton() {
           state: "",
           city: "",
           designation: "",
-          date_of_joining:"",
+          date_of_joining: "",
           Department: "",
           Company: "",
           dob: "",
@@ -316,11 +339,11 @@ function AdduserButton() {
 
             {/* Right side: Form */}
             <div className="flex-1">
-              <h2 className="text-xl font-bold mb-4">Create New User</h2>
+              <h2 className="text-xl font-bold mb-2">Create New User</h2>
               <form onSubmit={handleFormSubmit}>
                 {/* Name Fields */}
                 <div className="flex justify-between items-center gap-2">
-                  <div className="mb-4 w-[220px]">
+                  <div className="mb-2 w-[220px]">
                     <label className="block text-gray-300 font-medium mb-2">
                       First Name
                     </label>
@@ -336,8 +359,8 @@ function AdduserButton() {
                       required
                     />
                   </div>
-                  <div className="mb-4 w-[220px]">
-                    <label className="block text-gray-300 font-medium mb-2">
+                  <div className="mb-2 w-[220px]">
+                    <label className="block text-gray-300 font-medium mb-1">
                       Last Name
                     </label>
                     <input
@@ -356,8 +379,8 @@ function AdduserButton() {
 
                 {/* Contact Fields */}
                 <div className="flex justify-between items-center gap-2">
-                  <div className="mb-4 w-[220px]">
-                    <label className="block text-gray-300 font-medium mb-2">
+                  <div className="mb-2 w-[220px]">
+                    <label className="block text-gray-300 font-medium mb-1">
                       Email
                     </label>
                     <input
@@ -372,8 +395,8 @@ function AdduserButton() {
                       required
                     />
                   </div>
-                  <div className="mb-4 w-[220px]">
-                    <label className="block text-gray-300 font-medium mb-2">
+                  <div className="mb-2 w-[220px]">
+                    <label className="block text-gray-300 font-medium mb-1">
                       Contact No.
                     </label>
                     <input
@@ -392,8 +415,8 @@ function AdduserButton() {
 
                 {/* Password and Role */}
                 <div className="flex justify-between items-center gap-2">
-                  <div className="mb-4 w-[220px]">
-                    <label className="block text-gray-300 font-medium mb-2">
+                  <div className="mb-2 w-[220px]">
+                    <label className="block text-gray-300 font-medium mb-1">
                       Password
                     </label>
                     <input
@@ -408,8 +431,8 @@ function AdduserButton() {
                       required
                     />
                   </div>
-                  <div className="mb-4 w-[220px]">
-                    <label className="block text-gray-300 font-medium mb-2">
+                  <div className="mb-2 w-[220px]">
+                    <label className="block text-gray-300 font-medium mb-1">
                       Role
                     </label>
                     <select
@@ -433,8 +456,8 @@ function AdduserButton() {
 
                 {/* State and City */}
                 <div className="flex justify-between items-center gap-2">
-                  <div className="mb-4 w-[220px]">
-                    <label className="block text-gray-300 font-medium mb-2">
+                  <div className="mb-2 w-[220px]">
+                    <label className="block text-gray-300 font-medium mb-1">
                       State
                     </label>
                     <select
@@ -459,8 +482,8 @@ function AdduserButton() {
                       ))}
                     </select>
                   </div>
-                  <div className="mb-4 w-[220px]">
-                    <label className="block text-gray-300 font-medium mb-2">
+                  <div className="mb-2 w-[220px]">
+                    <label className="block text-gray-300 font-medium mb-1">
                       City
                     </label>
                     <select
@@ -493,8 +516,8 @@ function AdduserButton() {
 
                 {/* Designation and Department */}
                 <div className="flex justify-between items-center gap-2">
-                  <div className="mb-4 w-[220px]">
-                    <label className="block text-gray-300 font-medium mb-2">
+                  <div className="mb-2 w-[220px]">
+                    <label className="block text-gray-300 font-medium mb-1">
                       Designation
                     </label>
                     <select
@@ -515,8 +538,8 @@ function AdduserButton() {
                     </select>
                   </div>
 
-                  <div className="mb-4 w-[220px]">
-                    <label className="block text-gray-300 font-medium mb-2">
+                  <div className="mb-2 w-[220px]">
+                    <label className="block text-gray-300 font-medium mb-1">
                       Department
                     </label>
                     <select
@@ -540,52 +563,50 @@ function AdduserButton() {
                 </div>
 
                 <div className="flex flex-row gap-2">
+                  <div className="mb-2 w-[220px]">
+                    <label className="block text-gray-300 font-medium mb-1">
+                      Company
+                    </label>
+                    <select
+                      name="Company"
+                      value={formData.Company}
+                      onChange={handleInputChange}
+                      className="w-full border border-gray-600 rounded px-3 py-2 focus:outline-none focus:ring focus:ring-blue-300 bg-gray-800 text-white"
+                      required
+                    >
+                      <option value="" disabled>
+                        Select Company
+                      </option>
+                      {data1.data1 &&
+                        Array.isArray(data1.data1) &&
+                        data1.data1.map((data) => (
+                          <option key={data._id} value={data._id}>
+                            {data.company_name}
+                          </option>
+                        ))}
+                    </select>
+                  </div>
 
-                <div className="mb-4 w-[220px]">
-                  <label className="block text-gray-300 font-medium mb-2">
-                    Company
-                  </label>
-                  <select
-                    name="Company"
-                    value={formData.Company}
-                    onChange={handleInputChange}
-                    className="w-full border border-gray-600 rounded px-3 py-2 focus:outline-none focus:ring focus:ring-blue-300 bg-gray-800 text-white"
-                    required
-                  >
-                    <option value="" disabled>
-                      Select Company
-                    </option>
-                    {data1.data1 &&
-                      Array.isArray(data1.data1) &&
-                      data1.data1.map((data) => (
-                        <option key={data._id} value={data._id}>
-                          {data.company_name}
-                        </option>
-                      ))}
-                  </select>
+                  <div className="mb-2 w-[220px]">
+                    <label className="block text-gray-300 font-medium mb-1">
+                      Date of Joining
+                    </label>
+                    <input
+                      type="date"
+                      name="date_of_joining"
+                      value={formData.date_of_joining}
+                      onChange={handleInputChange}
+                      onClick={(e) => e.target.showPicker()}
+                      className="w-full border border-gray-600 rounded px-3 py-2 focus:outline-none focus:ring focus:ring-blue-300 bg-gray-800 text-white"
+                      required
+                    />
+                  </div>
                 </div>
-
-                <div className="mb-4 w-[220px]">
-  <label className="block text-gray-300 font-medium mb-2">
-    Date of Joining
-  </label>
-  <input
-    type="date"
-    name="date_of_joining"
-    value={formData.date_of_joining}
-    onChange={handleInputChange}
-    onClick={(e) => e.target.showPicker()}
-    className="w-full border border-gray-600 rounded px-3 py-2 focus:outline-none focus:ring focus:ring-blue-300 bg-gray-800 text-white"
-    required
-  />
-</div>
-
-</div>
 
                 {/* Date of Birth and Status */}
                 <div className="flex justify-between items-center gap-2">
-                  <div className="mb-4 w-[220px]">
-                    <label className="block text-gray-300 font-medium mb-2">
+                  <div className="mb-2 w-[220px]">
+                    <label className="block text-gray-300 font-medium mb-1">
                       Date of Birth
                     </label>
                     <input
@@ -600,8 +621,8 @@ function AdduserButton() {
                       required
                     />
                   </div>
-                  <div className="mb-4 w-[220px]">
-                    <label className="block text-gray-300 font-medium mb-2">
+                  <div className="mb-2 w-[220px]">
+                    <label className="block text-gray-300 font-medium mb-1">
                       Status
                     </label>
                     <select
@@ -622,6 +643,27 @@ function AdduserButton() {
                     >
                       <option value="Active">Active</option>
                       <option value="Inactive">Inactive</option>
+                    </select>
+                  </div>
+                </div>
+                <div>
+                  <div className="mb-2 w-[full]">
+                    <label className="block text-gray-300 font-medium mb-1">
+                      {" "}
+                      Shift
+                    </label>
+                    <select
+                      name="shiftId"
+                      value={formData.shiftId}
+                      onChange={handleInputChange}
+                      className="w-full border border-gray-600 rounded px-3 py-2 focus:outline-none focus:ring focus:ring-blue-300 bg-gray-800 text-white"
+                      required
+                    >
+                      {shiftOptions.map((shift) => (
+                        <option key={shift.id} value={shift.id}>
+                          {shift.name} -- {shift.in} - {shift.out}
+                        </option>
+                      ))}
                     </select>
                   </div>
                 </div>

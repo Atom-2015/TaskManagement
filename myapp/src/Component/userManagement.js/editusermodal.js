@@ -11,6 +11,7 @@ import {
 import Swal from "sweetalert2";
 import { FaCamera } from "react-icons/fa6";
 import { allUser } from "../../FeatureRedux/alluserSlice";
+import { getShift } from "../../FeatureRedux/ShiftingSlice/getShiftSlice";
 
 const EditUserModal = ({ formData }) => {
   const dispatch = useDispatch();
@@ -38,27 +39,6 @@ const EditUserModal = ({ formData }) => {
     (state) => state.allUser
   );
 
-  //  const handleImageUpload = (e) => {
-  //   const file = e.target.files[0];
-  //   if (!file) return;
-
-  //   // Validate file type
-  //   if (!file.type.match('image.*')) {
-  //     Swal.fire('Error', 'Please select an image file', 'error');
-  //     return;
-  //   }
-
-  //   // Validate file size (e.g., 2MB max)
-  //   if (file.size > 2 * 1024 * 1024) {
-  //     Swal.fire('Error', 'Image size should be less than 2MB', 'error');
-  //     return;
-  //   }
-
-  //   const imageUrl = URL.createObjectURL(file);
-  //   setSelectedImage(imageUrl);
-  //   // Update form data if needed
-  //   setLocalFormData(prev => ({...prev, imageFile: file}));
-  // };
 
   useEffect(() => {
     if (isOpen && formData) {
@@ -84,6 +64,18 @@ const EditUserModal = ({ formData }) => {
       setStates(stateList);
     }
   }, [isOpen]);
+
+    useEffect(() => {
+      dispatch(getShift());
+    }, [dispatch]);
+  
+    const { getData } = useSelector((state) => state.getShift || {});
+    const shiftOptions = getData?.shifts?.map((shift) => ({
+      id: shift._id,
+      in: shift.punchIn,
+      out: shift.punchOut,
+      name: shift.name,
+    }));
 
   useEffect(() => {
     if (localFormData.state && isOpen) {
@@ -428,6 +420,26 @@ const EditUserModal = ({ formData }) => {
                     required
                   />
                 </div>
+
+                   <div className="">
+                    <label className="block text-gray-300 font-medium mb-1">
+                      {" "}
+                      Shift
+                    </label>
+                    <select
+                      name="shiftId"
+                      value={formData.shiftId}
+                      onChange={handleInputChange}
+                      className="w-full border border-gray-600 rounded px-3 py-2 focus:outline-none focus:ring focus:ring-blue-300 bg-gray-800 text-white"
+                      required
+                    >
+                      {shiftOptions.map((shift) => (
+                        <option key={shift.id} value={shift.id}>
+                          {shift.name} -- {shift.in} - {shift.out}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
               </div>
 
               {/* Right Column */}
@@ -558,6 +570,8 @@ const EditUserModal = ({ formData }) => {
                     <option value="Pending">Pending</option>
                   </select>
                 </div>
+
+                
               </div>
             </div>
 
