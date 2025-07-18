@@ -62,6 +62,9 @@ import  GetEmployeeTotal  from "../FeatureRedux/AttendenceSlice/CreateTotalEmplo
 import GetEmployeeTotalSlice from "../FeatureRedux/AttendenceSlice/CreateTotalEmployeeSlice";
 import  GetTotalGraph  from "../FeatureRedux/AttendenceSlice/GetAttendenceGraph";
 import GetReportAttendence  from "../FeatureRedux/AttendenceSlice/GetReportAttendence";
+import  createShift  from "../FeatureRedux/ShiftingSlice/AddShiftSlice";
+import  deleteShift  from "../FeatureRedux/ShiftingSlice/DeleteShiftSlice";
+import  editShift  from "../FeatureRedux/ShiftingSlice/EditShiftSlice";
 
 export const store = configureStore({
   reducer: {
@@ -127,7 +130,10 @@ export const store = configureStore({
   //  GetEmployeeTotalSlice:GetEmployeeTotalSlice
  GetEmployeeTotal: GetEmployeeTotal,
  GetTotalGraph:GetTotalGraph,
- GetReportAttendence:GetReportAttendence
+ GetReportAttendence:GetReportAttendence,
+ createShift: createShift,
+ deleteShift: deleteShift,
+ editShift:editShift,
 
   },
 });

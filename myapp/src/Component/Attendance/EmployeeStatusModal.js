@@ -23,7 +23,20 @@ const EmployeeStatusModal = ({ title, data, onClose }) => {
   }, []);
 
   return (
-    <div className="fixed inset-0 z-50 w-full min-h-screen flex items-center justify-center backdrop-blur-sm bg-black/30">
+    // <div style={{
+    //         position: "absolute",
+    //         top: 0,
+    //         left: 0,
+    //         right: 0,
+    //         bottom: 0,
+    //         width: "90vw",
+    //         height: "170vh",
+    //         margin: 0,
+    //         padding: 0,
+    //         zIndex: 9999,
+    //       }} className="fixed inset-0 z-50 w-full min-h-screen flex items-center justify-center backdrop-blur-sm bg-black/30">
+      
+   <div className="fixed inset-0 z-50 w-full min-h-screen flex items-center justify-center backdrop-blur-sm bg-black/30">
       <div
         ref={modalRef}
         className="relative bg-white p-6 rounded-xl shadow-xl w-full max-w-md max-h-[80vh] overflow-y-auto"
