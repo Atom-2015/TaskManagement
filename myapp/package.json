@@ -27,6 +27,7 @@
     "bootstrap": "^5.3.3",
     "browser-image-compression": "^2.0.2",
     "buffer": "^6.0.3",
+    "build": "^0.1.4",
     "chart.js": "^4.4.9",
     "cloudinary-react": "^1.8.1",
     "country-state-city": "^3.2.1",
