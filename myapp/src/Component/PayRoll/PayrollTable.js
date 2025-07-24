@@ -6,6 +6,7 @@ import { allUser } from "../../FeatureRedux/alluserSlice";
 import { generatePayroll } from "../../FeatureRedux/PayrollSlice/PayrollCompanyGenerate";
 import moment from "moment";
 import { getMonthlyPayrollSummary } from "../../FeatureRedux/PayrollSlice/PayrollCompanyMonthlySalary";
+import PayrolModal from "./PayrolModal";
 
 const ITEMS_PER_PAGE = 5;
 
@@ -28,6 +29,11 @@ const PayrollTable = () => {
   const [processingUserId, setProcessingUserId] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [search, setSearch] = useState("");
+  const [openIncentiveFormFor, setOpenIncentiveFormFor] = useState(null);
+  const [newIncentive, setNewIncentive] = useState({ label: "", amount: "" });
+  const [viewPayrollFor,setViewPayrollFor] = useState(null);
+  const [modalPosition, setModalPosition] = useState({ top: 0, left: 0 });
+
 
   const currentYear = moment().year();
   const currentMonth = moment().month() + 1;
@@ -85,11 +91,10 @@ const PayrollTable = () => {
   );
 
   useEffect(() => {
-  if (payrollData?.length > 0) {
-    console.log("Full payrollData:", payrollData);
-  }
-}, [payrollData]);
-
+    if (payrollData?.length > 0) {
+      console.log("Full payrollData:", payrollData);
+    }
+  }, [payrollData]);
 
   const totalPages = Math.ceil(filteredUsers.length / ITEMS_PER_PAGE);
 
@@ -163,7 +168,7 @@ const PayrollTable = () => {
               <th className="px-4 py-2">Employee</th>
               <th className="px-4 py-2">Role</th>
               <th className="px-4 py-2">Salary</th>
-            
+
               <th className="px-4 py-2">Incentives</th>
               <th className="px-4 py-2">Net Pay</th>
               <th className="px-4 py-2">Deductions</th>
@@ -205,37 +210,49 @@ const PayrollTable = () => {
                       <span className="text-gray-400 mr-1">{emp.level}</span>
                       {emp.role}
                     </td>
-                  <td className="px-4 py-3 text-sm text-gray-700">
-  ₹
-  {typeof emp?.earnings?.salary === "number"
-    ? emp.earnings.salary
-    : typeof emp?.salary === "number"
-    ? emp.salary
-    : "0.00"}
-</td>
+                    <td className="px-4 py-3 text-sm text-gray-700">
+                      ₹
+                      {typeof emp?.earnings?.salary === "number"
+                        ? emp.earnings.salary
+                        : typeof emp?.salary === "number"
+                        ? emp.salary
+                        : "0.00"}
+                    </td>
 
-                 
-                  <td className="px-4 py-3 text-sm text-gray-700">
-  {payrollEntry?.earnings?.incentives?.length > 0 ? (
-    payrollEntry.earnings.incentives.map((inc, i) => (
-      <div key={i} className="text-xs text-gray-600">
-        {inc.label}: ₹{Number(inc.amount).toFixed(2)}
-      </div>
-    ))
-  ) : (
-    <div className="text-xs text-gray-400">No incentives</div>
-  )}
-</td>
+                    <td className="px-4 py-3 text-sm text-gray-700 relative">
+                      {/* + Icon in top-right */}
 
+                      {/* Incentives display */}
+                      <div className="flex flex-col gap-1 mt-1">
+                        {payrollEntry?.earnings?.incentives?.length > 0 ? (
+                          payrollEntry.earnings.incentives.map((inc, i) => (
+                            <div key={i} className="text-xs text-gray-600">
+                              {inc.label}: ₹{Number(inc.amount).toFixed(2)}
+                            </div>
+                          ))
+                        ) : (
+                          <div className="text-xs text-gray-400">
+                            No incentives
+                          </div>
+                        )}
+
+                        {/* Show incentive input form conditionally */}
+                      </div>
+                    </td>
 
                     <td className="px-4 py-3 text-gray-700">
                       ₹{payrollEntry?.netPay?.toFixed(2) ?? "0.00"}
                     </td>
-                   <td className="px-4 py-3 text-sm text-gray-700">
-    <div className="text-xs text-gray-500">
-      Absent: {payrollEntry?.deductions?.absentDays || 0}, Unpaid: {payrollEntry?.deductions?.unpaidLeaves || 0}, Deducted: ₹{Number(payrollEntry?.deductions?.totalDeductions || 0).toFixed(2)}
-    </div>
-  </td>
+                    <td className="px-4 py-3 text-sm text-gray-700">
+                      <div className="text-xs text-gray-500">
+                        Absent: {payrollEntry?.deductions?.absentDays || 0},
+                        Unpaid: {payrollEntry?.deductions?.unpaidLeaves || 0},
+                        Deducted: ₹
+                        {Number(
+                          payrollEntry?.deductions?.totalDeductions || 0
+                        ).toFixed(2)}
+                      </div>
+                    </td>
 
                     <td className="px-4 py-3">
                       <span
@@ -262,8 +279,61 @@ const PayrollTable = () => {
                           ? "Generating..."
                           : "Generate"}
                       </button>
-                      <FiEye className="text-gray-500 cursor-pointer" />
-                      <FiMoreVertical className="text-gray-500 cursor-pointer" />
+                    
+<FiEye
+  className="text-gray-500 cursor-pointer hover:text-blue-600 transition-colors"
+  onClick={(e) => {
+    e.stopPropagation(); // Prevent event bubbling
+    
+    const rect = e.target.getBoundingClientRect();
+    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
+    
+    // Modal dimensions (approximate)
+    const modalWidth = 300;
+    const modalHeight = 400;
+    
+    // Viewport dimensions
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+    
+    // Calculate initial position (to the right of the eye icon)
+    let left = rect.right + scrollLeft + 500; // 10px gap from icon
+    let top = rect.top + scrollTop;
+    
+    // Adjust horizontal position if modal would go off-screen
+    if (left + modalWidth > viewportWidth + scrollLeft) {
+      left = rect.left + scrollLeft - modalWidth - 10; // Position to the left instead
+    }
+    
+    // Adjust vertical position if modal would go off-screen
+    if (top + modalHeight > viewportHeight + scrollTop) {
+      top = viewportHeight + scrollTop - modalHeight - 20; // 20px margin from bottom
+    }
+    
+    // Ensure modal doesn't go above viewport
+    if (top < scrollTop + 20) {
+      top = scrollTop + 20; // 20px margin from top
+    }
+    
+    setModalPosition({ top, left });
+    setViewPayrollFor(emp._id);
+  }}
+/>
+
+{viewPayrollFor === emp._id && (
+  <PayrolModal
+    emp={emp}
+    payrollEntry={payrollEntry}
+    newIncentive={newIncentive}
+    setNewIncentive={setNewIncentive}
+    onClose={() => setViewPayrollFor(null)}
+    position={modalPosition}
+  />
+)}
+
+                      
+                     
                     </td>
                   </tr>
                 );
