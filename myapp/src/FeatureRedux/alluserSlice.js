@@ -6,7 +6,7 @@ export const allUser = createAsyncThunk(
   async (formData, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.get("/api/user/userlist", formData);
-      console.log("Ye response ka data hai ",response.data.data)
+     
       return response.data.data;
     } catch (error) {
       return rejectWithValue(

@@ -28,7 +28,7 @@ const ProjectViewSubTaskDetails = () => {
 
   const length = data?.data?.length - (index + 1);
 
-  console.log("index", index, "dfkkfkdfk", data?.data?.[length]);
+  
 
   const dispatch = useDispatch();
   useEffect(() => {
@@ -137,7 +137,7 @@ const ProjectViewSubTaskDetails = () => {
 
             <div className="bg-white rounded-lg p-2  ">
               {/* Description */}
-              <div className="w-full p-2">
+              {/* <div className="w-full p-2">
                 <div className="flex justify-between">
                   <label className="font-semibold text-gray-700 flex items-start ">
                     <button onClick={toggleOpen}>
@@ -177,7 +177,7 @@ const ProjectViewSubTaskDetails = () => {
                     </div>
                   </div>
                 )}
-              </div>
+              </div> */}
             </div>
 
             <div className="bg-white   p-3 rounded-lg ">
@@ -365,6 +365,18 @@ const ProjectViewSubTaskDetails = () => {
                       </span>
                       <span className="font-medium">
                         {subtaskData.duration}
+                      </span>
+                    </div>
+
+                    <div className="flex border-b-[1px] border-gray-200 pb-2">
+                      <span className="w-40 text-start text-gray-600">
+                        Comment:
+                      </span>
+                      <span
+                        className={`text-sm font-medium
+                        }`}
+                      >
+                        {subtaskData.comment}
                       </span>
                     </div>
                     {/* <div className="flex border-b-[1px] border-gray-200 pb-2">

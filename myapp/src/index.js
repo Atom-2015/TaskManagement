@@ -42,6 +42,8 @@ import Leavemyteam from "./Component/LeaveComponent/LeaveManagement/Leavemyteam"
 import HolidayDashBoard from "./Component/Holiday/HolidayDashBoard";
 import UserAttendence from "./Component/Attendance/UserAttendence";
 import CompanyAttendence from "./Component/Attendance/CompanyAttendence";
+import UserPayroll from "./Component/PayRoll/UserPayroll";
+import CompanyPayroll from "./Component/PayRoll/CompanyPayroll";
 
 // ProtectedRoute Component
 const ProtectedRoute = ({ element }) => {
@@ -120,6 +122,10 @@ const router = createBrowserRouter([
       {
         path: "/Payroll",
         element: <PayrollDashboard />,
+        children:[
+          {path:"/Payroll/user",element:<UserPayroll/>},
+          {path:"/Payroll/Company",element:<CompanyPayroll/>}
+        ]
       },
 
       {

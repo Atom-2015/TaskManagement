@@ -65,6 +65,9 @@ import GetReportAttendence  from "../FeatureRedux/AttendenceSlice/GetReportAtten
 import  createShift  from "../FeatureRedux/ShiftingSlice/AddShiftSlice";
 import  deleteShift  from "../FeatureRedux/ShiftingSlice/DeleteShiftSlice";
 import  editShift  from "../FeatureRedux/ShiftingSlice/EditShiftSlice";
+import  getCompanyMonthlySalary  from "../FeatureRedux/PayrollSlice/PayrollCompanyGraphSlice";
+import  generatePayroll  from "../FeatureRedux/PayrollSlice/PayrollCompanyGenerate";
+import  getMonthlyPayrollSummary  from "../FeatureRedux/PayrollSlice/PayrollCompanyMonthlySalary";
 
 export const store = configureStore({
   reducer: {
@@ -134,6 +137,10 @@ export const store = configureStore({
  createShift: createShift,
  deleteShift: deleteShift,
  editShift:editShift,
+ getCompanyMonthlySalary:getCompanyMonthlySalary,
+  generatePayroll:generatePayroll,
+  getMonthlyPayrollSummary:getMonthlyPayrollSummary
+
 
   },
 });

@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import {
-  BarChart,
-  Bar,
+  LineChart,
+  Line,
   XAxis,
   YAxis,
   Tooltip,
@@ -9,46 +10,91 @@ import {
   ResponsiveContainer,
   Legend,
 } from "recharts";
-
-const data = [
-  { month: "Mar", cost: 3000, expense: 1500 },
-  { month: "Apr", cost: 6000, expense: 2000 },
-  { month: "May", cost: 9000, expense: 3000 },
-  { month: "Jun", cost: 5000, expense: 1800 },
-  { month: "Jul", cost: 8700, expense: 2110 },
-  { month: "Aug", cost: 4000, expense: 1200 },
-  { month: "Sep", cost: 7000, expense: 2600 },
-  { month: "Oct", cost: 6200, expense: 2400 },
-  { month: "Nov", cost: 9700, expense: 3100 },
-];
+import { getCompanyMonthlySalary } from "../../FeatureRedux/PayrollSlice/PayrollCompanyGraphSlice";
 
 const PayrollGraph = () => {
-  return (
-    <div className="bg-white h-full w-full p-6 rounded-2xl shadow-md border border-gray-100 flex flex-col">
-      <h2 className="text-lg font-semibold text-gray-800 mb-2">
-        Payroll Cost Overview
-      </h2>
-      <p className="text-sm text-gray-500 mb-4">Monthly cost vs expense</p>
+  const dispatch = useDispatch();
 
-      <div className="flex-grow">
-        <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={data} margin={{ top: 10, right: 20, left: 0, bottom: 10 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-            <XAxis dataKey="month" stroke="#6b7280" fontSize={12} />
-            <YAxis stroke="#6b7280" fontSize={12} />
-            <Tooltip
-              formatter={(value) => `₹${value.toLocaleString()}`}
-              contentStyle={{ fontSize: "0.875rem", borderRadius: "0.5rem" }}
-            />
-            <Legend
-              wrapperStyle={{ fontSize: "0.75rem", paddingTop: 8 }}
-              iconType="circle"
-            />
-            <Bar dataKey="cost" stackId="a" fill="#4f46e5" name="Cost" />
-            <Bar dataKey="expense" stackId="a" fill="#818cf8" name="Expense" />
-          </BarChart>
-        </ResponsiveContainer>
-      </div>
+  const {
+    data: salaryData,
+    isLoading,
+    isError,
+    errorMessage,
+  } = useSelector((state) => state.getCompanyMonthlySalary);
+
+  useEffect(() => {
+    dispatch(getCompanyMonthlySalary(new Date().getFullYear()));
+  }, [dispatch]);
+
+  const chartData = salaryData?.map((item) => ({
+    month: item.month,
+    salary: item.totalNetPay || 0,
+  })) || [];
+
+  return (
+    <div className="bg-white h-full w-full p-6 rounded-2xl shadow-xl border border-gray-100 flex flex-col">
+      <h2 className="text-xl font-semibold text-gray-800 mb-1">
+        Total Salary Overview
+      </h2>
+
+      {isLoading ? (
+        <div className="text-center py-8 text-gray-500">Loading...</div>
+      ) : isError ? (
+        <div className="text-center py-8 text-red-500">
+          {errorMessage || "Failed to load data"}
+        </div>
+      ) : (
+        <div className="flex-grow">
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart
+              data={chartData}
+              margin={{ top: 20, right: 30, left: 10, bottom: 10 }}
+            >
+              <defs>
+                <linearGradient id="colorSalary" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#6366f1" stopOpacity={0.8} />
+                  <stop offset="100%" stopColor="#818cf8" stopOpacity={0.2} />
+                </linearGradient>
+              </defs>
+
+              <CartesianGrid strokeDasharray="4 4" stroke="#f1f5f9" />
+              <XAxis dataKey="month" stroke="#6b7280" fontSize={12} />
+              <YAxis
+                stroke="#6b7280"
+                fontSize={12}
+                tickFormatter={(val) => `₹${val}`}
+              />
+              <Tooltip
+                formatter={(value) => `₹${value.toLocaleString()}`}
+                contentStyle={{
+                  fontSize: "0.875rem",
+                  borderRadius: "0.5rem",
+                  borderColor: "#6366f1",
+                }}
+                labelStyle={{ fontWeight: 600 }}
+              />
+              <Legend
+                wrapperStyle={{ fontSize: "0.75rem", marginTop: 10 }}
+                verticalAlign="top"
+                align="right"
+                iconType="circle"
+              />
+              <Line
+                type="monotone"
+                dataKey="salary"
+                name="Total Salary"
+                stroke="url(#colorSalary)"
+                strokeWidth={3}
+                dot={{ r: 5, strokeWidth: 2, stroke: "#4f46e5", fill: "#fff" }}
+                activeDot={{ r: 8 }}
+                isAnimationActive={true}
+                animationDuration={1200}
+                animationBegin={200}
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      )}
     </div>
   );
 };

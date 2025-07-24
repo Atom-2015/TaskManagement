@@ -38,6 +38,7 @@ function AdduserButton() {
     Company: "",
     shiftId: "",
     dob: "",
+    salary:"",
     status: "Active",
   });
 
@@ -260,6 +261,7 @@ function AdduserButton() {
           Department: "",
           Company: "",
           dob: "",
+          salary:"",
           status: "Active",
         });
         setSelectedImage(null);
@@ -646,8 +648,8 @@ function AdduserButton() {
                     </select>
                   </div>
                 </div>
-                <div>
-                  <div className="mb-2 w-[full]">
+                <div className="flex flex-row gap-2">
+                  <div className="mb-2 w-[220px]">
                     <label className="block text-gray-300 font-medium mb-1">
                       {" "}
                       Shift
@@ -665,6 +667,23 @@ function AdduserButton() {
                         </option>
                       ))}
                     </select>
+                  </div>
+
+                 <div className="mb-2 w-[220px]">
+                    <label className="block text-gray-300 font-medium mb-1">
+                      Salary
+                    </label>
+                    <input
+                      type="number"
+                      name="salary"
+                      placeholder="salary"
+                      value={formData.salary}
+                      onChange={handleInputChange}
+                      onKeyDown={(e) => handleKeyDown(e, "role")}
+                      ref={inputRefs.password}
+                      className="w-full border border-gray-600 rounded px-3 py-2 focus:outline-none focus:ring focus:ring-blue-300 bg-gray-800 text-white"
+                      required
+                    />
                   </div>
                 </div>
 
