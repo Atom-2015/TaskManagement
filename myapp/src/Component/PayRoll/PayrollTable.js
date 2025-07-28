@@ -7,6 +7,7 @@ import { generatePayroll } from "../../FeatureRedux/PayrollSlice/PayrollCompanyG
 import moment from "moment";
 import { getMonthlyPayrollSummary } from "../../FeatureRedux/PayrollSlice/PayrollCompanyMonthlySalary";
 import PayrolModal from "./PayrolModal";
+import { addPayrollIncentive } from "../../FeatureRedux/PayrollSlice/PayrollCompanyIncetiveAdd";
 
 const ITEMS_PER_PAGE = 5;
 
@@ -31,9 +32,8 @@ const PayrollTable = () => {
   const [search, setSearch] = useState("");
   const [openIncentiveFormFor, setOpenIncentiveFormFor] = useState(null);
   const [newIncentive, setNewIncentive] = useState({ label: "", amount: "" });
-  const [viewPayrollFor,setViewPayrollFor] = useState(null);
+  const [viewPayrollFor, setViewPayrollFor] = useState(null);
   const [modalPosition, setModalPosition] = useState({ top: 0, left: 0 });
-
 
   const currentYear = moment().year();
   const currentMonth = moment().month() + 1;
@@ -49,19 +49,49 @@ const PayrollTable = () => {
   }, [dispatch, selectedMonth, selectedYear]);
 
   const handleGeneratePayrollForUser = async (userId) => {
+
     setProcessingUserId(userId);
-    await dispatch(
-      generatePayroll({
-        userId,
-        month: selectedMonth,
-        year: selectedYear,
-      })
-    );
+     const response = await dispatch(
+    generatePayroll({
+      userId,
+      month: selectedMonth,
+      year: selectedYear,
+    })
+  );
+
+  console.log("Generated payroll response:", response);
     await dispatch(
       getMonthlyPayrollSummary({ month: selectedMonth, year: selectedYear })
     );
     setProcessingUserId(null);
   };
+
+
+//   const handleGeneratePayrollForUser = async (userId) => {
+//   console.log("Generating payroll for userId:", userId);
+//   setProcessingUserId(userId);
+
+//   const generateResult = await dispatch(
+//     generatePayroll({
+//       userId,
+//       month: selectedMonth,
+//       year: selectedYear,
+//     })
+//   );
+
+//   console.log("Payroll generation result:", generateResult);
+
+//   const summaryResult = await dispatch(
+//     getMonthlyPayrollSummary({ month: selectedMonth, year: selectedYear })
+//   );
+
+//   console.log("getMonthlyPayrollSummary response:", summaryResult);
+//   console.log("Payroll summary payload:", summaryResult?.payload);
+
+//   setProcessingUserId(null);
+// };
+
+
 
   const goToPage = (page) => {
     if (page >= 1 && page <= totalPages) setCurrentPage(page);
@@ -172,6 +202,7 @@ const PayrollTable = () => {
               <th className="px-4 py-2">Incentives</th>
               <th className="px-4 py-2">Net Pay</th>
               <th className="px-4 py-2">Deductions</th>
+             
               <th className="px-4 py-2">Status</th>
               <th className="px-4 py-2">Action</th>
             </tr>
@@ -240,7 +271,7 @@ const PayrollTable = () => {
                       </div>
                     </td>
 
-                    <td className="px-4 py-3 text-gray-700">
+                    <td className="px-4 py-3 font-bold text-gray-700">
                       ₹{payrollEntry?.netPay?.toFixed(2) ?? "0.00"}
                     </td>
                     <td className="px-4 py-3 text-sm text-gray-700">
@@ -253,6 +284,7 @@ const PayrollTable = () => {
                         ).toFixed(2)}
                       </div>
                     </td>
+          
 
                     <td className="px-4 py-3">
                       <span
@@ -265,6 +297,7 @@ const PayrollTable = () => {
                         {payrollEntry ? "Completed" : "Pending"}
                       </span>
                     </td>
+                    
                     <td className="px-4 py-3 flex items-center gap-2">
                       <button
                         className={`text-xs bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 ${
@@ -279,61 +312,65 @@ const PayrollTable = () => {
                           ? "Generating..."
                           : "Generate"}
                       </button>
-                    
-<FiEye
-  className="text-gray-500 cursor-pointer hover:text-blue-600 transition-colors"
-  onClick={(e) => {
-    e.stopPropagation(); // Prevent event bubbling
-    
-    const rect = e.target.getBoundingClientRect();
-    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-    const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
-    
-    // Modal dimensions (approximate)
-    const modalWidth = 300;
-    const modalHeight = 400;
-    
-    // Viewport dimensions
-    const viewportWidth = window.innerWidth;
-    const viewportHeight = window.innerHeight;
-    
-    // Calculate initial position (to the right of the eye icon)
-    let left = rect.right + scrollLeft + 500; // 10px gap from icon
-    let top = rect.top + scrollTop;
-    
-    // Adjust horizontal position if modal would go off-screen
-    if (left + modalWidth > viewportWidth + scrollLeft) {
-      left = rect.left + scrollLeft - modalWidth - 10; // Position to the left instead
-    }
-    
-    // Adjust vertical position if modal would go off-screen
-    if (top + modalHeight > viewportHeight + scrollTop) {
-      top = viewportHeight + scrollTop - modalHeight - 20; // 20px margin from bottom
-    }
-    
-    // Ensure modal doesn't go above viewport
-    if (top < scrollTop + 20) {
-      top = scrollTop + 20; // 20px margin from top
-    }
-    
-    setModalPosition({ top, left });
-    setViewPayrollFor(emp._id);
-  }}
-/>
 
-{viewPayrollFor === emp._id && (
-  <PayrolModal
-    emp={emp}
-    payrollEntry={payrollEntry}
-    newIncentive={newIncentive}
-    setNewIncentive={setNewIncentive}
-    onClose={() => setViewPayrollFor(null)}
-    position={modalPosition}
-  />
-)}
+                      <FiEye
+                        className="text-gray-500 cursor-pointer hover:text-blue-600 transition-colors"
+                        onClick={(e) => {
+                          e.stopPropagation(); // Prevent event bubbling
 
-                      
-                     
+                          const rect = e.target.getBoundingClientRect();
+                          const scrollTop =
+                            window.pageYOffset ||
+                            document.documentElement.scrollTop;
+                          const scrollLeft =
+                            window.pageXOffset ||
+                            document.documentElement.scrollLeft;
+
+                          // Modal dimensions (approximate)
+                          const modalWidth = 300;
+                          const modalHeight = 400;
+
+                          // Viewport dimensions
+                          const viewportWidth = window.innerWidth;
+                          const viewportHeight = window.innerHeight;
+
+                          // Calculate initial position (to the right of the eye icon)
+                          let left = rect.right + scrollLeft + 500; // 10px gap from icon
+                          let top = rect.top + scrollTop;
+
+                          // Adjust horizontal position if modal would go off-screen
+                          if (left + modalWidth > viewportWidth + scrollLeft) {
+                            left = rect.left + scrollLeft - modalWidth - 10; // Position to the left instead
+                          }
+
+                          // Adjust vertical position if modal would go off-screen
+                          if (top + modalHeight > viewportHeight + scrollTop) {
+                            top = viewportHeight + scrollTop - modalHeight - 20; // 20px margin from bottom
+                          }
+
+                          // Ensure modal doesn't go above viewport
+                          if (top < scrollTop + 20) {
+                            top = scrollTop + 20; // 20px margin from top
+                          }
+
+                          setModalPosition({ top, left });
+                          setViewPayrollFor(emp._id);
+                        }}
+                      />
+
+                      {viewPayrollFor === emp._id && (
+                        <PayrolModal
+                          emp={emp}
+                          month={selectedMonth}
+                          year={selectedYear}
+                          payrollEntry={payrollEntry}
+                          payrollId={payrollEntry?.payrollId}
+                          newIncentive={newIncentive}
+                          setNewIncentive={setNewIncentive}
+                          onClose={() => setViewPayrollFor(null)}
+                          position={modalPosition}
+                        />
+                      )}
                     </td>
                   </tr>
                 );

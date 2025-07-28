@@ -68,6 +68,12 @@ import  editShift  from "../FeatureRedux/ShiftingSlice/EditShiftSlice";
 import  getCompanyMonthlySalary  from "../FeatureRedux/PayrollSlice/PayrollCompanyGraphSlice";
 import  generatePayroll  from "../FeatureRedux/PayrollSlice/PayrollCompanyGenerate";
 import  getMonthlyPayrollSummary  from "../FeatureRedux/PayrollSlice/PayrollCompanyMonthlySalary";
+import  addPayrollIncentive  from "../FeatureRedux/PayrollSlice/PayrollCompanyIncetiveAdd";
+import  deletePayrollIncentive  from "../FeatureRedux/PayrollSlice/PayrollCompanyDeleteIncentiveSLice";
+import  getUserAnnualSalarySummary  from "../FeatureRedux/PayrollSlice/PaytollUserSlice";
+import  GetLeavePolicy  from "../FeatureRedux/LeavePolicySlice/GetLeavePolicy";
+import addLeavePolicy from "../FeatureRedux/LeavePolicySlice/AddLeavePolicy";
+import  deleteLeavePolicy  from "../FeatureRedux/LeavePolicySlice/DeleteLeavePolicy";
 
 export const store = configureStore({
   reducer: {
@@ -139,7 +145,15 @@ export const store = configureStore({
  editShift:editShift,
  getCompanyMonthlySalary:getCompanyMonthlySalary,
   generatePayroll:generatePayroll,
-  getMonthlyPayrollSummary:getMonthlyPayrollSummary
+  getMonthlyPayrollSummary:getMonthlyPayrollSummary,
+  addPayrollIncentive:addPayrollIncentive,
+  deletePayrollIncentive:deletePayrollIncentive,
+  getUserAnnualSalarySummary:getUserAnnualSalarySummary,
+  GetLeavePolicy:GetLeavePolicy,
+  addLeavePolicy:addLeavePolicy,
+  deleteLeavePolicy:deleteLeavePolicy
+  
+
 
 
   },

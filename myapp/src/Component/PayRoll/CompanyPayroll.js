@@ -9,7 +9,7 @@ const CompanyPayroll = () => {
     <div className="w-full min-h-screen bg-gray-50 p-6">
       {/* <h1 className="text-2xl font-bold text-gray-800 mb-4">PAYROLL</h1> */}
 
-      <div className="mb-6 flex flex-col sm:flex-row items-start sm:items-center gap-4">
+      {/* <div className="mb-6 flex flex-col sm:flex-row items-start sm:items-center gap-4">
         <div>
           <label className="block text-sm text-gray-600 mb-1"></label>
           <input
@@ -17,9 +17,9 @@ const CompanyPayroll = () => {
             className="border border-gray-300 rounded px-3 py-2 text-sm shadow-sm"
           />
         </div>
-      </div>
+      </div> */}
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
+      {/* <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
         <div className="bg-white text-left border flex flex-col border-gray-200 rounded-lg px-3 py-2">
           <p className="text-lg font-bold text-blue-700 mb-0">Payroll Cost</p>
           <div className="flex items-center justify-between mt-3">
@@ -71,7 +71,7 @@ const CompanyPayroll = () => {
             </div>
           </div>
         </div>
-      </div>
+      </div> */}
 
       <div className="flex flex-col md:flex-row gap-4 mt-6 h-[350px]">
         <div className="w-full  h-full">

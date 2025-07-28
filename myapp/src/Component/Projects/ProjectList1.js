@@ -268,7 +268,7 @@ function ProjectList1() {
                               className="absolute right-0 px-2 text-sm ml-2 bg-white text-blue-600 border-2 border-purple-600 rounded-lg opacity-0 transition-opacity duration-200"
                               onClick={() => navigate(`/project/${project._id}`)}
                             >
-                              <span>View Project</span>
+                              <span>View</span>
                             </button>
                           </div>
                         </td>
