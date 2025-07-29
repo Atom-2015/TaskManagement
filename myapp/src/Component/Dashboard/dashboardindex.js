@@ -42,9 +42,9 @@ function Dashboardindex() {
 
 
       </div>
-
+{/* 
 <div className='w-2/4'>  <AssignedTask /></div>
-   
+    */}
 
    
     </div>
