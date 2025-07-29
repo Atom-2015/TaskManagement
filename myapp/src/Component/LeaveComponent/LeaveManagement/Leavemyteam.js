@@ -8,7 +8,7 @@ import AddLeavePolicy from "./AddLeavePolicy";
 const Leavemyteam = () => {
  
 
-  const chartLabels = ["Present", "Absent"];
+  
  
 
   return (
